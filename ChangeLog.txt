@@ -1,0 +1,13 @@
+---ChangeLog---
+
+Added more protections
+Added more kicks
+Added more crashes & new lobby crashes
+Added detections-modder detections
+Added network options
+Added session options
+Added regen health
+Added more ammo
+Added more vehicle options
+Added more self options
+Added two new kicks to all players/kicks
