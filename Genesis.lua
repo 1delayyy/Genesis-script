@@ -4,6 +4,7 @@ util.require_natives("natives-1640181023")
 util.require_natives("1640181023")
 util.require_natives("natives-1663599433")
 util.require_natives("natives-1651208000")
+util.require_natives(1663599433)
 
 -- Add all SE's here for quicker updates
 local se = {
@@ -724,87 +725,160 @@ end
 --[[ ||| MAIN  ROOTS ||| ]]--
 
 --[[Self Menu]]--
-MenuSelf = menu.list(menu.my_root(), "Self", {""}, "Self Options.") ; menu.divider(MenuSelf, "--- Self Options ---")
+MenuSelf = menu.list(menu.my_root(), "Self", {""}, "Self Options.") ; menu.divider(MenuSelf, "Self Options")
     --[[Self Menu Subcategories]]--
-    MenuMovement = menu.list(MenuSelf, "Movement", {""}, "Movement Options.") ; menu.divider(MenuMovement, "--- Movement Options ---")
-        MenuMainMovement = menu.list(MenuMovement, "Movement", {""}, "Main Movement Options.") ; menu.divider(MenuMainMovement, "--- Main Movement Options ---")
-        MenuTeleport = menu.list(MenuMovement, "Teleport", {""}, "Teleportation Options.") ; menu.divider(MenuTeleport, "--- Teleport Options ---")
-    MenuHealth = menu.list(MenuSelf, "Health", {""}, "Health Options.") ; menu.divider(MenuHealth, "--- Health Options ---")
-    MenuWeapon = menu.list(MenuSelf, "Weapon", {""}, "Weapon Options.") ; menu.divider(MenuWeapon, "--- Weapon Options ---")
-        MenuWeaponHotswap = menu.list(MenuWeapon, "Hotswap", {""}, "Weapon Hotswap Options.") ; menu.divider(MenuWeaponHotswap, "--- Hotswap Options ---")
-        MenuWeaponSAim = menu.list(MenuWeapon, "Silent Aimbot", {""}, "Silent Aimbot Options.") ; menu.divider(MenuWeaponSAim, "--- Silent Aimbot Options ---")
-        MenuWeaponQR = menu.list(MenuWeapon, "Quick Rocket", {""}, "Quick Rocket Options.") ; menu.divider(MenuWeaponQR, "--- Quick Rocket Options ---")
-        MenuWeaponGuidedM = menu.list(MenuWeapon, "Missle Guidance", {""}, "Missle Guidance Options.") ; menu.divider(MenuWeaponGuidedM, "--- Missle Guidance Options ---")
-            MenuWeaponMA = menu.list(MenuWeaponGuidedM, "Missle Aimbot", {""}, "Missle Aimbot Options.") ; menu.divider(MenuWeaponMA, "--- Missle Aimbot Options ---")
-            MenuWeaponMCLOS = menu.list(MenuWeaponGuidedM, "MCLOS", {""}, "MCLOS Guided Missle Options.") ; menu.divider(MenuWeaponMCLOS, "--- MCLOS Options ---")
-            MenuWeaponSACLOS = menu.list(MenuWeaponGuidedM, "SACLOS", {""}, "SACLOS Guided Missle Options.") ; menu.divider(MenuWeaponSACLOS, "--- SACLOS Options ---")
+    MenuMovement = menu.list(MenuSelf, "Movement", {""}, "Movement Options.") ; menu.divider(MenuMovement, "Movement Options")
+        MenuMainMovement = menu.list(MenuMovement, "Movement", {""}, "Main Movement Options.") ; menu.divider(MenuMainMovement, "Main Movement Options")
+        MenuTeleport = menu.list(MenuMovement, "Teleport", {""}, "Teleportation Options.") ; menu.divider(MenuTeleport, "Teleport Options")
+    MenuHealth = menu.list(MenuSelf, "Health", {""}, "Health Options.") ; menu.divider(MenuHealth, "Health Options")
+    MenuWeapon = menu.list(MenuSelf, "Weapon", {""}, "Weapon Options.") ; menu.divider(MenuWeapon, "Weapon Options")
+        MenuWeaponHotswap = menu.list(MenuWeapon, "Hotswap", {""}, "Weapon Hotswap Options.") ; menu.divider(MenuWeaponHotswap, "Hotswap Options")
+        MenuWeaponSAim = menu.list(MenuWeapon, "Silent Aimbot", {""}, "Silent Aimbot Options.") ; menu.divider(MenuWeaponSAim, "Silent Aimbot Options")
+        MenuWeaponQR = menu.list(MenuWeapon, "Quick Rocket", {""}, "Quick Rocket Options.") ; menu.divider(MenuWeaponQR, "Quick Rocket Options")
+        MenuWeaponGuidedM = menu.list(MenuWeapon, "Missle Guidance", {""}, "Missle Guidance Options.") ; menu.divider(MenuWeaponGuidedM, "Missle Guidance Options")
+            MenuWeaponMA = menu.list(MenuWeaponGuidedM, "Missle Aimbot", {""}, "Missle Aimbot Options.") ; menu.divider(MenuWeaponMA, "Missle Aimbot Options")
+            MenuWeaponMCLOS = menu.list(MenuWeaponGuidedM, "MCLOS", {""}, "MCLOS Guided Missle Options.") ; menu.divider(MenuWeaponMCLOS, "MCLOS Options")
+            MenuWeaponSACLOS = menu.list(MenuWeaponGuidedM, "SACLOS", {""}, "SACLOS Guided Missle Options.") ; menu.divider(MenuWeaponSACLOS, "SACLOS Options")
 
 --[[Vehicle Menu]]--
-MenuVehicle = menu.list(menu.my_root(), "Vehicle", {""}, "Vehicle Options.") ; menu.divider(MenuVehicle, "--- Vehicle Options ---")
+MenuVehicle = menu.list(menu.my_root(), "Vehicle", {""}, "Vehicle Options.") ; menu.divider(MenuVehicle, "Vehicle Options")
     --[[Vehicle Menu Subcategories]]--
-    MenuVehicleMain = menu.list(MenuVehicle, "Main", {""}, "Main Vehicle Options.") ; menu.divider(MenuVehicleMain, "--- Main Vehicle Options ---")
-        MenuVehMovement = menu.list(MenuVehicleMain, "Movement", {""}, "Vehicle Movement Options.") ; menu.divider(MenuVehMovement, "--- Vehicle Movement Options ---")
-        MenuVehVisual = menu.list(MenuVehicleMain, "Visual", {""}, "Vehicle Visual Options.") ; menu.divider(MenuVehVisual, "--- Vehicle Visual Options ---")
-            MenuVehVisualMain = menu.list(MenuVehVisual, "Visual", {""}, "Main Vehicle Visual Options.") ; menu.divider(MenuVehVisualMain, "--- Main Vehicle Visual Options ---")
-            MenuVisualLights = menu.list(MenuVehVisual, "Vehicle Lights", {""}, "Vehicle Light Options.") ; menu.divider(MenuVisualLights, "--- Vehicle Light Options ---")
-        MenuVehHealth = menu.list(MenuVehicleMain, "Health/Armour", {""}, "Vehicle Health/Armour Options.") ; menu.divider(MenuVehHealth, "--- Vehicle Health/Armour Options ---")
-        MenuAircraft = menu.list(MenuVehicleMain, "Aircraft", {""}, "Aircraft Options.") ; menu.divider(MenuAircraft, "--- Aircraft Options ---")
-            MenuJet = menu.list(MenuAircraft, "Jet", {""}, "Jet Options.") ; menu.divider(MenuJet, "--- Jet Options ---")
-            MenuHeli = menu.list(MenuAircraft, "Helicopter", {""}, "Helicopter Options.") ; menu.divider(MenuHeli, "--- Helicopter Options ---")
-            MenuAircraftUniversal = menu.list(MenuAircraft, "Universal", {""}, "Universal Aircraft Options.") ; menu.divider(MenuAircraftUniversal, "--- Universal Aircraft Options ---")
-        MenuVehPersonal = menu.list(MenuVehicleMain, "Personal", {""}, "Personal Vehicle Options.") ; menu.divider(MenuVehPersonal, "--- Personal Vehicle Options ---")
-    MenuVehicleOther = menu.list(MenuVehicle, "Other", {""}, "Other Vehicle Options.") ; menu.divider(MenuVehicleOther, "--- Other Vehicle Options ---")
-        MenuVehDoors = menu.list(MenuVehicleOther, "Vehicle Doors", {""}, "Vehicle Door Options.") ; menu.divider(MenuVehDoors, "--- Vehicle Door Options ---")
-            MenuVehOpenDoors = menu.list(MenuVehDoors, "Open/Close Doors", {""}, "Vehicle Open/Close Door Options.") ; menu.divider(MenuVehOpenDoors, "--- Vehicle Open/Close Door Options ---")
-        MenuVehWindows = menu.list(MenuVehicleOther, "Vehicle Windows", {""}, "Vehicle Window Options.") ; menu.divider(MenuVehWindows, "--- Vehicle Window Options ---")
-        MenuVehOtherCounterM = menu.list(MenuVehicleOther, "Countermeasures", {""}, "Vehicle Countermeasure Options.") ; menu.divider(MenuVehOtherCounterM, "--- Vehicle Countermeasure Options ---")
-            MenuVehCounterFlare = menu.list(MenuVehOtherCounterM, "Flare", {""}, "Vehicle Flare Countermeasure Options.") ; menu.divider(MenuVehCounterFlare, "--- Vehicle Flare Countermeasure Options ---")
-            MenuVehCounterChaff = menu.list(MenuVehOtherCounterM, "Chaff", {""}, "Vehicle Chaff Countermeasure Options.") ; menu.divider(MenuVehCounterChaff, "--- Vehicle Chaff Countermeasure Options ---")
-            MenuCMAPS = menu.list(MenuVehOtherCounterM, "TROPHY APS", {""}, "TROPHY APS System Options.") ; menu.divider(MenuCMAPS, "--- Vehicle TROPHY APS Options ---")
-        MenuVehOther = menu.list(MenuVehicleOther, "Miscellaneous", {""}, "Miscellaneous Vehicle Options.") ; menu.divider(MenuVehOther, "--- Miscellaneous Vehicle Options ---")
+    MenuVehicleMain = menu.list(MenuVehicle, "Main", {""}, "Main Vehicle Options.") ; menu.divider(MenuVehicleMain, "Main Vehicle Options")
+        MenuVehMovement = menu.list(MenuVehicleMain, "Movement", {""}, "Vehicle Movement Options.") ; menu.divider(MenuVehMovement, "Vehicle Movement Options")
+        MenuVehVisual = menu.list(MenuVehicleMain, "Visual", {""}, "Vehicle Visual Options.") ; menu.divider(MenuVehVisual, "Vehicle Visual Options")
+            MenuVehVisualMain = menu.list(MenuVehVisual, "Visual", {""}, "Main Vehicle Visual Options.") ; menu.divider(MenuVehVisualMain, "Main Vehicle Visual Options")
+            MenuVisualLights = menu.list(MenuVehVisual, "Vehicle Lights", {""}, "Vehicle Light Options.") ; menu.divider(MenuVisualLights, "Vehicle Light Options")
+        MenuVehHealth = menu.list(MenuVehicleMain, "Health/Armour", {""}, "Vehicle Health/Armour Options.") ; menu.divider(MenuVehHealth, "Vehicle Health/Armour Options")
+        MenuAircraft = menu.list(MenuVehicleMain, "Aircraft", {""}, "Aircraft Options.") ; menu.divider(MenuAircraft, "Aircraft Options")
+            MenuJet = menu.list(MenuAircraft, "Jet", {""}, "Jet Options.") ; menu.divider(MenuJet, "Jet Options")
+            MenuHeli = menu.list(MenuAircraft, "Helicopter", {""}, "Helicopter Options.") ; menu.divider(MenuHeli, "Helicopter Options")
+            MenuAircraftUniversal = menu.list(MenuAircraft, "Universal", {""}, "Universal Aircraft Options.") ; menu.divider(MenuAircraftUniversal, "Universal Aircraft Options")
+        MenuVehPersonal = menu.list(MenuVehicleMain, "Personal", {""}, "Personal Vehicle Options.") ; menu.divider(MenuVehPersonal, "Personal Vehicle Options")
+    MenuVehicleOther = menu.list(MenuVehicle, "Other", {""}, "Other Vehicle Options.") ; menu.divider(MenuVehicleOther, "Other Vehicle Options")
+        MenuVehDoors = menu.list(MenuVehicleOther, "Vehicle Doors", {""}, "Vehicle Door Options.") ; menu.divider(MenuVehDoors, "Vehicle Door Options")
+            MenuVehOpenDoors = menu.list(MenuVehDoors, "Open/Close Doors", {""}, "Vehicle Open/Close Door Options.") ; menu.divider(MenuVehOpenDoors, "Vehicle Open/Close Door Options")
+        MenuVehWindows = menu.list(MenuVehicleOther, "Vehicle Windows", {""}, "Vehicle Window Options.") ; menu.divider(MenuVehWindows, "Vehicle Window Options")
+        MenuVehOtherCounterM = menu.list(MenuVehicleOther, "Countermeasures", {""}, "Vehicle Countermeasure Options.") ; menu.divider(MenuVehOtherCounterM, "Vehicle Countermeasure Options")
+            MenuVehCounterFlare = menu.list(MenuVehOtherCounterM, "Flare", {""}, "Vehicle Flare Countermeasure Options.") ; menu.divider(MenuVehCounterFlare, "Vehicle Flare Countermeasure Options")
+            MenuVehCounterChaff = menu.list(MenuVehOtherCounterM, "Chaff", {""}, "Vehicle Chaff Countermeasure Options.") ; menu.divider(MenuVehCounterChaff, "Vehicle Chaff Countermeasure Options")
+            MenuCMAPS = menu.list(MenuVehOtherCounterM, "TROPHY APS", {""}, "TROPHY APS System Options.") ; menu.divider(MenuCMAPS, "Vehicle TROPHY APS Options")
+        MenuVehOther = menu.list(MenuVehicleOther, "Miscellaneous", {""}, "Miscellaneous Vehicle Options.") ; menu.divider(MenuVehOther, "Miscellaneous Vehicle Options")
 
 --[[Online Menu]]--
-MenuOnline = menu.list(menu.my_root(), "Online", {""}, "Online Options.") ; menu.divider(MenuOnline, "--- Online Options ---")
+MenuOnline = menu.list(menu.my_root(), "Online", {""}, "Online Options.") ; menu.divider(MenuOnline, "Online Options")
     --[[Online Menu Subcategories]]--
-    MenuOnlineAll = menu.list(MenuOnline, "All Players", {""}, "All Players Options.") ; menu.divider(MenuOnlineAll, "--- All Players Options ---")
-    MenuOnlineTK = menu.list(MenuOnline, "Targeted Kick Options", {""}, "Targeted Kick Options.") ; menu.divider(MenuOnlineTK, "--- Targeted Kick Options ---")
-    MenuProtection = menu.list(MenuOnline, "Protections", {""}, "Protection Options.") ; menu.divider(MenuProtection, "--- Protection Options ---")
-    MenuLobby = menu.list(MenuOnline, "Lobby Crashes", {""}, "Lobby Crash Options.") ;menu.divider(MenuLobby, "---Lobby Crash Options ---")
-    MenuDetections = menu.list(MenuOnline, "Detections", {""}, "Detection Options.") ;menu.divider(MenuDetections, "--- Detections ---")
-    MenuModderDetections = menu.list(MenuOnline, "Modder Detections", {""}, "Modder Detection Options.") ;menu.divider(MenuModderDetections, "--- Modder Detections ---")
-    MenuNetwork = menu.list(MenuOnline, "Network", {""}, "Network Options.") ;menu.divider(MenuNetwork, "--- Network Options ---")
-    MenuSession = menu.list(MenuOnline, "Session", {""}, "Session Options.") ;menu.divider(MenuSession, "--- Session Options ---")
+    MenuOnlineAll = menu.list(MenuOnline, "All Players", {""}, "All Players Options.") ; menu.divider(MenuOnlineAll, "All Players Options")
+    MenuOnlineTK = menu.list(MenuOnline, "Targeted Kick Options", {""}, "Targeted Kick Options.") ; menu.divider(MenuOnlineTK, "Targeted Kick Options")
+    MenuProtection = menu.list(MenuOnline, "Protections", {""}, "Protection Options.") ; menu.divider(MenuProtection, "Protection Options")
+    MenuLobby = menu.list(MenuOnline, "Lobby Crashes", {""}, "Lobby Crash Options.") ;menu.divider(MenuLobby, "Lobby Crash Options")
+    MenuDetections = menu.list(MenuOnline, "Detections", {""}, "Detection Options.") ;menu.divider(MenuDetections, "Detections")
+    MenuModderDetections = menu.list(MenuOnline, "Modder Detections", {""}, "Modder Detection Options.") ;menu.divider(MenuModderDetections, "Modder Detections")
+    MenuNetwork = menu.list(MenuOnline, "Network", {""}, "Network Options.") ;menu.divider(MenuNetwork, "Network Options")
+    MenuSession = menu.list(MenuOnline, "Session", {""}, "Session Options.") ;menu.divider(MenuSession, "Session Options")
+
+    local functions = require('lib.Genesis.functions')
+local api = require('lib.Genesis.api')
+
+local scriptHome = filesystem.scripts_dir() .. "/Genesis/"
+local debug_file_path = scriptHome .. "debug.txt"
+local blacklist_file_path = scriptHome .. "antirus.txt"
+
+functions.create_directory(scriptHome)
+functions.generate_blacklist(blacklist_file_path)
+
+local log_chat_toggle = false
+local kick_prohibited_chat_toggle = false
+local anti_barcode_toggle = false
+
+local blacklist = functions.load_blacklist(blacklist_file_path)
+
+local main_menu = menu.my_root()
+
+local Genesis_menu = menu.list(main_menu, "AntiPlayer", {}, "Anti Player Features")
+
+Genesis_menu:toggle("Kick *Russian&Chinese* Nuisances", {}, "Kick nuisances typing in ruscheese (*Russian & Chinese!*", function(state)
+    kick_prohibited_chat_toggle = state
+    functions.log_debug("Kick Russian & Chinese toggled: " .. tostring(state), debug_file_path)
+    util.toast("Kick Russian & Chinese toggled: " .. tostring(state))
+end, false)
+
+chat.on_message(function(packet_sender, message_sender, message_text, is_team_chat)
+    local player_name = players.get_name(message_sender)
+    functions.log_debug("Chat message received - Player: " .. player_name .. ", Message: " .. message_text, debug_file_path)
+    if log_chat_toggle then
+        api.log_chat_to_file(chat_log_file_path, player_name, message_text)
+    end
+    if kick_prohibited_chat_toggle then
+        api.kick_if_prohibited_characters(player_name, message_text, debug_file_path, blacklist)
+    end
+    if detect_ip_toggle then
+        api.detect_ip_and_respond(player_name, message_text, message_sender, debug_file_path)
+    end
+end)
+
+Genesis_menu:toggle("Auto Kick Barcode On Join", {}, "Kick Barcode Players On Join", function(state)
+    anti_barcode_toggle = state
+    functions.log_debug("Barcode Biased toggled: " .. tostring(state), debug_file_path)
+    util.toast("Barcode Biased toggled: " .. tostring(state))
+end, false)
+
+local function kick_barcode_players()
+    for _, pid in ipairs(players.list(true, true, true)) do
+        local player_name = players.get_name(pid)
+        if functions.is_barcode_name(player_name) then
+            menu.trigger_commands("kick " .. player_name)
+            functions.log_debug("Kicked barcode player: " .. player_name, debug_file_path)
+            util.toast("Kicked barcode player: " .. player_name)
+        end
+    end
+end
+
+players.on_join(function(pid)
+    if anti_barcode_toggle then
+        local player_name = players.get_name(pid)
+        if functions.is_barcode_name(player_name) then
+            menu.trigger_commands("kick " .. player_name)
+            functions.log_debug("Kicked barcode player on join: " .. player_name, debug_file_path)
+            util.toast("Kicked barcode player on join: " .. player_name)
+        end
+    end
+end)
+
+if anti_barcode_toggle then
+    kick_barcode_players()
+end
+
 --[[World Menu]]--
-MenuWorld = menu.list(menu.my_root(), "World", {""}, "World Options.") ; menu.divider(MenuWorld, "--- World Options ---")
+MenuWorld = menu.list(menu.my_root(), "World", {""}, "World Options.") ; menu.divider(MenuWorld, "World Options")
     --[[World Menu Subcategories]]--
-    MenuWorldVeh = menu.list(MenuWorld, "Global Vehicle Options", {""}, "Global Vehicle Options.") ; menu.divider(MenuWorldVeh, "--- Global Vehicle Options ---")
-    MenuWorldClear = menu.list(MenuWorld, "Clear", {""}, "World Clear Options.") ; menu.divider(MenuWorldClear, "--- World Clear Options ---")
-        MenuWorldClearSpec = menu.list(MenuWorldClear, "Specific", {""}, "Specific Clear Options.") ; menu.divider(MenuWorldClearSpec, "--- Specific Clear Options ---")
-    MenuWrldProj = menu.list(MenuWorld, "Projectile", {""}, "Projectile Options.") ; menu.divider(MenuWrldProj, " --- World Projectile Options ---")
-        MenuWrldProjMarking = menu.list(MenuWrldProj, "Projectile Marking", {""}, "Projectile Marking Options.") ; menu.divider(MenuWrldProjMarking, "--- Projectile Marking Options ---")    
-            MenuWrldProjOptions = menu.list(MenuWrldProjMarking, "Mark Projectiles", {""}, "Mark Projectile Options.") ; menu.divider(MenuWrldProjOptions, "--- Mark Projectile Options ---")
-            MenuWrldProjColours = menu.list(MenuWrldProjMarking, "Mark Projectile Colours", {""}, "Mark Projectile Colour Options.") ; menu.divider(MenuWrldProjColours, "--- Mark Projectile Colour Options ---")
-        MenuWrldProjMovement = menu.list(MenuWrldProj, "Projectile Movement", {""}, "Projectile Movement Options.") ; menu.divider(MenuWrldProjMovement, "--- Projectile Movement Options ---")
-    MenuWrldChaos = menu.list(MenuWorld, "Chaos", {""}, "Chaos Options.") ; menu.divider(MenuWrldChaos, "--- Chaos Options ---")
+    MenuWorldVeh = menu.list(MenuWorld, "Global Vehicle Options", {""}, "Global Vehicle Options.") ; menu.divider(MenuWorldVeh, "Global Vehicle Options")
+    MenuWorldClear = menu.list(MenuWorld, "Clear", {""}, "World Clear Options.") ; menu.divider(MenuWorldClear, "World Clear Options")
+        MenuWorldClearSpec = menu.list(MenuWorldClear, "Specific", {""}, "Specific Clear Options.") ; menu.divider(MenuWorldClearSpec, "Specific Clear Options")
+    MenuWrldProj = menu.list(MenuWorld, "Projectile", {""}, "Projectile Options.") ; menu.divider(MenuWrldProj, " World Projectile Options")
+        MenuWrldProjMarking = menu.list(MenuWrldProj, "Projectile Marking", {""}, "Projectile Marking Options.") ; menu.divider(MenuWrldProjMarking, "Projectile Marking Options")    
+            MenuWrldProjOptions = menu.list(MenuWrldProjMarking, "Mark Projectiles", {""}, "Mark Projectile Options.") ; menu.divider(MenuWrldProjOptions, "Mark Projectile Options")
+            MenuWrldProjColours = menu.list(MenuWrldProjMarking, "Mark Projectile Colours", {""}, "Mark Projectile Colour Options.") ; menu.divider(MenuWrldProjColours, "Mark Projectile Colour Options")
+        MenuWrldProjMovement = menu.list(MenuWrldProj, "Projectile Movement", {""}, "Projectile Movement Options.") ; menu.divider(MenuWrldProjMovement, "Projectile Movement Options")
+    MenuWrldChaos = menu.list(MenuWorld, "Chaos", {""}, "Chaos Options.") ; menu.divider(MenuWrldChaos, "Chaos Options")
 
 --[[Game Menu]]--
-MenuGame = menu.list(menu.my_root(), "Game", {""}, "Game Options.") ; menu.divider(MenuGame, "--- Game Options ---")
+MenuGame = menu.list(menu.my_root(), "Game", {""}, "Game Options.") ; menu.divider(MenuGame, "Game Options")
     --[[Game Menu Subcategories]]
-    MenuAlerts = menu.list(MenuGame, "Fake Alerts", {""}, "Fake Alert Options.") ; menu.divider(MenuAlerts, "--- Fake Alert Options ---")
-    MenuGameMacros = menu.list(MenuGame, "Macro Options", {""}, "Similar to AHK Macros, just Running in the Game so there's Never any Input Lag.") ; menu.divider(MenuGameMacros, "--- Macro Options ---")
-        MenuGameRunMacros = menu.list(MenuGameMacros, "Macros", {""}, "Different Types of Macros to Choose from. Highly Reccomended to Bind them.") ; menu.divider(MenuGameRunMacros, "--- Macros ---") 
-            MenuGameRunMacrosReg = menu.list(MenuGameRunMacros, "Registration", {"gsgamemacrosmacroreg"}, "Macros that have to do with Registering as CEO/MC President.") ; menu.divider(MenuGameRunMacrosReg, "--- Registration Macros ---")                        
-            MenuGameRunMacrosSur = menu.list(MenuGameRunMacros, "Survivability", {"gsgamemacrosmacrosur"}, "Macros that have to do with Health, like Armour and BST.") ; menu.divider(MenuGameRunMacrosSur, "--- Survivability Macros ---")                        
-            MenuGameRunMacrosAbi = menu.list(MenuGameRunMacros, "Ability", {"gsgamemacrosmacroabi"}, "Macros that have to do with CEO Abilities, like Ghost Organization.") ; menu.divider(MenuGameRunMacrosAbi, "--- Ability Macros ---")                        
-            MenuGameRunMacrosVeh = menu.list(MenuGameRunMacros, "Vehicle", {"gsgamemacrosmacroveh"}, "Macros that have to do with Calling Vehicles, like the CEO Buzzard.") ; menu.divider(MenuGameRunMacrosVeh, "--- Vehicle Macros ---")                        
-            MenuGameRunMacrosPhone = menu.list(MenuGameRunMacros, "Phone", {"gsgamemacrosmacrophone"}, "Macros that have to do with Quickly getting to Contacts in your Phone. These Automatically Start after you Close Stand if you've Clicked one, since the Phone Can't Open when Stand is Open.") ; menu.divider(MenuGameRunMacrosPhone, "--- Phone Macros ---")                        
-            MenuGameRunMacrosServ = menu.list(MenuGameRunMacros, "Service", {"gsgamemacrosmacroservice"}, "Macros that have to do with Calling Service Vehicles.") ; menu.divider(MenuGameRunMacrosServ, "--- Service Macros ---")      
-            MenuGameRunMacrosMisc = menu.list(MenuGameRunMacros, "Other", {"gsgamemacrosmacroother"}, "Macros that have to do with Miscellaneous things, like Activating Thermal Visor.") ; menu.divider(MenuGameRunMacrosMisc, "--- Other Macros ---") 
+    MenuAlerts = menu.list(MenuGame, "Fake Alerts", {""}, "Fake Alert Options.") ; menu.divider(MenuAlerts, "Fake Alert Options")
+    MenuGameMacros = menu.list(MenuGame, "Macro Options", {""}, "Similar to AHK Macros, just Running in the Game so there's Never any Input Lag.") ; menu.divider(MenuGameMacros, "Macro Options")
+        MenuGameRunMacros = menu.list(MenuGameMacros, "Macros", {""}, "Different Types of Macros to Choose from. Highly Reccomended to Bind them.") ; menu.divider(MenuGameRunMacros, "Macros") 
+            MenuGameRunMacrosReg = menu.list(MenuGameRunMacros, "Registration", {"gsgamemacrosmacroreg"}, "Macros that have to do with Registering as CEO/MC President.") ; menu.divider(MenuGameRunMacrosReg, "Registration Macros")                        
+            MenuGameRunMacrosSur = menu.list(MenuGameRunMacros, "Survivability", {"gsgamemacrosmacrosur"}, "Macros that have to do with Health, like Armour and BST.") ; menu.divider(MenuGameRunMacrosSur, "Survivability Macros")                        
+            MenuGameRunMacrosAbi = menu.list(MenuGameRunMacros, "Ability", {"gsgamemacrosmacroabi"}, "Macros that have to do with CEO Abilities, like Ghost Organization.") ; menu.divider(MenuGameRunMacrosAbi, "Ability Macros")                        
+            MenuGameRunMacrosVeh = menu.list(MenuGameRunMacros, "Vehicle", {"gsgamemacrosmacroveh"}, "Macros that have to do with Calling Vehicles, like the CEO Buzzard.") ; menu.divider(MenuGameRunMacrosVeh, "Vehicle Macros")                        
+            MenuGameRunMacrosPhone = menu.list(MenuGameRunMacros, "Phone", {"gsgamemacrosmacrophone"}, "Macros that have to do with Quickly getting to Contacts in your Phone. These Automatically Start after you Close Stand if you've Clicked one, since the Phone Can't Open when Stand is Open.") ; menu.divider(MenuGameRunMacrosPhone, "Phone Macros")                        
+            MenuGameRunMacrosServ = menu.list(MenuGameRunMacros, "Service", {"gsgamemacrosmacroservice"}, "Macros that have to do with Calling Service Vehicles.") ; menu.divider(MenuGameRunMacrosServ, "Service Macros")      
+            MenuGameRunMacrosMisc = menu.list(MenuGameRunMacros, "Other", {"gsgamemacrosmacroother"}, "Macros that have to do with Miscellaneous things, like Activating Thermal Visor.") ; menu.divider(MenuGameRunMacrosMisc, "Other Macros") 
         
 --[[Menu Genesis]]--
-MenuMisc = menu.list(menu.my_root(), "Genesis", {""}, "Genesis Options.") ; menu.divider(MenuMisc, "--- Genesis ---")
+MenuMisc = menu.list(menu.my_root(), "Genesis", {""}, "Genesis Options.") ; menu.divider(MenuMisc, "Genesis")
     --[[Menu Genesis Subcategories]]--
-    MenuCredits = menu.list(MenuMisc, "Credits", {""}, "Credits for the Developers of Genesis.") ; menu.divider(MenuCredits, "--- Credits ---")
+    MenuCredits = menu.list(MenuMisc, "Credits", {""}, "Credits for the Developer and Supporters of Genesis.") ; menu.divider(MenuCredits, "")
 
 
 
@@ -2044,10 +2118,10 @@ menu.action(MenuOnlineAll, "Crash All", {"gscrashall"}, "Crashes every Player in
         if players.exists(i) and i ~= players.user() then
             local string PlayerName = players.get_name(i)
             local string PlayerNameLower = PlayerName:lower()
-            menu.trigger_command(menu.ref_by_command_name("Elegant"..PlayerNameLower))
-            menu.trigger_command(menu.ref_by_command_name("Burger King Foot Lettuce"..PlayerNameLower))
-            menu.trigger_command(menu.ref_by_command_name("Vehicular Manslaughter"..PlayerNameLower))
-            menu.trigger_command(menu.ref_by_command_name("Steamroller"..PlayerNameLower))
+            menu.trigger_command(menu.ref_by_command_name("ruinerc1"..PlayerNameLower))
+            menu.trigger_command(menu.ref_by_command_name("footlettuce"..PlayerNameLower))
+            menu.trigger_command(menu.ref_by_command_name("slaughter"..PlayerNameLower))
+            menu.trigger_command(menu.ref_by_command_name("steamroll"..PlayerNameLower))
         end
     end
 end)
@@ -4998,40 +5072,15 @@ function PlayerAddRoot(csPID)
 
         --Player Removal Kicks
 
-    menu.action(MenuPlayerRemovalKick, "Freemode Death Kick", {"gsplayerremovalkickfd"}, "Kills their Freemode using a Script Event and sends them back to Story Mode.", function(on_click)
-        util.trigger_script_event(1 << csPID, {111242367, csPID, memory.script_global(2689235 + 1 + (csPID * 453) + 318 + 7)})
-    end)
-
-    menu.action(MenuPlayerRemovalKick, "Network Bail Kick", {"gsplayerremovalkicknb"}, "Uses Script Events to Initiate a Network Bail on their Game.", function(on_click)
-        util.trigger_script_event(1 << csPID, {0x63D4BFB1, players.user(), memory.read_int(memory.script_global(0x1CE15F + 1 + (csPID * 0x257) + 0x1FE))})
-    end)
-
-    menu.action(MenuPlayerRemovalKick, "Invalid Collectible Kick", {"gsplayerremovalkickic"}, "Spawns an Invalid Collectible which in turn, Kicks them.", function()
-        util.trigger_script_event(1 << csPID, {0xB9BA4D30, csPID, 0x4, -1, 1, 1, 1})
-    end)
-
     if menu.get_edition() >= 2 then 
-        menu.action(MenuPlayerRemovalKick, "Adaptive Kick", {"gsplayerremovalkickak"}, "Multiple Kicks in One. This has Breakup Kick added since you have Stand Regular!", function(on_click)
+        menu.action(MenuPlayerRemovalKick, "Intelligent Kick", {"nerd"}, "Multiple Kicks in One. Perfect for basic and regular stand users!", function(on_click)
             util.trigger_script_event(1 << csPID, {0xB9BA4D30, csPID, 0x4, -1, 1, 1, 1})
             util.trigger_script_event(1 << csPID, {0x6A16C7F, csPID, memory.script_global(0x2908D3 + 1 + (csPID * 0x1C5) + 0x13E + 0x7)})
             util.trigger_script_event(1 << csPID, {0x63D4BFB1, players.user(), memory.read_int(memory.script_global(0x1CE15F + 1 + (csPID * 0x257) + 0x1FE))})
-            menu.trigger_commands("breakup" .. players.get_name(csPID))
-        end)
-    else
-        menu.action(MenuPlayerRemovalKick, "Adaptive Kick", {"gsplayerremovalkickak"}, "Multiple Kicks in One.", function(on_click)
-            util.trigger_script_event(1 << csPID, {0xB9BA4D30, csPID, 0x4, -1, 1, 1, 1})
-            util.trigger_script_event(1 << csPID, {0x6A16C7F, csPID, memory.script_global(0x2908D3 + 1 + (csPID * 0x1C5) + 0x13E + 0x7)})
-            util.trigger_script_event(1 << csPID, {0x63D4BFB1, csPIDyers.user(), memory.read_int(memory.script_global(0x1CE15F + 1 + (csPID * 0x257) + 0x1FE))})
+            menu.trigger_commands("bonk" .. players.get_name(csPID))
         end)
     end
-
-    if menu.get_edition() >= 2 then 
-        menu.action(MenuPlayerRemovalKick, "Block Join Kick", {"gsplayerremovalkickbj"}, "Breakup Kick them, then add 'Block Joins' to thim in your History, so they can Never Join your Game Again.", function(on_click)
-            menu.trigger_commands("historyblock " .. players.get_name(csPID))
-            menu.trigger_commands("breakup" .. players.get_name(csPID))
-        end)
-    end
-
+ 
     if menu.get_edition() >= 2 then
         menu.action(MenuPlayerRemovalKick, "Nuke Kick", {"nuke"}, "Blocks the player join reaction then uses kick.", function()
             menu.trigger_commands("historyblock " .. players.get_name(csPID))
@@ -5054,7 +5103,7 @@ function PlayerAddRoot(csPID)
  
         --Player Removal Crashes
 
-menu.toggle_loop(MenuPlayerRemovalCrash, "Big Chungus Crash", {"bigchungus"}, "Skid from x-force Big CHUNGUS Crash. Coded by Picoles(RyzeScript)", function(on_toggle)
+menu.toggle_loop(MenuPlayerRemovalCrash, "Big Chungus Crash", {"bigchungus"}, "Skid from x-force Big CHUNGUS Crash. Coded by Picoles(RyzeScript) Crash is extremely powerful and may result in crashing yourself, be aware.", function(on_toggle)
 local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(player_id)
 local pos = ENTITY.GET_ENTITY_COORDS(ped, true)
 local mdl = util.joaat("A_C_Cat_01")
@@ -5178,7 +5227,7 @@ entities.delete_by_handle(veh_mdl2)
 util.yield(1000)
 end, nil, nil, COMMANDPERM_AGGRESSIVE)
 
-    menu.toggle(MenuPlayerRemovalCrash, "Chungus Crash", {"bigchungustoggle"}, "Skid from x-force Big CHUNGUS Crash. Coded by Picoles(RyzeScript)", function(on_toggle)
+    menu.toggle(MenuPlayerRemovalCrash, "Chungus Crash", {"bigchungustoggle"}, "Skid from x-force Big CHUNGUS Crash. Coded by Picoles(RyzeScript) Crash is extremely powerful and may result in crashing yourself, be aware.", function(on_toggle)
     if on_toggle then
     menu.trigger_commands("tploopon" .. players.get_name(csPID))
     menu.trigger_commands("anticrashcamera On")
@@ -5357,7 +5406,7 @@ end)
         end)
     end)    
 
-    menu.action(MenuPlayerRemovalCrash, "Script Event Overflow Crash", {"gsplayerremovalcrashseo"}, "Spams the Player with Big Script Events a Ton which Crashes their Game.", function(on_click)
+    menu.action(MenuPlayerRemovalCrash, "Script Event Overflow Crash", {"scriptcrash"}, "Spams the Player with Big Script Events which Crashes their Game.", function(on_click)
         local int_min = -2147483647
         local int_max = 2147483647
         for i = 1, 150 do
