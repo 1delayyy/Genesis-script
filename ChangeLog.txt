@@ -1,5 +1,7 @@
 ---ChangeLog---
 
+(25/08/24)
+
 Added more protections
 Added more kicks
 Added more crashes & new lobby crashes
@@ -12,3 +14,11 @@ Added more vehicle options
 Added more self options
 Added two new kicks to all players/kicks
 Added Chungus+Big Chungus Crash to player options, (need's more testing because or error fault [Argument 2 is of an unsupported type] 
+
+(27/08/24)
+
+Fixed Ruiner V1-V2 crashes not working
+Fixed Cargobob crash not working
+Fixed Sound Crash not working
+Fixed Chungus+Big Chungus crashes not working
+Bug Fixes
