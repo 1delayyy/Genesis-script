@@ -1,9 +1,9 @@
 util.keep_running()
 util.require_natives("natives-1672190175")
 util.require_natives("natives-1640181023")
+util.require_natives("1640181023")
 util.require_natives("natives-1663599433")
 util.require_natives("natives-1651208000")
-util.require_natives("natives-1663599433-uno")
 
 -- Add all SE's here for quicker updates
 local se = {
@@ -3032,24 +3032,6 @@ end)
             PED.SET_PED_TO_RAGDOLL_WITH_FALL(players.user_ped(), 1500, 2000, 2, vector.x, -vector.y, vector.z, 1, 0, 0, 0, 0, 0, 0)
         end)
 
-menu.action(MenuLobby, "Ruiner Crash V1", {"ruinerc1"}, "Uses Ruiner V1 to crash whole lobby, works most of the time!", function()
-    local spped = PLAYER.PLAYER_PED_ID()
-    local ppos = ENTITY.GET_ENTITY_COORDS(spped, true)
-    for i = 1, 15 do
-        local SelfPlayerPos = ENTITY.GET_ENTITY_COORDS(spped, true)
-        local Ruiner2 = CreateVehicle(util.joaat("Ruiner2"), SelfPlayerPos, ENTITY.GET_ENTITY_HEADING(TTPed), true)
-        PED.SET_PED_INTO_VEHICLE(spped, Ruiner2, -1)
-        ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Ruiner2, SelfPlayerPos.x, SelfPlayerPos.y, 1000, false, true, true)
-        util.yield(200)
-        VEHICLE._SET_VEHICLE_PARACHUTE_MODEL(Ruiner2, 260873931)
-        VEHICLE._SET_VEHICLE_PARACHUTE_ACTIVE(Ruiner2, true)
-        util.yield(200)
-        entities.delete_by_handle(Ruiner2)
-    end
-    ENTITY.SET_ENTITY_COORDS_NO_OFFSET(spped, ppos.x, ppos.y, ppos.z, false, true, true)
-
-end)
-
 menu.action(MenuVehVisual, "Candy Paint", {"candypaint"}, "", function()
 candy_paint(true)
 end)
@@ -3119,24 +3101,6 @@ VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(vehicle, "menu")
 util.toast("RC Bombs are now ready")
 util.log("RC Bombs are now ready")
 end
-
-menu.action(MenuLobby, "Ruiner Crash V2", {"ruinerc2"}, "Uses Ruiner V2 use this if Ruiner V1 doesn't work!", function()
-    local spped = PLAYER.PLAYER_PED_ID()
-    local ppos = ENTITY.GET_ENTITY_COORDS(spped, true)
-    for i = 1, 30 do
-        local SelfPlayerPos = ENTITY.GET_ENTITY_COORDS(spped, true)
-        local Ruiner2 = CreateVehicle(util.joaat("Ruiner2"), SelfPlayerPos, ENTITY.GET_ENTITY_HEADING(TTPed), true)
-        PED.SET_PED_INTO_VEHICLE(spped, Ruiner2, -1)
-        ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Ruiner2, SelfPlayerPos.x, SelfPlayerPos.y, 2200, false, true, true)
-        util.yield(130)
-        VEHICLE._SET_VEHICLE_PARACHUTE_MODEL(Ruiner2, 3235319999)
-        VEHICLE._SET_VEHICLE_PARACHUTE_ACTIVE(Ruiner2, true)
-        util.yield(130)
-        entities.delete_by_handle(Ruiner2)
-    end
-    ENTITY.SET_ENTITY_COORDS_NO_OFFSET(spped, ppos.x, ppos.y, ppos.z, false, true, true)
-
-end)
 
 drift = false
 menu.toggle(MenuVehMovement, "Shift to Drift", {"driftmode"}, "", function(on_toggle)
@@ -3249,6 +3213,40 @@ NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(vehicle)
 if AUDIO.IS_HORN_ACTIVE(vehicle) then
 ENTITY.APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(vehicle, 1, 0.0, 1.0, 0.0, true, true, true, true)
 end
+end)
+
+menu.action(MenuLobby, "Ruiner Crash V1", {"ruinerc1"}, "Uses Ruiner V1 to crash whole lobby, works most of the time!", function()
+    local spped = PLAYER.PLAYER_PED_ID()
+    local ppos = ENTITY.GET_ENTITY_COORDS(spped, true)
+    for i = 1, 15 do
+        local SelfPlayerPos = ENTITY.GET_ENTITY_COORDS(spped, true)
+        local Ruiner2 = CreateVehicle(util.joaat("Ruiner2"), SelfPlayerPos, ENTITY.GET_ENTITY_HEADING(TTPed), true)
+        PED.SET_PED_INTO_VEHICLE(spped, Ruiner2, -1)
+        ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Ruiner2, SelfPlayerPos.x, SelfPlayerPos.y, 1000, false, true, true)
+        util.yield(200)
+        VEHICLE._SET_VEHICLE_PARACHUTE_MODEL(Ruiner2, 260873931)
+        VEHICLE._SET_VEHICLE_PARACHUTE_ACTIVE(Ruiner2, true)
+        util.yield(200)
+        entities.delete_by_handle(Ruiner2)
+    end
+    ENTITY.SET_ENTITY_COORDS_NO_OFFSET(spped, ppos.x, ppos.y, ppos.z, false, true, true)
+end)
+
+menu.action(MenuLobby, "Ruiner Crash V2", {"ruinerc2"}, "Uses Ruiner V2 use this if Ruiner V1 doesn't work!", function()
+    local spped = PLAYER.PLAYER_PED_ID()
+    local ppos = ENTITY.GET_ENTITY_COORDS(spped, true)
+    for i = 1, 30 do
+        local SelfPlayerPos = ENTITY.GET_ENTITY_COORDS(spped, true)
+        local Ruiner2 = CreateVehicle(util.joaat("Ruiner2"), SelfPlayerPos, ENTITY.GET_ENTITY_HEADING(TTPed), true)
+        PED.SET_PED_INTO_VEHICLE(spped, Ruiner2, -1)
+        ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Ruiner2, SelfPlayerPos.x, SelfPlayerPos.y, 2200, false, true, true)
+        util.yield(130)
+        VEHICLE._SET_VEHICLE_PARACHUTE_MODEL(Ruiner2, 3235319999)
+        VEHICLE._SET_VEHICLE_PARACHUTE_ACTIVE(Ruiner2, true)
+        util.yield(130)
+        entities.delete_by_handle(Ruiner2)
+    end
+    ENTITY.SET_ENTITY_COORDS_NO_OFFSET(spped, ppos.x, ppos.y, ppos.z, false, true, true)
 end)
 
 menu.action(MenuLobby, "Umbrella Crash V1", {"umbc1"}, "Parachute crash may work depending on connection", function()
@@ -3412,6 +3410,45 @@ menu.action(MenuLobby, "Nature Global Crash", {"naturenuke"}, "What the hell are
     ENTITY.SET_ENTITY_HEALTH(user_ped, 0)
     NETWORK.NETWORK_RESURRECT_LOCAL_PLAYER(pos.x, pos.y, pos.z, 0, false, false, 0)
 end)
+
+menu.action(MenuLobby, "Cargobob Crash", {"cargoc"}, "Self explanitory..", function()
+    menu.trigger_commands("anticrashcam on")
+    local cspped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+    local TPpos = ENTITY.GET_ENTITY_COORDS(cspped, true)
+    local cargobob = CreateVehicle(0XFCFCB68B, TPpos, ENTITY.GET_ENTITY_HEADING(SelfPlayerPed), true)
+    local cargobobPos = ENTITY.GET_ENTITY_COORDS(cargobob, true)
+    local veh = CreateVehicle(0X187D938D, TPpos, ENTITY.GET_ENTITY_HEADING(SelfPlayerPed), true)
+    local vehPos = ENTITY.GET_ENTITY_COORDS(veh, true)
+    local newRope = PHYSICS.ADD_ROPE(TPpos.x, TPpos.y, TPpos.z, 0, 0, 10, 1, 1, 0, 1, 1, false, false, false, 1.0, false
+        , 0)
+    PHYSICS.ATTACH_ENTITIES_TO_ROPE(newRope, cargobob, veh, cargobobPos.x, cargobobPos.y, cargobobPos.z, vehPos.x,
+        vehPos.y, vehPos.z, 2, false, false, 0, 0, "Center", "Center")
+    util.yield(2500)
+    entities.delete_by_handle(cargobob)
+    entities.delete_by_handle(veh)
+    PHYSICS.DELETE_CHILD_ROPE(newRope)
+    menu.trigger_commands("anticrashcam off")
+    util.toast("Go Fuck Your Self")
+end)
+
+menu.action(MenuLobby, "Sound Crash", {"earrape"}, "Earrape Crash may break your ears, turn the damn volume down got damn it!!", function()
+    local TPP = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+    local time = util.current_time_millis() + 2000
+    while time > util.current_time_millis() do
+        local TPPS = ENTITY.GET_ENTITY_COORDS(TPP, true)
+        for i = 1, 20 do
+            AUDIO.PLAY_SOUND_FROM_COORD(-1, "Event_Message_Purple", TPPS.x, TPPS.y, TPPS.z, "GTAO_FM_Events_Soundset",
+                true, 100000, false)
+        end
+        util.yield()
+        for i = 1, 20 do
+            AUDIO.PLAY_SOUND_FROM_COORD(-1, "5s", TPPS.x, TPPS.y, TPPS.z, "GTAO_FM_Events_Soundset", true, 100000, false)
+        end
+        util.yield()
+    end
+    util.toast("Sound Crash Completed")
+end)
+
 
 local kicks = {
 0x493fc6bb,
@@ -3802,45 +3839,6 @@ se.givecollectible,
 125899875,
 -1217949151,
 }
-
-menu.action(MenuLobby, "Cargobob Crash", {"cargoc"}, "Self explanitory..", function()
-    menu.trigger_commands("anticrashcam on")
-    local cspped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
-    local TPpos = ENTITY.GET_ENTITY_COORDS(cspped, true)
-    local cargobob = CreateVehicle(0XFCFCB68B, TPpos, ENTITY.GET_ENTITY_HEADING(SelfPlayerPed), true)
-    local cargobobPos = ENTITY.GET_ENTITY_COORDS(cargobob, true)
-    local veh = CreateVehicle(0X187D938D, TPpos, ENTITY.GET_ENTITY_HEADING(SelfPlayerPed), true)
-    local vehPos = ENTITY.GET_ENTITY_COORDS(veh, true)
-    local newRope = PHYSICS.ADD_ROPE(TPpos.x, TPpos.y, TPpos.z, 0, 0, 10, 1, 1, 0, 1, 1, false, false, false, 1.0, false
-        , 0)
-    PHYSICS.ATTACH_ENTITIES_TO_ROPE(newRope, cargobob, veh, cargobobPos.x, cargobobPos.y, cargobobPos.z, vehPos.x,
-        vehPos.y, vehPos.z, 2, false, false, 0, 0, "Center", "Center")
-    util.yield(2500)
-    entities.delete_by_handle(cargobob)
-    entities.delete_by_handle(veh)
-    PHYSICS.DELETE_CHILD_ROPE(newRope)
-    menu.trigger_commands("anticrashcam off")
-    util.toast("Go Fuck Your Self")
-end)
-
-menu.action(MenuLobby, "Sound Crash", {"earrape"}, "Earrape Crash may break your ears, turn the damn volume down got damn it!!", function()
-    local TPP = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
-    local time = util.current_time_millis() + 2000
-    while time > util.current_time_millis() do
-        local TPPS = ENTITY.GET_ENTITY_COORDS(TPP, true)
-        for i = 1, 20 do
-            AUDIO.PLAY_SOUND_FROM_COORD(-1, "Event_Message_Purple", TPPS.x, TPPS.y, TPPS.z, "GTAO_FM_Events_Soundset",
-                true, 100000, false)
-        end
-        util.yield()
-        for i = 1, 20 do
-            AUDIO.PLAY_SOUND_FROM_COORD(-1, "5s", TPPS.x, TPPS.y, TPPS.z, "GTAO_FM_Events_Soundset", true, 100000, false)
-        end
-        util.yield()
-    end
-    util.toast("Sound Crash Completed")
-end)
-
 
 --[[| Online/TargetedKickOptions/ |]]--
 menu.toggle_loop(MenuOnlineTK, "Auto Kick Host", {"gsautokickhost"}, "Automatically Kicks the Host when you Join a New Session. Be careful with this, as you can get Karma'd if the Host is Modding.", function(on)
