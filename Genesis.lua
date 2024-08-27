@@ -1,5 +1,5 @@
 util.keep_running()
-util.require_natives("1672190175")
+util.require_natives("natives-1672190175")
 util.require_natives("natives-1640181023")
 util.require_natives("natives-1663599433")
 util.require_natives("natives-1651208000")
