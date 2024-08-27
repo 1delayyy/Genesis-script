@@ -22,3 +22,11 @@ Fixed Cargobob crash not working
 Fixed Sound Crash not working
 Fixed Chungus+Big Chungus crashes not working
 Bug Fixes
+
+28/08/24
+
+Added Auto kick barcode usernames
+Added Auto kick Chinese/Russian players
+New kicks added
+Bug fixes
+Script cleanup
