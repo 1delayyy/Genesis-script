@@ -801,6 +801,19 @@ Genesis_menu:toggle("Kick *Russian&Chinese* Nuisances", {}, "Kick nuisances typi
     util.toast("Kick Russian & Chinese toggled: " .. tostring(state))
 end, false)
 
+chat.on_message(function(packet_sender, message_sender, message_text, is_team_chat)
+    local player_name = players.get_name(message_sender)
+    functions.log_debug("Chat message received - Player: " .. player_name .. ", Message: " .. message_text, debug_file_path)
+    if log_chat_toggle then
+        api.log_chat_to_file(chat_log_file_path, player_name, message_text)
+    end
+    if kick_prohibited_chat_toggle then
+        api.kick_if_prohibited_characters(player_name, message_text, debug_file_path, blacklist)
+    end
+    if detect_ip_toggle then
+        api.detect_ip_and_respond(player_name, message_text, message_sender, debug_file_path)
+    end
+end)
 
 
 
