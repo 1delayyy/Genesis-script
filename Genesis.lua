@@ -788,7 +788,6 @@ functions.generate_blacklist(blacklist_file_path)
 
 local log_chat_toggle = false
 local kick_prohibited_chat_toggle = false
-local anti_barcode_toggle = false
 
 local blacklist = functions.load_blacklist(blacklist_file_path)
 
@@ -802,51 +801,9 @@ Genesis_menu:toggle("Kick *Russian&Chinese* Nuisances", {}, "Kick nuisances typi
     util.toast("Kick Russian & Chinese toggled: " .. tostring(state))
 end, false)
 
-chat.on_message(function(packet_sender, message_sender, message_text, is_team_chat)
-    local player_name = players.get_name(message_sender)
-    functions.log_debug("Chat message received - Player: " .. player_name .. ", Message: " .. message_text, debug_file_path)
-    if log_chat_toggle then
-        api.log_chat_to_file(chat_log_file_path, player_name, message_text)
-    end
-    if kick_prohibited_chat_toggle then
-        api.kick_if_prohibited_characters(player_name, message_text, debug_file_path, blacklist)
-    end
-    if detect_ip_toggle then
-        api.detect_ip_and_respond(player_name, message_text, message_sender, debug_file_path)
-    end
-end)
 
-Genesis_menu:toggle("Auto Kick Barcode On Join", {}, "Kick Barcode Players On Join", function(state)
-    anti_barcode_toggle = state
-    functions.log_debug("Barcode Biased toggled: " .. tostring(state), debug_file_path)
-    util.toast("Barcode Biased toggled: " .. tostring(state))
-end, false)
 
-local function kick_barcode_players()
-    for _, pid in ipairs(players.list(true, true, true)) do
-        local player_name = players.get_name(pid)
-        if functions.is_barcode_name(player_name) then
-            menu.trigger_commands("kick " .. player_name)
-            functions.log_debug("Kicked barcode player: " .. player_name, debug_file_path)
-            util.toast("Kicked barcode player: " .. player_name)
-        end
-    end
-end
 
-players.on_join(function(pid)
-    if anti_barcode_toggle then
-        local player_name = players.get_name(pid)
-        if functions.is_barcode_name(player_name) then
-            menu.trigger_commands("kick " .. player_name)
-            functions.log_debug("Kicked barcode player on join: " .. player_name, debug_file_path)
-            util.toast("Kicked barcode player on join: " .. player_name)
-        end
-    end
-end)
-
-if anti_barcode_toggle then
-    kick_barcode_players()
-end
 
 --[[World Menu]]--
 MenuWorld = menu.list(menu.my_root(), "World", {""}, "World Options.") ; menu.divider(MenuWorld, "World Options")
@@ -2118,7 +2075,7 @@ menu.action(MenuOnlineAll, "Crash All", {"gscrashall"}, "Crashes every Player in
         if players.exists(i) and i ~= players.user() then
             local string PlayerName = players.get_name(i)
             local string PlayerNameLower = PlayerName:lower()
-            menu.trigger_command(menu.ref_by_command_name("ruinerc1"..PlayerNameLower))
+            menu.trigger_command(menu.ref_by_command_name("crash"..PlayerNameLower))
             menu.trigger_command(menu.ref_by_command_name("footlettuce"..PlayerNameLower))
             menu.trigger_command(menu.ref_by_command_name("slaughter"..PlayerNameLower))
             menu.trigger_command(menu.ref_by_command_name("steamroll"..PlayerNameLower))
@@ -2469,11 +2426,6 @@ menu.toggle_loop(MenuProtection, "Block PFTX/Particulate Lag", {"blocklag"}, "bl
 
 menu.toggle_loop(MenuDetections, "Is Host", {}, "Detects if someone host", function()
 util.draw_debug_text(players.get_name(players.get_host()) .. " Is Host")
-end)
-
-menu.toggle_loop(MenuDetections, "Auto Kick Host", {}, "Detects if someone host, then kicks them this is best free option for basic and regular users.", function()
-util.draw_debug_text(players.get_name(players.get_host()) .. " Is Host")
-menu.trigger_commands("Smart" .. players.get_name(players.get_host()))
 end)
 
 menu.toggle_loop(MenuDetections, "Aim Detection", {}, "Detects if someone is aiming a weapon at you.", function()
@@ -3914,14 +3866,22 @@ se.givecollectible,
 -1217949151,
 }
 
+util.require_natives("2944a", "g")
+
+--code skidded from 2take1 (place credits here to original creator --Lumineyyy_xx)
+
+antiBarcodeEnabled = false
+
+menu.toggle_loop(Genesis_menu, "Anti-Barcode", {"csantibarcode"}, "Will kick players with a barcode name", function() 
+end, function ()
+    util.toast("Anti-Barcode Disabled")
+end)
+
+
 --[[| Online/TargetedKickOptions/ |]]--
-menu.toggle_loop(MenuOnlineTK, "Auto Kick Host", {"gsautokickhost"}, "Automatically Kicks the Host when you Join a New Session. Be careful with this, as you can get Karma'd if the Host is Modding.", function(on)
-    local CurrentHostId = players.get_host()
-    local CurrentHostName = players.get_name(CurrentHostId)
-    local string CurrentHostNameLower = CurrentHostName:lower()
-    if players.user() ~= CurrentHostId then
-        menu.trigger_command(menu.ref_by_command_name("kick"..CurrentHostNameLower))
-    end    
+menu.toggle_loop(MenuOnlineTK, "Auto Kick Host", {}, "Detects if someone host, then kicks them this is best free option for basic and regular users.", function()
+util.draw_debug_text(players.get_name(players.get_host()) .. " Is Host")
+menu.trigger_commands("kick" .. players.get_name(players.get_host()))
 end)
 
 menu.toggle_loop(MenuOnlineTK, "Auto Kick Modders", {"gsautokickmodders"}, "Automatically Kicks any Players that get Marked as Modders. Highly Reccomended to be Host while using this, so as to not get Karma'd.", function(on)
@@ -4238,7 +4198,7 @@ menu.action(MenuGameRunMacrosReg, "Register as CEO", {"gsmacrosceo"}, "Runs a Ma
     if typeOfCEO == -1 then
         util.yield(macroRunDelay)
         if macroAnnounceEnds then util.toast("-Genesis-\n\nMacro 'Register as CEO' has Started.") end
-        PAD.SET_CONTROL_VALUE_NEXT_FRAME(244, 244, 1.0) ; util.yield(macroDelay) --Press 'M'
+        PAD.SET_CONTROL_VALUE_NEXT_FRAME(244, 244, 1.0) ; util.yield(macroDelay) Press 'M'
         for i=1, 6, 1 do PAD.SET_CONTROL_VALUE_NEXT_FRAME(173, 173, 1.0) ; if i ~= 7 then util.yield(macroDelay - 20) else util.yield(macroDelay) end end --Press 'Down' 6 Times  
         for i=1, 2, 1 do PAD.SET_CONTROL_VALUE_NEXT_FRAME(176, 176, 1.0) ; if i ~= 3 then util.yield(macroDelay) else util.yield(10) end end --Press 'Enter' 2 Times, Yield 10ms on Last Iteration
         PAD.SET_CONTROL_VALUE_NEXT_FRAME(201, 201, 1.0) --Press 'Enter' again Due to Popup
@@ -4737,22 +4697,22 @@ menu.hyperlink(MenuMisc, "Patch Notes/ChangeLog", "https://github.com/1delayyy/G
 
 --[[ ||| PLAYER ROOT ||| ]]--
 function PlayerAddRoot(csPID)
-    menu.divider(menu.player_root(csPID), "============ Genesis ============")
-    MenuPlayerRoot = menu.list(menu.player_root(csPID), "Genesis", {"gsplayer"}, "Genesis Options for Selected Player.") ; menu.divider(MenuPlayerRoot, "--- Player Options ---")
-    menu.divider(menu.player_root(csPID), "==========^^ Genesis ^^==========")
+    menu.divider(menu.player_root(csPID), "<3 Genesis <3")
+    MenuPlayerRoot = menu.list(menu.player_root(csPID), "Genesis", {"gsplayer"}, "Genesis Options for Selected Player.") ; menu.divider(MenuPlayerRoot, "Player Options")
+    menu.divider(menu.player_root(csPID), "^^ Genesis ^^")
         
-    MenuPlayerFriendly = menu.list(MenuPlayerRoot, "Friendly", {"gsplayerfriendly"}, "Genesis Friendly Options for the Selected Player.") ; menu.divider(MenuPlayerFriendly, "--- Player Friendly Options ---") 
-    MenuPlayerFun = menu.list(MenuPlayerRoot, "Fun", {"gsplayerfun"}, "Genesis Fun Options for the Selected Player.") ; menu.divider(MenuPlayerFun, "--- Player Fun Options ---")    
-    MenuPlayerTrolling = menu.list(MenuPlayerRoot, "Trolling", {"gsplayertrolling"}, "Genesis Trolling Options for the Selected Player.") ; menu.divider(MenuPlayerTrolling, "--- Player Trolling Options ---")  
-        MenuPlayerTrollingSpawn = menu.list(MenuPlayerTrolling, "Spawn Options", {"gstrolling"}, "Trolling Options that Involve Spawning things.") ; menu.divider(MenuPlayerTrollingSpawn, "--- Trolling Spawn Options ---")  
-        MenuPlayerTrollingCage = menu.list(MenuPlayerTrolling, "Cage Options", {"gsplayertrollingcage"}, "Different Types of Cages to put this Player in.") ; menu.divider(MenuPlayerTrollingCage, "--- Trolling Cage Options ---")
-        MenuPlayerTrollingFreeze = menu.list(MenuPlayerTrolling, "Freeze Options", {"gsplayertrollingfreeze"}, "Freeze Options for this Player.") ; menu.divider(MenuPlayerTrollingFreeze, "--- Trolling Freeze Options ---")
-    MenuPlayerKilling = menu.list(MenuPlayerRoot, "Killing", {"gsplayerkilling"}, "Genesis Killing Options for the Selected Player.") ; menu.divider(MenuPlayerKilling, "--- Player Killing Options ---")    
-        MenuPlayerKillingOwned = menu.list(MenuPlayerKilling, "Owned", {"gsplayerkillingowned"}, "Shows that you Killed them in the Killfeed.") ; menu.divider(MenuPlayerKillingOwned, "--- Owned Killing Options ---")
-        MenuPlayerKillingAnon = menu.list(MenuPlayerKilling, "Anonymous", {"gsplayerkillinganon"}, "Just says they Died in the Killfeed.") ; menu.divider(MenuPlayerKillingAnon, "--- Anonymous Killing Options ---")
-    MenuPlayerRemoval = menu.list(MenuPlayerRoot, "Removal", {"gsplayerremoval"}, "Genesis Removal Options for the Selected Player, like Kicks and Crashes.") ; menu.divider(MenuPlayerRemoval, "--- Player Removal Options ---")
-        MenuPlayerRemovalKick = menu.list(MenuPlayerRemoval, "Kicks", {"gsplayerremovalkick"}, "Kick Options for this Player.") ; menu.divider(MenuPlayerRemovalKick, "--- Player Kick Options ---")
-        MenuPlayerRemovalCrash = menu.list(MenuPlayerRemoval, "Crashes", {"gsplayerremovalcrash"}, "Crash Options for this Player.") ; menu.divider(MenuPlayerRemovalCrash, "--- Player Crash Options ---")
+    MenuPlayerFriendly = menu.list(MenuPlayerRoot, "Friendly", {"gsplayerfriendly"}, "Genesis Friendly Options for the Selected Player.") ; menu.divider(MenuPlayerFriendly, "Player Friendly Options") 
+    MenuPlayerFun = menu.list(MenuPlayerRoot, "Fun", {"gsplayerfun"}, "Genesis Fun Options for the Selected Player.") ; menu.divider(MenuPlayerFun, "Player Fun Options")    
+    MenuPlayerTrolling = menu.list(MenuPlayerRoot, "Trolling", {"gsplayertrolling"}, "Genesis Trolling Options for the Selected Player.") ; menu.divider(MenuPlayerTrolling, "Player Trolling Options")  
+        MenuPlayerTrollingSpawn = menu.list(MenuPlayerTrolling, "Spawn Options", {"gstrolling"}, "Trolling Options that Involve Spawning things.") ; menu.divider(MenuPlayerTrollingSpawn, "Trolling Spawn Options")  
+        MenuPlayerTrollingCage = menu.list(MenuPlayerTrolling, "Cage Options", {"gsplayertrollingcage"}, "Different Types of Cages to put this Player in.") ; menu.divider(MenuPlayerTrollingCage, "Trolling Cage Options")
+        MenuPlayerTrollingFreeze = menu.list(MenuPlayerTrolling, "Freeze Options", {"gsplayertrollingfreeze"}, "Freeze Options for this Player.") ; menu.divider(MenuPlayerTrollingFreeze, "Trolling Freeze Options")
+    MenuPlayerKilling = menu.list(MenuPlayerRoot, "Killing", {"gsplayerkilling"}, "Genesis Killing Options for the Selected Player.") ; menu.divider(MenuPlayerKilling, "Player Killing Options")    
+        MenuPlayerKillingOwned = menu.list(MenuPlayerKilling, "Owned", {"gsplayerkillingowned"}, "Shows that you Killed them in the Killfeed.") ; menu.divider(MenuPlayerKillingOwned, "Owned Killing Options")
+        MenuPlayerKillingAnon = menu.list(MenuPlayerKilling, "Anonymous", {"gsplayerkillinganon"}, "Just says they Died in the Killfeed.") ; menu.divider(MenuPlayerKillingAnon, "Anonymous Killing Options")
+    MenuPlayerRemoval = menu.list(MenuPlayerRoot, "Removal", {"gsplayerremoval"}, "Genesis Removal Options for the Selected Player, like Kicks and Crashes.") ; menu.divider(MenuPlayerRemoval, "Player Removal Options")
+        MenuPlayerRemovalKick = menu.list(MenuPlayerRemoval, "Kicks", {"gsplayerremovalkick"}, "Kick Options for this Player.") ; menu.divider(MenuPlayerRemovalKick, "Player Kick Options")
+        MenuPlayerRemovalCrash = menu.list(MenuPlayerRemoval, "Crashes", {"gsplayerremovalcrash"}, "Crash Options for this Player.") ; menu.divider(MenuPlayerRemovalCrash, "Player Crash Options")
     
 
 
@@ -4781,7 +4741,7 @@ function PlayerAddRoot(csPID)
             util.trigger_script_event(1 << csPID, event_data)
     end)
 
-    menu.action(MenuPlayerFun, "Custom Text / Label", {"gsfunlabel"}, "Sends the Person a Preset Text, since you can't just Send normal Texts on PC. Check the Hyperlink below for all Labels.", function() menu.show_command_box("csplayerfunct "..players.get_name(csPID).." ") end, function(label)
+    menu.action(MenuPlayerFun, "Custom Text / Label", {"gsfunlabel"}, "Sends the Person a Preset Text, since you can't just Send normal Texts on PC.", function() menu.show_command_box("gsplayerfunct "..players.get_name(csPID).." ") end, function(label)
         local event_data = {0xD0CCAC62, players.user(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
         local out = label:sub(1, 127)
         if HUD.DOES_TEXT_LABEL_EXIST(label) then
@@ -4819,7 +4779,7 @@ function PlayerAddRoot(csPID)
     menu.action(MenuPlayerTrollingCage, "Electric Cage", {"gsplayertrollingcageec"}, "A Cage made of Transistors, that will Taze the Player.", function(on_click)
         local number_of_cages = 6
         local elec_box = util.joaat("prop_elecbox_12")
-        local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+        local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
         local pos = ENTITY.GET_ENTITY_COORDS(ped)
         pos.z = pos.z - 0.5
         request_model(elec_box)
@@ -4843,7 +4803,7 @@ function PlayerAddRoot(csPID)
     menu.action(MenuPlayerTrollingCage, "Coffin Cage", {"gsplayertrollingcagecc"}, "Spawns 6 Coffins around the Player.", function(on_click)
         local number_of_cages = 6
         local coffin_hash = util.joaat("prop_coffin_02b")
-        local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+        local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
         local pos = ENTITY.GET_ENTITY_COORDS(ped)
         request_model(coffin_hash)
         local temp_v3 = v3.new(0, 0, 0)
@@ -4864,7 +4824,7 @@ function PlayerAddRoot(csPID)
 
     menu.action(MenuPlayerTrollingCage, "Shipping Container Cage", {"gsplayertrollingcagescc"}, "Spawns a Shipping Container on the Player.", function(on_click)
         local container_hash = util.joaat("prop_container_ld_pu")
-        local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+        local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
         local pos = ENTITY.GET_ENTITY_COORDS(ped)
         request_model(container_hash)
         pos.z = pos.z - 1
@@ -4875,7 +4835,7 @@ function PlayerAddRoot(csPID)
 
     menu.action(MenuPlayerTrollingCage, "Box Truck Cage", {"gsplayertrollingcagebtc"}, "Spawns a Box Truck on the Player.", function(on_click)
         local container_hash = util.joaat("boxville3")
-        local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+        local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
         local pos = ENTITY.GET_ENTITY_COORDS(ped)
         request_model(container_hash)
         local container = entities.create_vehicle(container_hash, ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, 2.0, 0.0), ENTITY.GET_ENTITY_HEADING(ped))
@@ -5102,6 +5062,120 @@ function PlayerAddRoot(csPID)
     end
  
         --Player Removal Crashes
+
+local main_menu = menu.list(MenuPlayerRemovalCrash, "Menu Crashes", {}, "Other Menu Crashes")                                        --Credits to addict script
+
+menu.action(main_menu,"North Crash", {"northcrash"}, "Working.", function()
+local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
+local michael = util.joaat("player_zero")
+while not STREAMING.HAS_MODEL_LOADED(michael) do
+STREAMING.REQUEST_MODEL(michael)
+util.yield()
+end
+local ped = entities.create_ped(0, michael, pos, 0)
+PED.SET_PED_COMPONENT_VARIATION(ped, 0, 0, 6, 0)
+PED.SET_PED_COMPONENT_VARIATION(ped, 0, 0, 7, 0)
+util.yield()
+util.yield(500)
+entities.delete_by_handle(ped)
+util.toast("North Crash Sent to " .. players.get_name(csPID))
+util.log("North Crash Sent to " .. players.get_name(csPID))
+end, nil, nil, COMMANDPERM_AGGRESSIVE)
+
+menu.toggle_loop(main_menu,"North Crash", {"northcrash"}, "Working. Can't crash yourself with toggled.", function()
+if pid ~= players.user() then
+local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
+local michael = util.joaat("player_zero")
+while not STREAMING.HAS_MODEL_LOADED(michael) do
+STREAMING.REQUEST_MODEL(michael)
+util.yield()
+end
+local ped = entities.create_ped(0, michael, pos, 0)
+PED.SET_PED_COMPONENT_VARIATION(ped, 0, 0, 6, 0)
+PED.SET_PED_COMPONENT_VARIATION(ped, 0, 0, 7, 0)
+util.yield()
+util.yield(500)
+entities.delete_by_handle(ped)
+util.toast("North Crash Sent to " .. players.get_name(csPID))
+util.log("North Crash Sent to " .. players.get_name(csPID))
+end
+end)
+
+menu.action(main_menu,"Cherax Crash", {"cheraxcrash"}, "Working.", function()
+menu.trigger_commands("choke" .. PLAYER.GET_PLAYER_NAME(csPID))
+menu.trigger_commands("flashcrash" .. PLAYER.GET_PLAYER_NAME(csPID))
+menu.trigger_commands("choke" .. PLAYER.GET_PLAYER_NAME(csPID))
+menu.trigger_commands("flashcrash" .. PLAYER.GET_PLAYER_NAME(csPID))
+util.yield()
+util.toast("Cherax Crash Sent to " .. players.get_name(csPID))
+util.log("Cherax Crash Sent to " .. players.get_name(csPID))
+end, nil, nil, COMMANDPERM_AGGRESSIVE)
+
+menu.toggle_loop(main_menu,"Cherax Crash", {"cheraxcrash"}, "Working.", function()
+if pid ~= players.user() then
+menu.trigger_commands("choke" .. PLAYER.GET_PLAYER_NAME(csPID))
+menu.trigger_commands("flashcrash" .. PLAYER.GET_PLAYER_NAME(csPID))
+menu.trigger_commands("choke" .. PLAYER.GET_PLAYER_NAME(csPID))
+menu.trigger_commands("flashcrash" .. PLAYER.GET_PLAYER_NAME(csPID))
+util.yield()
+util.toast("Cherax Crash Sent to " .. players.get_name(csPID))
+util.log("Cherax Crash Sent to " .. players.get_name(csPID))
+end
+end)
+
+menu.action(main_menu,"Rebound Crash", {"reboundcrash"}, "Working.", function()
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+local pos = players.get_position(csPID)
+local mdl = util.joaat("mp_m_freemode_01")
+local veh_mdl = util.joaat("taxi")
+util.request_model(veh_mdl)
+util.request_model(mdl)
+for i = 1, 1 do
+if not players.exists(csPID) then
+return
+end
+local veh = entities.create_vehicle(veh_mdl, pos, 0)
+local jesus = entities.create_ped(2, mdl, pos, 0)
+PED.SET_PED_INTO_VEHICLE(jesus, veh, -1)
+util.yield(100)
+TASK.TASK_VEHICLE_HELI_PROTECT(jesus, veh, ped, 10.0, 0, 10, 0, 0)
+util.yield(2000)
+entities.delete_by_handle(jesus)
+entities.delete_by_handle(veh)
+end
+STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(mdl)
+STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(veh_mdl)
+util.toast("Rebound Crash Sent to " .. players.get_name(csPID))
+util.log("Rebound Crash Sent to " .. players.get_name(csPID))
+end, nil, nil, COMMANDPERM_AGGRESSIVE)
+
+menu.toggle_loop(main_menu,"Rebound Crash", {"reboundcrash"}, "Working. Can't crash yourself with toggled.", function()
+if pid ~= players.user() then
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+local pos = players.get_position(csPID)
+local mdl = util.joaat("mp_m_freemode_01")
+local veh_mdl = util.joaat("taxi")
+util.request_model(veh_mdl)
+util.request_model(mdl)
+for i = 1, 10 do
+if not players.exists(csPID) then
+return
+end
+local veh = entities.create_vehicle(veh_mdl, pos, 0)
+local jesus = entities.create_ped(2, mdl, pos, 0)
+PED.SET_PED_INTO_VEHICLE(jesus, veh, -1)
+util.yield(100)
+TASK.TASK_VEHICLE_HELI_PROTECT(jesus, veh, ped, 10.0, 0, 10, 0, 0)
+util.yield(1000)
+entities.delete_by_handle(jesus)
+entities.delete_by_handle(veh)
+end
+STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(mdl)
+STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(veh_mdl)
+util.toast("Rebound Crash Sent to " .. players.get_name(csPID))
+util.log("Rebound Crash Sent to " .. players.get_name(csPID))
+end
+end)
 
 menu.toggle_loop(MenuPlayerRemovalCrash, "Big Chungus Crash", {"bigchungus"}, "Skid from x-force Big CHUNGUS Crash. Coded by Picoles(RyzeScript) Crash is extremely powerful and may result in crashing yourself, be aware.", function(on_toggle)
 local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(player_id)
