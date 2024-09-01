@@ -38,3 +38,4 @@ Added more player friendly options
 Added more trolling options (Cage Options) (Player Trolling)
 Added more player removal crashes (25 more)
 Added lag switch macro
+Added vehicle options to player menu
