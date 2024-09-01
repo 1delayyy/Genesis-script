@@ -793,7 +793,7 @@ local blacklist = functions.load_blacklist(blacklist_file_path)
 
 local main_menu = menu.my_root()
 
-local Genesis_menu = menu.list(MenuOnline, "AntiPlayer", {}, "Anti Player Features")
+local Genesis_menu = menu.list(MenuOnline, "Anti-Player", {}, "Anti Player Features")
 
 Genesis_menu:toggle("Kick *Russian&Chinese* Nuisances", {}, "Kick nuisances typing in ruscheese (*Russian & Chinese!*", function(state)
     kick_prohibited_chat_toggle = state
@@ -4702,7 +4702,7 @@ end)
 --[[| Genesis/ |]]--
 menu.divider(MenuCredits, "Main Developer")
 
-menu.hyperlink(MenuCredits, "My Github page, check here to see for updates!!", "https://github.com/1delayyy/Genesis-script?tab=readme-ov-file")
+menu.hyperlink(MenuCredits, "Github", "https://github.com/1delayyy/Genesis-script?tab=readme-ov-file")
 
 menu.action(MenuCredits, "1delay.", {"gscredits.1delay."}, "This is My discord, and I did half of Everything, from Scratch.", function(on_click)
     util.toast("- 1delay. -\n\nThis is My discord, and I did half of Everything, from Scratch.")
@@ -4716,6 +4716,10 @@ end)
 
 menu.action(MenuCredits, "44_69_6d_61", {"gscredits.44_69_6d_61"}, "Another Friend Of Mine, also gave me some Ideas on what to Add to the Script.", function(on_click)
     util.toast(" - 44_69_6d_61 -\n\nAnother Friend Of Mine, also gave me some Ideas on what to Add to the Script.")
+end)
+
+menu.action(MenuCredits, "Lumineyyy_xx", {"gscredits.Lumineyyy_xx"}, "Good Friend Of Mine, Shared Code For Barcode And Chinese Functions. <3", function(on_click)
+    util.toast(" - Lumineyyy_xx -\n\n.Good Friend Of Mine, Shared Code For Barcode And Chinese Functions. <3")
 end)
 
 
@@ -4786,7 +4790,7 @@ end, nil, nil, COMMANDPERM_AGGRESSIVE)
 local hugs = menu.list(MenuPlayerFriendly, "Hug Player", {"hug"}, "Note: Make sure they are stood still.")
 
 tpf_units = 1
-menu.action(hugs,"Hug Player 1", {}, "Credits to Kataliya for idea.", function()
+menu.action(hugs,"Hug Player 1", {}, "Make Their Day Better.", function()
 menu.trigger_commands("freeze" ..  PLAYER.GET_PLAYER_NAME(csPID) .. " on")
 menu.trigger_commands("tp" .. PLAYER.GET_PLAYER_NAME(csPID))
 util.yield(200)
@@ -4800,7 +4804,7 @@ ENTITY.SET_ENTITY_COORDS_NO_OFFSET(PLAYER.PLAYER_PED_ID(), pos['x'], pos['y'], p
 end)
 
 tpf_units = -0.7
-menu.action(hugs,"Hug Player 2", {"hugs"}, "Note: Make sure they are stood still. Like first one but tiny bit different. Credits to Kataliya for idea.", function()
+menu.action(hugs,"Hug Player 2", {"hugs"}, "Note: Make sure they are stood still. Like first one but tiny bit different.", function()
 menu.trigger_commands("freeze" ..  PLAYER.GET_PLAYER_NAME(csPID) .. " on")
 menu.trigger_commands("tp" .. PLAYER.GET_PLAYER_NAME(csPID))
 util.yield(200)
