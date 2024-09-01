@@ -30,3 +30,11 @@ Added Auto kick Chinese/Russian players
 New kicks added
 Bug fixes
 Script cleanup
+
+01/09/24
+
+Added new teleport options
+Added more player friendly options
+Added more trolling options (Cage Options) (Player Trolling)
+Added more player removal crashes (25 more)
+Added lag switch macro
