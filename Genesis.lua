@@ -793,7 +793,7 @@ local blacklist = functions.load_blacklist(blacklist_file_path)
 
 local main_menu = menu.my_root()
 
-local Genesis_menu = menu.list(main_menu, "AntiPlayer", {}, "Anti Player Features")
+local Genesis_menu = menu.list(MenuOnline, "AntiPlayer", {}, "Anti Player Features")
 
 Genesis_menu:toggle("Kick *Russian&Chinese* Nuisances", {}, "Kick nuisances typing in ruscheese (*Russian & Chinese!*", function(state)
     kick_prohibited_chat_toggle = state
@@ -3879,13 +3879,32 @@ se.givecollectible,
 -1217949151,
 }
 
+
+local Laggy = menu.list(MenuGameMacros, "Lag Macro", {}, "Lag Options")
+
+local latiaofakelagvalueset = menu.slider(Laggy, "Fakelag Value", {"latiaofakelagvalue"}, "", 250, 1000, 250, 1, function()
+end)
+menu.toggle_loop(Laggy, "fake lag", {"latiaofakelag"}, ("latiaofakelag"), function()
+    menu.trigger_commands("spoofpos".." on")
+    local pos = players.get_position(players.user())
+    local x = pos.x
+    local y = pos.y
+    local z = pos.z
+    util.yield(menu.get_value(latiaofakelagvalueset))
+    menu.trigger_commands("spoofedposition " .. x .. "," .. y .. "," .. z)
+    
+
+end,function()
+    menu.trigger_commands("spoofpos".." off")
+end)
+
 util.require_natives("2944a", "g")
 
 --code skidded from 2take1 (place credits here to original creator --Lumineyyy_xx)
 
 antiBarcodeEnabled = false
 
-menu.toggle_loop(Genesis_menu, "Anti-Barcode", {"csantibarcode"}, "Will kick players with a barcode name", function() 
+menu.toggle_loop(Genesis_menu, "Anti-Barcode", {"antibarcode"}, "Will kick players with a barcode name", function() 
 end, function ()
     util.toast("Anti-Barcode Disabled")
 end)
@@ -4714,6 +4733,7 @@ function PlayerAddRoot(csPID)
     MenuPlayerRoot = menu.list(menu.player_root(csPID), "Genesis", {"gsplayer"}, "Genesis Options for Selected Player.") ; menu.divider(MenuPlayerRoot, "Player Options")
     menu.divider(menu.player_root(csPID), "^^ Genesis ^^")
         
+    MenuPlayerTeleport = menu.list(MenuPlayerRoot, "Teleport", {"gsteleport"}, "Genesis Teleport Options For The Selected Player.") ; menu.divider(MenuPlayerTeleport, "Player Teleport Options")
     MenuPlayerFriendly = menu.list(MenuPlayerRoot, "Friendly", {"gsplayerfriendly"}, "Genesis Friendly Options for the Selected Player.") ; menu.divider(MenuPlayerFriendly, "Player Friendly Options") 
     MenuPlayerFun = menu.list(MenuPlayerRoot, "Fun", {"gsplayerfun"}, "Genesis Fun Options for the Selected Player.") ; menu.divider(MenuPlayerFun, "Player Fun Options")    
     MenuPlayerTrolling = menu.list(MenuPlayerRoot, "Trolling", {"gsplayertrolling"}, "Genesis Trolling Options for the Selected Player.") ; menu.divider(MenuPlayerTrolling, "Player Trolling Options")  
@@ -4727,17 +4747,124 @@ function PlayerAddRoot(csPID)
         MenuPlayerRemovalKick = menu.list(MenuPlayerRemoval, "Kicks", {"gsplayerremovalkick"}, "Kick Options for this Player.") ; menu.divider(MenuPlayerRemovalKick, "Player Kick Options")
         MenuPlayerRemovalCrash = menu.list(MenuPlayerRemoval, "Crashes", {"gsplayerremovalcrash"}, "Crash Options for this Player.") ; menu.divider(MenuPlayerRemovalCrash, "Player Crash Options")
     
+     --Player Root Teleport
+
+tpoptions = menu.list(MenuPlayerTeleport, "TP Options", {}, "", function(); end)
+
+griefingtpp = menu.list(MenuPlayerTeleport, "TP Player", {}, "", function(); end)
+
+menu.action(griefingtpp, "Teleport To Them", {"goingtheere"}, "", function()
+menu.trigger_commands("tp" .. players.get_name(csPID))
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+menu.action(griefingtpp, "Teleport To Me", {"cometome"}, "", function()
+menu.trigger_commands("summon" .. players.get_name(csPID))
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+griefingtp = menu.list(tpoptions, "TP All Players", {}, "", function(); end)
+
+menu.action(griefingtp, "TP Everyone To MazeBank", {"tpallmazebank"}, "Teleports all players to mazebank you.", function()
+excludeselected = true
+menu.trigger_commands("tpplayersmazebank")
+end, nil, nil, COMMANDPERM_AGGRESSIVE)
+
+menu.action(griefingtp, "TP All Players to me", {"tpallplayers"}, "Teleports all players to you.", function()
+menu.trigger_commands("say " .. " Get on the bike :)")
+menu.trigger_commands("as " .. PLAYER.GET_PLAYER_NAME(csPID) .. " manchez")
+util.toast("Give them a second to get on...")
+excludeselected = true
+menu.trigger_commands("tpplayers")
+end, nil, nil, COMMANDPERM_AGGRESSIVE)
+
+menu.action(griefingtp, "TP All Players Near me", {"tpallnear"}, "Teleports all players near you.", function()
+menu.trigger_commands("aptmeall")
+end, nil, nil, COMMANDPERM_AGGRESSIVE)
 
 
     --Player Root Friendly
 
-    menu.toggle_loop(MenuPlayerFriendly, "Give Vehicle Stealth Godmode", {"gsfriendlygivevehstealthgm"}, "Gives the Player Vehicle Godmode that won't be Detected by Most menus.", function()
+local hugs = menu.list(MenuPlayerFriendly, "Hug Player", {"hug"}, "Note: Make sure they are stood still.")
+
+tpf_units = 1
+menu.action(hugs,"Hug Player 1", {}, "Credits to Kataliya for idea.", function()
+menu.trigger_commands("freeze" ..  PLAYER.GET_PLAYER_NAME(csPID) .. " on")
+menu.trigger_commands("tp" .. PLAYER.GET_PLAYER_NAME(csPID))
+util.yield(200)
+menu.trigger_commands("nocollision" .. " on")
+menu.trigger_commands("playanimhug")
+util.yield(300)
+menu.trigger_commands("freeze" ..  PLAYER.GET_PLAYER_NAME(csPID) .. " off")
+menu.trigger_commands("nocollision" .. " off")
+local pos = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(players.user_ped(), 0, tpf_units, 0)
+ENTITY.SET_ENTITY_COORDS_NO_OFFSET(PLAYER.PLAYER_PED_ID(), pos['x'], pos['y'], pos['z'], true, false, false)
+end)
+
+tpf_units = -0.7
+menu.action(hugs,"Hug Player 2", {"hugs"}, "Note: Make sure they are stood still. Like first one but tiny bit different. Credits to Kataliya for idea.", function()
+menu.trigger_commands("freeze" ..  PLAYER.GET_PLAYER_NAME(csPID) .. " on")
+menu.trigger_commands("tp" .. PLAYER.GET_PLAYER_NAME(csPID))
+util.yield(200)
+menu.trigger_commands("nocollision" .. " on")
+menu.trigger_commands("playanimhug2")
+util.yield(300)
+menu.trigger_commands("freeze" ..  PLAYER.GET_PLAYER_NAME(csPID) .. " off")
+menu.trigger_commands("nocollision" .. " off")
+local pos = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(players.user_ped(), 0, tpf_units, 0)
+ENTITY.SET_ENTITY_COORDS_NO_OFFSET(PLAYER.PLAYER_PED_ID(), pos['x'], pos['y'], pos['z'], true, false, false)
+end)
+
+menu.action(MenuPlayerFriendly, "Max Player", {"max"}, "Turns on Godmode, auto heal, ceopay, vehiclegodmode, vehicle boost, never wanted, gives all weapons, ammo/infinite and parachute all at once.", function ()
+menu.trigger_commands("arm".. players.get_name(csPID) .. "all")
+menu.trigger_commands("bail".. players.get_name(csPID))
+menu.trigger_commands("boost".. players.get_name(csPID))
+menu.trigger_commands("ceopay".. players.get_name(csPID))
+menu.trigger_commands("autoammo".. players.get_name(csPID))
+menu.trigger_commands("autoheal".. players.get_name(csPID))
+menu.trigger_commands("removestickys".. players.get_name(csPID))
+menu.trigger_commands("givevehgod".. players.get_name(csPID))
+menu.trigger_commands("paragive".. players.get_name(csPID))
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+menu.toggle_loop(MenuPlayerFriendly, "Give Vehicle Stealth Godmode", {"gsfriendlygivevehstealthgm"}, "Gives the Player Vehicle Godmode that won't be Detected by Most menus.", function()
         local pidPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
         ENTITY.SET_ENTITY_PROOFS(PED.GET_VEHICLE_PED_IS_IN(pidPed), true, true, true, true, true, false, false, true)
         end, function() 
         local pidPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
         ENTITY.SET_ENTITY_PROOFS(PED.GET_VEHICLE_PED_IS_IN(pidPed), false, false, false, false, false, false, false, false)
     end)
+
+menu.action(MenuPlayerFriendly, "Fix loading screen", {"fixme"}, "Try to fix player's infinite loading screen by giving him script host and teleporting to nearest apartment.", function()
+menu.trigger_commands("givesh" .. players.get_name(csPID))
+menu.trigger_commands("aptme" .. players.get_name(csPID))
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+menu.toggle_loop(MenuPlayerFriendly, "Remove Stickys From Car", {"removestickys"}, "", function(toggle)
+local car = PED.GET_VEHICLE_PED_IS_IN(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID), true)
+NETWORK.REMOVE_ALL_STICKY_BOMBS_FROM_ENTITY(car)
+end)
+
+menu.toggle_loop(MenuPlayerFriendly, "Infinity Ammo", {"autoammo"}, "Endless ammo for players", function(toggle)
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+local weaphash = WEAPON.GET_SELECTED_PED_WEAPON(ped)
+local ammo = WEAPON.GET_AMMO_IN_PED_WEAPON(ped, weaphash)
+if ammo < 9999 then
+WEAPON.ADD_AMMO_TO_PED(ped, weaphash, 9999)
+end
+end)
+
+menu.action(
+    MenuPlayerFriendly,
+    "Send Friend Request",
+    {"friend"},
+    "",
+    function()
+        menu.show_command_box("historynote " .. PLAYER.GET_PLAYER_NAME(csPID) .. "Friends List")
+        menu.show_command_box("befriend " .. PLAYER.GET_PLAYER_NAME(csPID))
+    end,
+    nil,
+    nil,
+    COMMANDPERM_FRIENDLY
+)
 
 
     --Player Root Fun
@@ -4775,7 +4902,130 @@ function PlayerAddRoot(csPID)
 
         --Trolling Spawn Options
 
-    menu.action(MenuPlayerTrollingSpawn, "Drop Taco Truck", {"gsplayertrollingspawndtt"}, "Drops a Taco Truck on the Player's Head.", function(on_click)
+    local eg = menu.list(MenuPlayerTrolling, "Player Trolling", {}, "Player Trolling Options")
+
+
+    menu.toggle_loop(eg, "Cyclic Spitfire", { "" }, "", function(on_click)
+        local target_ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+
+        local coords = ENTITY.GET_ENTITY_COORDS(target_ped, false)
+
+        FIRE.ADD_EXPLOSION(coords['x'], coords['y'], coords['z'], 12, 100.0, true, false, 0.0)
+
+    end)
+
+    menu.toggle_loop(eg, "Water Spray", { "" }, "", function(on_click)
+        local target_ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+
+        local coords = ENTITY.GET_ENTITY_COORDS(target_ped, false)
+
+        FIRE.ADD_EXPLOSION(coords['x'], coords['y'], coords['z'], 13, 100.0, true, false, 0.0)
+
+    end)
+    menu.toggle_loop(eg, "Mixed Prank", { "" }, "", function(on_click)
+        local target_ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+        local coords = ENTITY.GET_ENTITY_COORDS(target_ped)
+        FIRE.ADD_EXPLOSION(coords['x'], coords['y'], coords['z'], math.random(0, 82), 1.0, true, false, 0.0)
+    end)
+    menu.toggle_loop(eg, "Black screen for players", { "" }, "", function(on_click)
+        util.trigger_script_event(1 << csPID,
+            { -555356783, csPID, math.random(1, 32), 32, NETWORK.NETWORK_HASH_FROM_PLAYER_HANDLE(csPID), 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 })
+        util.yield(1000)
+    end)
+    menu.toggle_loop(eg, "Freeze V1", { "" }, "", function(on_click)
+        util.trigger_script_event(1 << csPID, { 0x4868BC31, csPID, 0, 0, 0, 0, 0 })
+        util.yield(500)
+    end)
+    menu.toggle_loop(eg, "Freeze V2", { "" }, "", function(on_click)
+        util.trigger_script_event(1 << csPID, { 0x7EFC3716, csPID, 0, 1, 0, 0 })
+        util.yield(500)
+    end)
+    menu.toggle_loop(eg, "Freeze V3", { "" }, "", function(on_click)
+
+        local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+        TASK.CLEAR_PED_TASKS_IMMEDIATELY(ped)
+    end)
+
+    menu.toggle_loop(eg, "Spam Bombing", { "" }, "", function(on_click)
+        util.trigger_script_event(1 << csPID, { 0xDA29E2BC, csPID, math.random(0, 0xB2), 0, 0, 0 })
+        util.yield()
+    end)
+
+    menu.toggle_loop(eg, "Apartment Invitation Message Bombing", { "" }, "", function(on_click)
+        util.trigger_script_event(1 << csPID, { 0x4246AA25, csPID, math.random(1, 0x6) })
+        util.yield()
+    end)
+
+    menu.action(eg, "Knife Cage", { "" }, "", function()
+        local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
+        local hash = util.joaat("bkr_prop_moneypack_03a")
+        STREAMING.REQUEST_MODEL(hash)
+
+        while not STREAMING.HAS_MODEL_LOADED(hash) do
+            util.yield()
+        end
+        local cage_object = OBJECT.CREATE_OBJECT(hash, pos.x - .70, pos.y, pos.z, true, true, false)
+        local cage_object2 = OBJECT.CREATE_OBJECT(hash, pos.x + .70, pos.y, pos.z, true, true, false)
+        local cage_object3 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y + .70, pos.z, true, true, false)
+        local cage_object4 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y - .70, pos.z, true, true, false)
+
+        local cage_object = OBJECT.CREATE_OBJECT(hash, pos.x - .70, pos.y, pos.z + .25, true, true, false)
+        local cage_object2 = OBJECT.CREATE_OBJECT(hash, pos.x + .70, pos.y, pos.z + .25, true, true, false)
+        local cage_object3 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y + .70, pos.z + .25, true, true, false)
+        local cage_object4 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y - .70, pos.z + .25, true, true, false)
+
+        local cage_object5 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y, pos.z + .75, true, true, false)
+        cages[#cages + 1] = cage_object
+        cages[#cages + 1] = cage_object
+        util.yield(15)
+        local rot = ENTITY.GET_ENTITY_ROTATION(cage_object)
+        rot.y     = 90
+        STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(cage_object)
+    end)
+
+    menu.action(eg, "Christmas Cage", { "" }, "", function()
+        local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
+        local hash = util.joaat("ch_prop_tree_02a")
+        STREAMING.REQUEST_MODEL(hash)
+
+        while not STREAMING.HAS_MODEL_LOADED(hash) do
+            util.yield()
+        end
+        local cage_object = OBJECT.CREATE_OBJECT(hash, pos.x - .75, pos.y, pos.z - .5, true, true, false)
+        local cage_object2 = OBJECT.CREATE_OBJECT(hash, pos.x + .75, pos.y, pos.z - .5, true, true, false)
+        local cage_object3 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y + .75, pos.z - .5, true, true, false)
+        local cage_object4 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y - .75, pos.z - .5, true, true, false)
+        local cage_object5 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y, pos.z + .5, true, true, false)
+        cages[#cages + 1] = cage_object
+        cages[#cages + 1] = cage_object
+        util.yield(15)
+
+        STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(cage_object)
+    end)
+
+
+    menu.action(eg, "Drop frame attack (press more for better effect)", {}, "", function()
+        while not STREAMING.HAS_MODEL_LOADED(447548909) do
+            STREAMING.REQUEST_MODEL(447548909)
+            util.yield(10)
+        end
+        local self_ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(players.user())
+        local OldCoords = ENTITY.GET_ENTITY_COORDS(self_ped)
+        ENTITY.SET_ENTITY_COORDS_NO_OFFSET(self_ped, 24, 7643.5, 19, true, true, true)
+
+        local player_ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+        local PlayerPedCoords = ENTITY.GET_ENTITY_COORDS(player_ped, true)
+        spam_amount = 300
+        while spam_amount >= 1 do
+            entities.create_vehicle(447548909, PlayerPedCoords, 0)
+            spam_amount = spam_amount - 1
+            util.yield(10)
+        end
+    end)
+        
+        
+        menu.action(MenuPlayerTrollingSpawn, "Drop Taco Truck", {"gsplayertrollingspawndtt"}, "Drops a Taco Truck on the Player's Head.", function(on_click)
         local pidPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
         local abovePidPed = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(pidPed, 0, 0, 10)
         local vehHash = util.joaat("taco")
@@ -4788,6 +5038,323 @@ function PlayerAddRoot(csPID)
     end)
 
         --Trolling Cage Options
+
+cages = {}  -- 1114264700 <- vending machine cage
+function cage_player(pos)
+local object_hash = util.joaat("prop_gold_cont_01b")
+pos.z = pos.z-0.9
+
+STREAMING.REQUEST_MODEL(object_hash)
+while not STREAMING.HAS_MODEL_LOADED(object_hash) do
+util.yield()
+end
+local object1 = OBJECT.CREATE_OBJECT(object_hash, pos.x, pos.y, pos.z, true, true, true)
+cages[#cages + 1] = object1
+
+local object2 = OBJECT.CREATE_OBJECT(object_hash, pos.x, pos.y, pos.z, true, true, true)
+cages[#cages + 1] = object2
+
+if object1 == 0 or object2 ==0 then --if 'CREATE_OBJECT' fails to create one of those
+end
+ENTITY.FREEZE_ENTITY_POSITION(object1, true)
+ENTITY.FREEZE_ENTITY_POSITION(object2, true)
+local rot  = ENTITY.GET_ENTITY_ROTATION(object2)
+rot.x = -180
+rot.y = -180
+ENTITY.SET_ENTITY_ROTATION(object2, rot.x,rot.y,rot.z,1,true)
+STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(object_hash)
+end
+
+
+        cage_options = menu.list(MenuPlayerTrollingCage, "Cage Options", {}, "")
+
+menu.action(cage_options, "Garage Cage All Players", {"cageall"}, "Garage Cage all players", function()
+for _, csPID in players.list(false, true, true) do
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+local pos = players.get_position(csPID)
+if ENTITY.DOES_ENTITY_EXIST(ped) then
+menu.trigger_commands("garagecage " .. players.get_name(csPID))
+end
+end
+end)
+
+menu.action(cage_options, "Send All Cages", {"sendallcages"}, "", function(action)
+menu.trigger_commands("garagecage" .. players.get_name(csPID))
+util.yield(100)
+menu.trigger_commands("basketcage" .. players.get_name(csPID))
+util.yield(100)
+menu.trigger_commands("simplecage" .. players.get_name(csPID))
+util.yield(100)
+menu.trigger_commands("foodtruckcage" .. players.get_name(csPID))
+util.yield(100)
+menu.trigger_commands("doghousecage" .. players.get_name(csPID))
+util.yield(100)
+menu.trigger_commands("jollycage" .. players.get_name(csPID))
+util.yield(100)
+menu.trigger_commands("jollycage2" .. players.get_name(csPID))
+util.yield(100)
+menu.trigger_commands("jollycage3" .. players.get_name(csPID))
+util.yield(100)
+menu.trigger_commands("safecage" .. players.get_name(csPID))
+util.yield(100)
+menu.trigger_commands("trashcage" .. players.get_name(csPID))
+util.yield(100)
+menu.trigger_commands("moneycage" .. players.get_name(csPID))
+util.yield(100)
+menu.trigger_commands("stuntcage" .. players.get_name(csPID))
+util.yield(100)
+end)
+
+menu.action(cage_options, "Arcade Basketball", {"basketcage"}, "", function()
+menu.trigger_commands("disarm" .. players.get_name(csPID))
+local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
+STREAMING.REQUEST_MODEL(2769149392)
+while not STREAMING.HAS_MODEL_LOADED(2769149392) do
+util.yield()
+end
+local cage_object = OBJECT.CREATE_OBJECT(2769149392, pos.x, pos.y, pos.z, true, true, false)
+cages[#cages + 1] = cage_object
+util.yield(15)
+local rot  = ENTITY.GET_ENTITY_ROTATION(cage_object)
+rot.y = 0
+ENTITY.SET_ENTITY_ROTATION(cage_object, rot.x,rot.y,rot.z,1,true)
+STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(cage_object)
+end)
+
+menu.action(cage_options, "Simple", {"simplecage"}, "", function()
+local player_ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+local pos = ENTITY.GET_ENTITY_COORDS(player_ped)
+if PED.IS_PED_IN_ANY_VEHICLE(player_ped, false) then
+menu.trigger_commands("freeze"..PLAYER.GET_PLAYER_NAME(csPID).." on")
+util.yield(300)
+if PED.IS_PED_IN_ANY_VEHICLE(player_ped, false) then
+menu.trigger_commands("freeze"..PLAYER.GET_PLAYER_NAME(csPID).." off")
+return
+end
+menu.trigger_commands("freeze"..PLAYER.GET_PLAYER_NAME(csPID).." off")
+pos =  ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)) --if not it could place the cage at the wrong position
+menu.trigger_commands("disarm" .. players.get_name(csPID))
+end
+cage_player(pos)
+end)
+
+menu.action(cage_options, "First Job", {"foodtruckcage"}, "", function()
+local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
+local hash = 4022605402
+STREAMING.REQUEST_MODEL(hash)
+while not STREAMING.HAS_MODEL_LOADED(hash) do
+util.yield()
+end
+local cage_object = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y, pos.z - 1, true, true, false)
+cages[#cages + 1] = cage_object
+util.yield(15)
+STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(cage_object)
+menu.trigger_commands("disarm" .. players.get_name(csPID))
+end)
+
+menu.action(cage_options, "Married Simulator", {"doghousecage"}, "", function()
+local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
+local hash = -1782242710
+STREAMING.REQUEST_MODEL(hash)
+while not STREAMING.HAS_MODEL_LOADED(hash) do
+util.yield()
+end
+local cage_object = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y, pos.z, true, true, false)
+cages[#cages + 1] = cage_object
+util.yield(15)
+STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(cage_object)
+menu.trigger_commands("disarm" .. players.get_name(csPID))
+end)
+
+menu.action(cage_options, "Christmas Time", {"jollycage"}, "", function()
+local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
+local hash = 238789712
+STREAMING.REQUEST_MODEL(hash)
+while not STREAMING.HAS_MODEL_LOADED(hash) do
+util.yield()
+end
+local cage_object = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y, pos.z - 1, true, true, false)
+cages[#cages + 1] = cage_object
+util.yield(15)
+STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(cage_object)
+menu.trigger_commands("disarm" .. players.get_name(csPID))
+end)
+
+menu.action(cage_options, "Christmas Time v2", {"jollycage2"}, "", function()
+local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
+local hash = util.joaat("ch_prop_tree_02a")
+STREAMING.REQUEST_MODEL(hash)
+while not STREAMING.HAS_MODEL_LOADED(hash) do
+util.yield()
+end
+local cage_object = OBJECT.CREATE_OBJECT(hash, pos.x - .75, pos.y, pos.z - .5, true, true, false) -- front
+local cage_object2 = OBJECT.CREATE_OBJECT(hash, pos.x + .75, pos.y, pos.z - .5, true, true, false) -- back
+local cage_object3 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y + .75, pos.z - .5, true, true, false) -- left
+local cage_object4 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y - .75, pos.z - .5, true, true, false) -- right
+local cage_object5 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y, pos.z + .5, true, true, false) -- above
+cages[#cages + 1] = cage_object
+cages[#cages + 1] = cage_object
+util.yield(15)
+STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(cage_object)
+menu.trigger_commands("disarm" .. players.get_name(csPID))
+end)
+
+menu.action(cage_options, "Christmas Time v3", {"jollycage3"}, "", function()
+local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
+local hash = util.joaat("ch_prop_tree_03a")
+STREAMING.REQUEST_MODEL(hash)
+while not STREAMING.HAS_MODEL_LOADED(hash) do
+util.yield()
+end
+local cage_object = OBJECT.CREATE_OBJECT(hash, pos.x - .75, pos.y, pos.z - .5, true, true, false) -- front
+local cage_object2 = OBJECT.CREATE_OBJECT(hash, pos.x + .75, pos.y, pos.z - .5, true, true, false) -- back
+local cage_object3 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y + .75, pos.z - .5, true, true, false) -- left
+local cage_object4 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y - .75, pos.z - .5, true, true, false) -- right
+local cage_object5 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y, pos.z + .5, true, true, false) -- above
+cages[#cages + 1] = cage_object
+cages[#cages + 1] = cage_object
+util.yield()
+STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(cage_object)
+menu.trigger_commands("disarm" .. players.get_name(csPID))
+end)
+
+menu.action(cage_options, "'Safe' Space", {"safecage"}, "", function()
+local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
+local hash = 1089807209
+STREAMING.REQUEST_MODEL(hash)
+while not STREAMING.HAS_MODEL_LOADED(hash) do
+util.yield()
+end
+local cage_object = OBJECT.CREATE_OBJECT(hash, pos.x - 1, pos.y, pos.z - .5, true, true, false) -- front
+local cage_object2 = OBJECT.CREATE_OBJECT(hash, pos.x + 1, pos.y, pos.z - .5, true, true, false) -- back
+local cage_object3 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y + 1, pos.z - .5, true, true, false) -- left
+local cage_object4 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y - 1, pos.z - .5, true, true, false) -- right
+local cage_object5 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y, pos.z + .75, true, true, false) -- above
+cages[#cages + 1] = cage_object
+ENTITY.FREEZE_ENTITY_POSITION(cage_object, true)
+ENTITY.FREEZE_ENTITY_POSITION(cage_object2, true)
+ENTITY.FREEZE_ENTITY_POSITION(cage_object3, true)
+ENTITY.FREEZE_ENTITY_POSITION(cage_object4, true)
+ENTITY.FREEZE_ENTITY_POSITION(cage_object5, true)
+util.yield(15)
+STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(cage_object)
+menu.trigger_commands("disarm" .. players.get_name(csPID))
+end)
+
+menu.action(cage_options, "Average X-Force User", {"trashcage"}, "", function()
+local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
+local hash = 684586828
+STREAMING.REQUEST_MODEL(hash)
+
+while not STREAMING.HAS_MODEL_LOADED(hash) do
+util.yield()
+end
+local cage_object = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y, pos.z - 1, true, true, false)
+local cage_object = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y, pos.z, true, true, false)
+local cage_object3 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y, pos.z + 1, true, true, false)
+cages[#cages + 1] = cage_object
+util.yield(15)
+STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(cage_object)
+menu.trigger_commands("disarm" .. players.get_name(csPID))
+end)
+
+menu.action(cage_options, "money cage", {"moneycage"}, "", function()
+local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
+local hash = util.joaat("bkr_prop_moneypack_03a")
+STREAMING.REQUEST_MODEL(hash)
+while not STREAMING.HAS_MODEL_LOADED(hash) do
+util.yield()
+end
+local cage_object = OBJECT.CREATE_OBJECT(hash, pos.x - .70, pos.y, pos.z, true, true, false) -- front
+local cage_object2 = OBJECT.CREATE_OBJECT(hash, pos.x + .70, pos.y, pos.z, true, true, false) -- back
+local cage_object3 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y + .70, pos.z, true, true, false) -- left
+local cage_object4 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y - .70, pos.z, true, true, false) -- right
+
+local cage_object = OBJECT.CREATE_OBJECT(hash, pos.x - .70, pos.y, pos.z + .25, true, true, false) -- front
+local cage_object2 = OBJECT.CREATE_OBJECT(hash, pos.x + .70, pos.y, pos.z + .25, true, true, false) -- back
+local cage_object3 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y + .70, pos.z + .25, true, true, false) -- left
+local cage_object4 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y - .70, pos.z + .25, true, true, false) -- right
+
+local cage_object5 = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y, pos.z + .75, true, true, false) -- above
+cages[#cages + 1] = cage_object
+cages[#cages + 1] = cage_object
+util.yield(15)
+local rot  = ENTITY.GET_ENTITY_ROTATION(cage_object)
+rot.y = 90
+STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(cage_object)
+menu.trigger_commands("disarm" .. players.get_name(csPID))
+end)
+
+menu.action(cage_options, "Stunt Tube", {"stuntcage"}, "", function()
+local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
+STREAMING.REQUEST_MODEL(2081936690)
+
+while not STREAMING.HAS_MODEL_LOADED(2081936690) do
+util.yield()
+end
+local cage_object = OBJECT.CREATE_OBJECT(2081936690, pos.x, pos.y, pos.z, true, true, false)
+cages[#cages + 1] = cage_object
+util.yield(15)
+local rot  = ENTITY.GET_ENTITY_ROTATION(cage_object)
+rot.y = 90
+ENTITY.SET_ENTITY_ROTATION(cage_object, rot.x,rot.y,rot.z,1,true)
+STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(cage_object)
+menu.trigger_commands("disarm" .. players.get_name(csPID))
+end)
+
+local cage_loop = false
+menu.toggle(cage_options, "automatic", {"autocage"}, "Cage them in a trap. If they get out... Do it again. No, I'll do it for you actually", function(on)
+local player_ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+local a = ENTITY.GET_ENTITY_COORDS(player_ped) --first position
+cage_loop = on
+if cage_loop then
+if PED.IS_PED_IN_ANY_VEHICLE(player_ped, false) then
+menu.trigger_commands("freeze"..PLAYER.GET_PLAYER_NAME(csPID).." on")
+util.yield(300)
+if PED.IS_PED_IN_ANY_VEHICLE(player_ped, false) then
+    menu.trigger_commands("freeze"..PLAYER.GET_PLAYER_NAME(csPID).." off")
+    return
+end
+menu.trigger_commands("freeze"..PLAYER.GET_PLAYER_NAME(csPID).." off")
+a =  ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
+end
+cage_player(a)
+end
+while cage_loop do
+local b = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)) --current position
+local ba = {x = b.x - a.x, y = b.y - a.y, z = b.z - a.z}
+if math.sqrt(ba.x * ba.x + ba.y * ba.y + ba.z * ba.z) >= 4 then --now I know there's a native to find distance between coords but I like this >_<
+a = b
+if PED.IS_PED_IN_ANY_VEHICLE(player_ped, false) then
+    goto continue
+end
+cage_player(a)
+::continue::
+end
+util.yield(1000)
+end
+end)
+
+menu.action(cage_options, "Slowly Burn Them To Death", {}, "use this to slowly kill the poor caged person (ONLY WORKS WITH SOME CAGES)", function()
+local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
+local hash = util.joaat("prop_beach_fire")
+STREAMING.REQUEST_MODEL(hash)
+while not STREAMING.HAS_MODEL_LOADED(hash) do
+STREAMING.REQUEST_MODEL(hash)
+util.yield()
+end
+local cage_object = OBJECT.CREATE_OBJECT(hash, pos.x, pos.y, pos.z - 1.75, true, true, false) -- front
+
+cages[#cages + 1] = cage_object
+
+local rot  = ENTITY.GET_ENTITY_ROTATION(cage_object)
+rot.y = 90
+end)
+
+menu.action(cage_options, "Release Player", {"release"}, "Attempts to delete spawned cages, for more complicated traps it may respawn.", function() -- ez fix but lazy
+menu.trigger_commands("superc 3")
+end)
+
 
     menu.action(MenuPlayerTrollingCage, "Electric Cage", {"gsplayertrollingcageec"}, "A Cage made of Transistors, that will Taze the Player.", function(on_click)
         local number_of_cages = 6
@@ -5075,6 +5642,545 @@ function PlayerAddRoot(csPID)
     end
  
         --Player Removal Crashes
+
+     local Crash = menu.list(MenuPlayerRemovalCrash, "Select Crashes", {}, "Other Select Crashes")
+
+    menu.action(Crash, "Host Crash (only for host)", { "" }, "", function()
+        local self_ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(players.user())
+        menu.trigger_commands("tpmazehelipad")
+        ENTITY.SET_ENTITY_COORDS(self_ped, -6170, 10837, 40, true, false, false)
+        util.yield(1000)
+        menu.trigger_commands("tpmazehelipad")
+    end)
+
+    local TPP = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+    local pos = ENTITY.GET_ENTITY_COORDS(TPP, true)
+    pos.z = pos.z + 10
+    veh = entities.get_all_vehicles_as_handles()
+
+    menu.action(Crash, "5G Crash", { "" }, "", function()
+        local TPP = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+        local pos = ENTITY.GET_ENTITY_COORDS(TPP, true)
+        pos.z = pos.z + 10
+        veh = entities.get_all_vehicles_as_handles()
+
+        for i = 1, #veh do
+            NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(veh[i])
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(veh[i], pos.x, pos.y, pos.z, ENTITY.GET_ENTITY_HEADING(TPP), 10)
+            TASK.TASK_VEHICLE_TEMP_ACTION(TPP, veh[i], 18, 999)
+            TASK.TASK_VEHICLE_TEMP_ACTION(TPP, veh[i], 16, 999)
+        end
+    end)
+
+    menu.action(Crash, "Yi Yu Crash", { "" }, "", function()
+        local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+        local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+        local Object_jb1 = CreateObject(0xD75E01A6, TargetPlayerPos)
+        local Object_jb2 = CreateObject(0x675D244E, TargetPlayerPos)
+        local Object_jb3 = CreateObject(0x799B48CA, TargetPlayerPos)
+        local Object_jb4 = CreateObject(0x68E49D4D, TargetPlayerPos)
+        local Object_jb5 = CreateObject(0x66F34017, TargetPlayerPos)
+        local Object_jb6 = CreateObject(0xDE1807BB, TargetPlayerPos)
+        local Object_jb7 = CreateObject(0xC4C9551E, TargetPlayerPos)
+        local Object_jb8 = CreateObject(0xCF37BA1F, TargetPlayerPos)
+        local Object_jb9 = CreateObject(0xB69AD9F8, TargetPlayerPos)
+        local Object_jb10 = CreateObject(0x5D750529, TargetPlayerPos)
+        local Object_jb11 = CreateObject(0x1705D85C, TargetPlayerPos)
+        for i = 0, 1000 do
+            local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true);
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_jb1, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z, false
+                , true, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_jb2, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z, false
+                , true, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_jb3, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z, false
+                , true, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_jb4, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z, false
+                , true, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_jb5, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z, false
+                , true, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_jb6, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z, false
+                , true, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_jb7, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z, false
+                , true, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_jb8, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z, false
+                , true, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_jb9, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z, false
+                , true, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_jb10, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z,
+                false, true, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_jb11, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z,
+                false, true, true)
+            util.yield(10)
+        end
+        util.yield(5500)
+        entities.delete_by_handle(Object_jb1)
+        entities.delete_by_handle(Object_jb2)
+        entities.delete_by_handle(Object_jb3)
+        entities.delete_by_handle(Object_jb4)
+        entities.delete_by_handle(Object_jb5)
+        entities.delete_by_handle(Object_jb6)
+        entities.delete_by_handle(Object_jb7)
+        entities.delete_by_handle(Object_jb8)
+        entities.delete_by_handle(Object_jb9)
+        entities.delete_by_handle(Object_jb10)
+        entities.delete_by_handle(Object_jb11)
+    end)
+
+    menu.action(Crash, "Bro Hug?", { "" }, "By MMT", function()
+        util.toast("I'll try to convince them to leave :) ")
+        PLAYER.SET_PLAYER_PARACHUTE_PACK_MODEL_OVERRIDE(PLAYER.PLAYER_ID(), 0xE5022D03)
+        TASK.CLEAR_PED_TASKS_IMMEDIATELY(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(players.user()))
+        util.yield(20)
+        local p_pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid))
+        ENTITY.SET_ENTITY_COORDS_NO_OFFSET(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(players.user()), p_pos.x, p_pos.y, p_pos.z
+            , false, true, true)
+        WEAPON.GIVE_DELAYED_WEAPON_TO_PED(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(players.user()), 0xFBAB5776, 1000, false)
+        TASK.TASK_PARACHUTE_TO_TARGET(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(players.user()), -1087, -3012, 13.94)
+        util.yield(500)
+        TASK.CLEAR_PED_TASKS_IMMEDIATELY(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(players.user()))
+        util.yield(1000)
+        PLAYER.CLEAR_PLAYER_PARACHUTE_PACK_MODEL_OVERRIDE(PLAYER.PLAYER_ID())
+        TASK.CLEAR_PED_TASKS_IMMEDIATELY(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(players.user()))
+    end)
+
+    menu.action(Crash, "iz5mc kill mom crash V1", { "iznmsl" }, "", function()
+        local int_min = -2147483647
+        local int_max = 2147483647
+        for i = 1, 150 do
+            util.trigger_script_event(1 << pid,
+                { 2765370640, pid, 3747643341, math.random(int_min, int_max), math.random(int_min, int_max),
+                    math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max),
+                    math.random(int_min, int_max),
+                    math.random(int_min, int_max), pid, math.random(int_min, int_max), math.random(int_min, int_max),
+                    math.random(int_min, int_max) })
+        end
+        util.yield()
+        for i = 1, 15 do
+            util.trigger_script_event(1 << pid, { 1348481963, pid, math.random(int_min, int_max) })
+        end
+        menu.trigger_commands("givesh " .. players.get_name(pid))
+        util.yield(100)
+        util.trigger_script_event(1 << pid, { 495813132, pid, 0, 0, -12988, -99097, 0 })
+        util.trigger_script_event(1 << pid, { 495813132, pid, -4640169, 0, 0, 0, -36565476, -53105203 })
+        util.trigger_script_event(1 << pid,
+            { 495813132, pid, 0, 1, 23135423, 3, 3, 4, 827870001, 5, 2022580431, 6, -918761645, 7, 1754244778, 8,
+                827870001, 9, 17 })
+    end)
+    menu.action(Crash, "iz5mc kill mom crash V2", { "" }, "", function()
+        for i = 1, 10 do
+            local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+            local cord = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+            STREAMING.REQUEST_MODEL(-930879665)
+            util.yield(10)
+            STREAMING.REQUEST_MODEL(3613262246)
+            util.yield(10)
+            STREAMING.REQUEST_MODEL(452618762)
+            util.yield(10)
+            while not STREAMING.HAS_MODEL_LOADED(-930879665) do util.yield() end
+            while not STREAMING.HAS_MODEL_LOADED(3613262246) do util.yield() end
+            while not STREAMING.HAS_MODEL_LOADED(452618762) do util.yield() end
+            local a1 = entities.create_object(-930879665, cord)
+            util.yield(10)
+            local a2 = entities.create_object(3613262246, cord)
+            util.yield(10)
+            local b1 = entities.create_object(452618762, cord)
+            util.yield(10)
+            local b2 = entities.create_object(3613262246, cord)
+            util.yield(300)
+            entities.delete_by_handle(a1)
+            entities.delete_by_handle(a2)
+            entities.delete_by_handle(b1)
+            entities.delete_by_handle(b2)
+            STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(452618762)
+            util.yield(10)
+            STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(3613262246)
+            util.yield(10)
+            STREAMING.SET_MODEL_AS_NO_LONGER_NEEDED(-930879665)
+            util.yield(10)
+        end
+        if SE_Notifications then
+            notification("Finished.", colors.red)
+        end
+    end)
+    menu.action(Crash, "iz5mc kill mom crash V3", { "" }, "", function()
+        local TPP = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+        local pos = ENTITY.GET_ENTITY_COORDS(TPP, true)
+        pos.z = pos.z + 10
+        veh = entities.get_all_vehicles_as_handles()
+
+        for i = 1, #veh do
+            NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(veh[i])
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(veh[i], pos.x, pos.y, pos.z, ENTITY.GET_ENTITY_HEADING(TPP), 10)
+            TASK.TASK_VEHICLE_TEMP_ACTION(TPP, veh[i], 18, 999)
+            TASK.TASK_VEHICLE_TEMP_ACTION(TPP, veh[i], 16, 999)
+        end
+    end)
+
+
+    menu.action(Crash, "Medusa crash", { "" }, "", function()
+        menu.trigger_commands("anticrashcam on")
+        local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+        local plauuepos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+        plauuepos.x = plauuepos.x + 5
+        plauuepos.z = plauuepos.z + 5
+        local hunter = {}
+        for i = 1, 3 do
+            for n = 0, 120 do
+                hunter[n] = CreateVehicle(1077420264, plauuepos, 0)
+                util.yield(0)
+                ENTITY.FREEZE_ENTITY_POSITION(hunter[n], true)
+                util.yield(0)
+                VEHICLE.EXPLODE_VEHICLE(hunter[n], true, true)
+            end
+            util.yield(190)
+            for i = 1, #hunter do
+                if hunter[i] ~= nil then
+                    entities.delete_by_handle(hunter[i])
+                end
+            end
+        end
+        util.toast("Crash done QWQ")
+        menu.trigger_commands("anticrashcam off")
+        hunter = nil
+        plauuepos = nil
+    end)
+
+    menu.action(Crash, "NPC Crash", { "" }, "", function()
+        menu.trigger_commands("anticrashcam on")
+        local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+        local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+        local SpawnPed_Wade = {}
+        for i = 1, 60 do
+            SpawnPed_Wade[i] = CreatePed(26, util.joaat("PLAYER_ONE"), TargetPlayerPos,
+                ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+            util.yield(1)
+        end
+        util.yield(5000)
+        for i = 1, 60 do
+            entities.delete_by_handle(SpawnPed_Wade[i])
+            menu.trigger_commands("anticrashcam off")
+        end
+    end)
+
+    menu.action(Crash, "Invalid Appearance Crash", { "" }, "", function()
+        menu.trigger_commands("anticrashcam on")
+        local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+        local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+        local SelfPlayerPed = PLAYER.PLAYER_PED_ID();
+        local Spawned_Mike = CreatePed(26, util.joaat("player_zero"), TargetPlayerPos,
+            ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+        for i = 0, 500 do
+            PED.SET_PED_COMPONENT_VARIATION(Spawned_Mike, 0, 0, math.random(0, 10), 0)
+            ENTITY.SET_ENTITY_COORDS(Spawned_Mike, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z, true, false,
+                false, true);
+            util.yield(10)
+        end
+        entities.delete_by_handle(Spawned_Mike)
+        menu.trigger_commands("anticrashcam off")
+    end)
+
+    menu.action(Crash, "Invalid model crashes", { "" }, "", function()
+        menu.trigger_commands("anticrashcam on")
+        local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+        local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+        local Object_pizza1 = CreateObject(3613262246, TargetPlayerPos)
+        local Object_pizza2 = CreateObject(2155335200, TargetPlayerPos)
+        local Object_pizza3 = CreateObject(3026699584, TargetPlayerPos)
+        local Object_pizza4 = CreateObject(-1348598835, TargetPlayerPos)
+        for i = 0, 100 do
+            local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true);
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_pizza1, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z,
+                false, true, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_pizza2, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z,
+                false, true, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_pizza3, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z,
+                false, true, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_pizza4, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z,
+                false, true, true)
+            util.yield(10)
+        end
+        util.yield(2000)
+        entities.delete_by_handle(Object_pizza1)
+        entities.delete_by_handle(Object_pizza2)
+        entities.delete_by_handle(Object_pizza3)
+        entities.delete_by_handle(Object_pizza4)
+        menu.trigger_commands("anticrashcam off")
+    end)
+
+
+    menu.click_slider(Crash, "Sound Crash", {}, "", 1, 2, 1, 1, function(on_change)
+        if on_change == 1 then
+            local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+            local time = util.current_time_millis() + 2000
+            while time > util.current_time_millis() do
+                local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+                for i = 1, 10 do
+                    AUDIO.PLAY_SOUND_FROM_COORD(-1, '5s', TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z,
+                        'MP_MISSION_COUNTDOWN_SOUNDSET', true, 10000, false)
+                end
+                util.yield()
+            end
+        end
+        if on_change == 2 then
+            local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+            local time = util.current_time_millis() + 1000
+            while time > util.current_time_millis() do
+                local pos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+                for i = 1, 20 do
+                    AUDIO.PLAY_SOUND_FROM_COORD(-1, 'Object_Dropped_Remote', pos.x, pos.y, pos.z,
+                        'GTAO_FM_Events_Soundset', true, 10000, false)
+                end
+                util.yield()
+            end
+        end
+    end)
+
+    menu.action(Crash, "Ghost Crash", { "" }, "", function()
+        menu.trigger_commands("anticrashcam on")
+        local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+        local SelfPlayerPed = PLAYER.PLAYER_PED_ID()
+        local SelfPlayerPos = ENTITY.GET_ENTITY_COORDS(SelfPlayerPed, true)
+        local Spawned_tr3 = CreateVehicle(util.joaat("tr3"), SelfPlayerPos, ENTITY.GET_ENTITY_HEADING(SelfPlayerPed),
+            true)
+        ENTITY.ATTACH_ENTITY_TO_ENTITY(Spawned_tr3, SelfPlayerPed, 0, 0, 0, 0, 0, 0, 0, 0, true, true, false, 0, true)
+        ENTITY.SET_ENTITY_VISIBLE(Spawned_tr3, false, 0)
+        local Spawned_chernobog = CreateVehicle(util.joaat("chernobog"), SelfPlayerPos,
+            ENTITY.GET_ENTITY_HEADING(SelfPlayerPed), true)
+        ENTITY.ATTACH_ENTITY_TO_ENTITY(Spawned_chernobog, SelfPlayerPed, 0, 0, 0, 0, 0, 0, 0, 0, true, true, false, 0,
+            true)
+        ENTITY.SET_ENTITY_VISIBLE(Spawned_chernobog, false, 0)
+        local Spawned_avenger = CreateVehicle(util.joaat("avenger"), SelfPlayerPos,
+            ENTITY.GET_ENTITY_HEADING(SelfPlayerPed), true)
+        ENTITY.ATTACH_ENTITY_TO_ENTITY(Spawned_avenger, SelfPlayerPed, 0, 0, 0, 0, 0, 0, 0, 0, true, true, false, 0, true)
+        ENTITY.SET_ENTITY_VISIBLE(Spawned_avenger, false, 0)
+        for i = 0, 100 do
+            local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+            ENTITY.SET_ENTITY_COORDS(SelfPlayerPed, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z, true, false
+                , false)
+            util.yield(10 * math.random())
+            ENTITY.SET_ENTITY_COORDS(SelfPlayerPed, SelfPlayerPos.x, SelfPlayerPos.y, SelfPlayerPos.z, true, false, false)
+            util.yield(10 * math.random())
+        end
+        menu.trigger_commands("anticrashcam off")
+    end)
+
+    menu.action(Crash, "SE Crash", {}, "Crash player with SE", function()
+        util.trigger_script_event(1 << PlayerID, { 962740265, PlayerID, 115831, 9999449 })
+    end)
+
+    menu.action(Crash, "Invalid Entity Crash", {}, "Crash player with invalid entity", function()
+        menu.trigger_commands("anticrashcam on")
+        local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+        local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+        local SpawnPed_slod_small_quadped = CreatePed(26, util.joaat("slod_small_quadped"), TargetPlayerPos,
+            ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+        local SpawnPed_slod_large_quadped = CreatePed(26, util.joaat("slod_large_quadped"), TargetPlayerPos,
+            ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+        local SpawnPed_slod_human = CreatePed(26, util.joaat("slod_human"), TargetPlayerPos,
+            ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+        util.yield(2000)
+        entities.delete_by_handle(SpawnPed_slod_small_quadped)
+        entities.delete_by_handle(SpawnPed_slod_large_quadped)
+        entities.delete_by_handle(SpawnPed_slod_human)
+        menu.trigger_commands("anticrashcam off")
+    end)
+
+    menu.action(Crash, "Invalid Object Crash", {}, "Crash player with invalid object", function()
+        menu.trigger_commands("anticrashcam on")
+        local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+        local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+        local Object_pizza1 = CreateObject(3613262246, TargetPlayerPos)
+        local Object_pizza2 = CreateObject(2155335200, TargetPlayerPos)
+        local Object_pizza3 = CreateObject(3026699584, TargetPlayerPos)
+        local Object_pizza4 = CreateObject(-1348598835, TargetPlayerPos)
+        for i = 0, 100 do
+            local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true);
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_pizza1, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z,
+                false, true, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_pizza2, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z,
+                false, true, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_pizza3, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z,
+                false, true, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(Object_pizza4, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z,
+                false, true, true)
+            util.yield(10)
+        end
+        util.yield(2000)
+        entities.delete_by_handle(Object_pizza1)
+        entities.delete_by_handle(Object_pizza2)
+        entities.delete_by_handle(Object_pizza3)
+        entities.delete_by_handle(Object_pizza4)
+        menu.trigger_commands("anticrashcam off")
+    end)
+
+    menu.action(Crash, "Chernobog Crash", {}, "Crash player with chernobog", function()
+        menu.trigger_commands("anticrashcam on")
+        local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+        local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+        SpawnedVehicleList = {};
+        for i = 1, 80 do
+            local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true);
+            SpawnedVehicleList[i] = CreateVehicle(util.joaat("chernobog"), TargetPlayerPos,
+                ENTITY.GET_ENTITY_HEADING(TargetPlayerPed), true)
+            ENTITY.FREEZE_ENTITY_POSITION(SpawnedVehicleList[i], true)
+            ENTITY.SET_ENTITY_VISIBLE(SpawnedVehicleList[i], false, 0)
+            util.yield(50)
+        end
+        util.yield(5000)
+        for i = 1, 80 do
+            entities.delete_by_handle(SpawnedVehicleList[i])
+        end
+        menu.trigger_commands("anticrashcam off")
+    end)
+
+    menu.action(Crash, "Hunter Crash", {}, "Crash player with hunter", function()
+        menu.trigger_commands("anticrashcam on")
+        local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+        local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+        local SpawnedVehicleList = {};
+        for i = 1, 60 do
+            local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+            SpawnedVehicleList[i] = CreateVehicle(util.joaat("hunter"), TargetPlayerPos,
+                ENTITY.GET_ENTITY_HEADING(TargetPlayerPed), true)
+            ENTITY.FREEZE_ENTITY_POSITION(SpawnedVehicleList[i], true)
+            ENTITY.SET_ENTITY_VISIBLE(SpawnedVehicleList[i], false, 0)
+            util.yield(50)
+        end
+        util.yield(5000)
+        for i = 1, 60 do
+            entities.delete_by_handle(SpawnedVehicleList[i])
+        end
+        menu.trigger_commands("anticrashcam off")
+    end)
+
+    menu.action(Crash, "Chernobog Pro Crash", {}, "Crash player with chernobog pro", function()
+        menu.trigger_commands("anticrashcam on")
+
+        local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+        local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+        TargetPlayerPos.y = TargetPlayerPos.y + 1050
+        SpawnedVehicleList1 = {};
+        for i = 1, 60 do
+            local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true);
+            SpawnedVehicleList1[i] = CreateVehicle(util.joaat("chernobog"), TargetPlayerPos,
+                ENTITY.GET_ENTITY_HEADING(TargetPlayerPed), true)
+            ENTITY.FREEZE_ENTITY_POSITION(SpawnedVehicleList1[i], true)
+            ENTITY.SET_ENTITY_VISIBLE(SpawnedVehicleList1[i], false, 0)
+            util.yield(50)
+        end
+        util.yield(2000)
+        for i = 1, 60 do
+            entities.delete_by_handle(SpawnedVehicleList1[i])
+        end
+
+        util.yield(1000)
+        SpawnedVehicleList2 = {};
+        for i = 1, 50 do
+            local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true);
+            SpawnedVehicleList2[i] = CreateVehicle(util.joaat("chernobog"), TargetPlayerPos,
+                ENTITY.GET_ENTITY_HEADING(TargetPlayerPed), true)
+            ENTITY.FREEZE_ENTITY_POSITION(SpawnedVehicleList2[i], true)
+            ENTITY.SET_ENTITY_VISIBLE(SpawnedVehicleList2[i], false, 0)
+            util.yield(50)
+        end
+        util.yield(2000)
+        for i = 1, 50 do
+            entities.delete_by_handle(SpawnedVehicleList2[i])
+        end
+
+        menu.trigger_commands("anticrashcam off")
+    end)
+
+    menu.action(Crash, "Wade Crash", {}, "Crash player with wade", function()
+        menu.trigger_commands("anticrashcam on")
+        local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+        local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+        local SpawnPed_Wade = {}
+        for i = 1, 50 do
+            SpawnPed_Wade[i] = CreatePed(50, 0xDFE443E5, TargetPlayerPos, ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+            SpawnPed_Wade[i] = CreatePed(50, 0x850446EC, TargetPlayerPos, ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+            SpawnPed_Wade[i] = CreatePed(50, 0x5F4C593D, TargetPlayerPos, ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+            SpawnPed_Wade[i] = CreatePed(50, 0x38951A1B, TargetPlayerPos, ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+            util.yield(1)
+        end
+        util.yield(10000)
+        for i = 1, 50 do
+            entities.delete_by_handle(SpawnPed_Wade[i])
+            entities.delete_by_handle(SpawnPed_Wade[i])
+            entities.delete_by_handle(SpawnPed_Wade[i])
+            entities.delete_by_handle(SpawnPed_Wade[i])
+        end
+        menu.trigger_commands("anticrashcam off")
+    end)
+
+    menu.action(Crash, "Invalid Clothing Crash", {}, "Crash player with invalid clothes", function()
+        menu.trigger_commands("anticrashcam on")
+        local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+        local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+        local SelfPlayerPed = PLAYER.PLAYER_PED_ID();
+        local Spawned_Mike = CreatePed(26, util.joaat("player_zero"), TargetPlayerPos,
+            ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+        for i = 0, 500 do
+            PED.SET_PED_COMPONENT_VARIATION(Spawned_Mike, 0, 0, math.random(0, 10), 0)
+            ENTITY.SET_ENTITY_COORDS(Spawned_Mike, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z, true, false,
+                false, true);
+            util.yield(10)
+        end
+        entities.delete_by_handle(Spawned_Mike)
+        menu.trigger_commands("anticrashcam off")
+    end)
+
+    menu.action(Crash, "Trailer Crash", {}, "Crash player with trailer", function()
+        local TargetPlayerPed = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(PlayerID)
+        local TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+        SpawnedDune1 = CreateVehicle(util.joaat("dune"), TargetPlayerPos, ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+        ENTITY.FREEZE_ENTITY_POSITION(SpawnedDune1, true)
+        SpawnedDune2 = CreateVehicle(util.joaat("dune"), TargetPlayerPos, ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+        ENTITY.FREEZE_ENTITY_POSITION(SpawnedDune2, true)
+        SpawnedBarracks1 = CreateVehicle(util.joaat("barracks"), TargetPlayerPos,
+            ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+        ENTITY.FREEZE_ENTITY_POSITION(SpawnedBarracks1, true)
+        SpawnedBarracks2 = CreateVehicle(util.joaat("barracks"), TargetPlayerPos,
+            ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+        ENTITY.FREEZE_ENTITY_POSITION(SpawnedBarracks2, true)
+        SpawnedTowtruck = CreateVehicle(util.joaat("towtruck2"), TargetPlayerPos,
+            ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+        ENTITY.FREEZE_ENTITY_POSITION(SpawnedTowtruck, true)
+        SpawnedBarracks31 = CreateVehicle(util.joaat("barracks3"), TargetPlayerPos,
+            ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+        ENTITY.FREEZE_ENTITY_POSITION(SpawnedBarracks31, true)
+        SpawnedBarracks32 = CreateVehicle(util.joaat("barracks3"), TargetPlayerPos,
+            ENTITY.GET_ENTITY_HEADING(TargetPlayerPed))
+        ENTITY.FREEZE_ENTITY_POSITION(SpawnedBarracks32, true)
+
+        ENTITY.ATTACH_ENTITY_TO_ENTITY(SpawnedBarracks31, SpawnedTowtruck, 0, 0, 0, 0, 0, 0, 0, true, true, true, false,
+            0, true)
+        ENTITY.ATTACH_ENTITY_TO_ENTITY(SpawnedBarracks32, SpawnedTowtruck, 0, 0, 0, 0, 0, 0, 0, true, true, true, false,
+            0, true)
+        ENTITY.ATTACH_ENTITY_TO_ENTITY(SpawnedBarracks1, SpawnedTowtruck, 0, 0, 0, 0, 0, 0, 0, true, true, true, false, 0
+            , true)
+        ENTITY.ATTACH_ENTITY_TO_ENTITY(SpawnedBarracks2, SpawnedTowtruck, 0, 0, 0, 0, 0, 0, 0, true, true, true, false, 0
+            , true)
+        ENTITY.ATTACH_ENTITY_TO_ENTITY(SpawnedDune1, SpawnedTowtruck, 0, 0, 0, 0, 0, 0, 0, true, true, true, false, 0,
+            true)
+        ENTITY.ATTACH_ENTITY_TO_ENTITY(SpawnedDune2, SpawnedTowtruck, 0, 0, 0, 0, 0, 0, 0, true, true, true, false, 0,
+            true)
+        for i = 0, 100 do
+            TargetPlayerPos = ENTITY.GET_ENTITY_COORDS(TargetPlayerPed, true)
+            ENTITY.SET_ENTITY_COORDS_NO_OFFSET(SpawnedTowtruck, TargetPlayerPos.x, TargetPlayerPos.y, TargetPlayerPos.z,
+                false, true, true)
+            util.yield(10)
+        end
+        util.yield(2000)
+        entities.delete_by_handle(SpawnedTowtruck)
+        entities.delete_by_handle(SpawnedDune1)
+        entities.delete_by_handle(SpawnedDune2)
+        entities.delete_by_handle(SpawnedBarracks31)
+        entities.delete_by_handle(SpawnedBarracks32)
+        entities.delete_by_handle(SpawnedBarracks1)
+        entities.delete_by_handle(SpawnedBarracks2)
+    end)
+
 
 local main_menu = menu.list(MenuPlayerRemovalCrash, "Menu Crashes", {}, "Other Menu Crashes")                                        --Credits to addict script
 
