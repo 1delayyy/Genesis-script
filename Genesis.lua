@@ -2446,17 +2446,17 @@ util.draw_debug_text(players.get_name(players.get_host()) .. " Is Host")
 end)
 
 menu.toggle_loop(MenuDetections, "Aim Detection", {}, "Detects if someone is aiming a weapon at you.", function()
-        for _, pid in ipairs(players.list(false, true, true)) do
-            local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+        for _, csPID in ipairs(players.list(false, true, true)) do
+            local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
             for i, hash in ipairs(all_weapons) do
                 local weapon_hash = util.joaat(hash)
                 if
-                    PLAYER.IS_PLAYER_FREE_AIMING(pid, ped, weapon_hash) and
-                        PLAYER.IS_PLAYER_TARGETTING_ENTITY(pid, ped, weapon_hash)
+                    PLAYER.IS_PLAYER_FREE_AIMING(csPID, ped, weapon_hash) and
+                        PLAYER.IS_PLAYER_TARGETTING_ENTITY(csPID, ped, weapon_hash)
                  then
-                    util.draw_debug_text(players.get_name(pid) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
-                    util.toast(players.get_name(pid) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
-                    util.log(players.get_name(pid) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
+                    util.draw_debug_text(players.get_name(csPID) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
+                    util.toast(players.get_name(csPID) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
+                    util.log(players.get_name(csPID) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
                 else
                     util.yield(100)
                 end
@@ -2466,20 +2466,20 @@ menu.toggle_loop(MenuDetections, "Aim Detection", {}, "Detects if someone is aim
 )
 
 menu.toggle_loop(MenuDetections, "Auto Snipe", {}, "Detects if someone is aiming a weapon at you, then shoots them back them.", function()
-        for _, pid in ipairs(players.list(false, true, true)) do
-            local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+        for _, csPID in ipairs(players.list(false, true, true)) do
+            local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
             for i, hash in ipairs(all_weapons) do
                 local weapon_hash = util.joaat(hash)
                 if
-                    PLAYER.IS_PLAYER_FREE_AIMING(pid, ped, weapon_hash) and
-                        PLAYER.IS_PLAYER_TARGETTING_ENTITY(pid, ped, weapon_hash)
+                    PLAYER.IS_PLAYER_FREE_AIMING(csPID, ped, weapon_hash) and
+                        PLAYER.IS_PLAYER_TARGETTING_ENTITY(csPID, ped, weapon_hash)
                  then
-                    menu.trigger_commands("osnipel" .. players.get_name(pid))
+                    menu.trigger_commands("osnipel" .. players.get_name(csPID))
                     util.yield(1000)
-                    menu.trigger_commands("osnipel" .. players.get_name(pid))
-                    util.draw_debug_text(players.get_name(pid) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
-                    util.toast(players.get_name(pid) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
-                    util.log(players.get_name(pid) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
+                    menu.trigger_commands("osnipel" .. players.get_name(csPID))
+                    util.draw_debug_text(players.get_name(csPID) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
+                    util.toast(players.get_name(csPID) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
+                    util.log(players.get_name(csPID) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
                 else
                     util.yield(100)
                 end
@@ -2489,20 +2489,20 @@ menu.toggle_loop(MenuDetections, "Auto Snipe", {}, "Detects if someone is aiming
 )
 
 menu.toggle_loop(MenuDetections, "Auto Firework", {}, "Detects if someone is aiming a weapon at you, then shoots fireworks at them.", function()
-        for _, pid in ipairs(players.list(false, true, true)) do
-            local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+        for _, csPID in ipairs(players.list(false, true, true)) do
+            local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
             for i, hash in ipairs(all_weapons) do
                 local weapon_hash = util.joaat(hash)
                 if
-                    PLAYER.IS_PLAYER_FREE_AIMING(pid, ped, weapon_hash) and
-                        PLAYER.IS_PLAYER_TARGETTING_ENTITY(pid, ped, weapon_hash)
+                    PLAYER.IS_PLAYER_FREE_AIMING(csPID, ped, weapon_hash) and
+                        PLAYER.IS_PLAYER_TARGETTING_ENTITY(csPID, ped, weapon_hash)
                  then
-                    menu.trigger_commands("fireworkon" .. players.get_name(pid))
+                    menu.trigger_commands("fireworkon" .. players.get_name(csPID))
                     util.yield(1000)
-                    menu.trigger_commands("fireworkon" .. players.get_name(pid))
-                    util.draw_debug_text(players.get_name(pid) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
-                    util.toast(players.get_name(pid) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
-                    util.log(players.get_name(pid) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
+                    menu.trigger_commands("fireworkon" .. players.get_name(csPID))
+                    util.draw_debug_text(players.get_name(csPID) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
+                    util.toast(players.get_name(csPID) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
+                    util.log(players.get_name(csPID) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
                 else
                     util.yield(100)
                 end
@@ -2512,17 +2512,17 @@ menu.toggle_loop(MenuDetections, "Auto Firework", {}, "Detects if someone is aim
 )
 
 menu.toggle_loop(MenuDetections, "Auto Atomizer", {}, "Detects if someone is aiming a weapon at you, then shoots atomizer at them.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
 for i, hash in ipairs(all_weapons) do
 local weapon_hash = util.joaat(hash)
-if PLAYER.IS_PLAYER_FREE_AIMING(pid, ped, weapon_hash) and PLAYER.IS_PLAYER_TARGETTING_ENTITY(pid, ped, weapon_hash) then
-menu.trigger_commands("atomizeron" .. players.get_name(pid))
+if PLAYER.IS_PLAYER_FREE_AIMING(csPID, ped, weapon_hash) and PLAYER.IS_PLAYER_TARGETTING_ENTITY(csPID, ped, weapon_hash) then
+menu.trigger_commands("atomizeron" .. players.get_name(csPID))
 util.yield(1000)
-Menu.trigger_commands("atomizeron" .. players.get_name(pid))
-util.draw_debug_text(players.get_name(pid) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
-util.toast(players.get_name(pid) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
-util.log(players.get_name(pid) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
+Menu.trigger_commands("atomizeron" .. players.get_name(csPID))
+util.draw_debug_text(players.get_name(csPID) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
+util.toast(players.get_name(csPID) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
+util.log(players.get_name(csPID) .. " Is Aiming A Weapon" .. "(" .. hash .. ")")
 else
 util.yield(100)
 end
@@ -2530,13 +2530,30 @@ end
 end
 end)
 
+menu.toggle_loop(
+    MenuModderDetections,
+    "Get IP's",
+    {},
+    "Log's IP's",
+    function()
+        for _, csPID in ipairs(players.list(false, true, true)) do
+            local print_ip = players.get_connect_ip(csPID)
+            if print_ip == util.joaat(print_ip) then
+                util.draw_debug_text(players.get_connect_ip(csPID) .. "(" .. print_ip .. ")")
+                util.log(players.get_name(csPID) .. "(" .. print_ip .. ")")
+            end
+        end
+    end
+)
+
+
 menu.toggle_loop(MenuModderDetections, "Godmode", {}, "Detects if someone is using godmode.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
 local pos = ENTITY.GET_ENTITY_COORDS(ped, false)
 for i, interior in ipairs(interior_stuff) do
-if (players.is_godmode(pid) or not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(ped)) and not NETWORK.NETWORK_IS_PLAYER_FADING(pid) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(pid) ~= 0 and get_interior_player_is_in(pid) == interior then
-util.draw_debug_text(players.get_name(pid) .. " Is In Godmode")
+if (players.is_godmode(csPID) or not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(ped)) and not NETWORK.NETWORK_IS_PLAYER_FADING(csPID) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(csPID) ~= 0 and get_interior_player_is_in(csPID) == interior then
+util.draw_debug_text(players.get_name(csPID) .. " Is In Godmode")
 break
 end
 end
@@ -2544,14 +2561,14 @@ end
 end)
 
 menu.toggle_loop(MenuModderDetections, "Godmode Auto Kick", {}, "Detects if someone is using godmode, blocks there joins and kicks them.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
 local pos = ENTITY.GET_ENTITY_COORDS(ped, false)
 for i, interior in ipairs(interior_stuff) do
-if (players.is_godmode(pid) or not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(ped)) and not NETWORK.NETWORK_IS_PLAYER_FADING(pid) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(pid) ~= 0 and get_interior_player_is_in(pid) == interior then
-menu.trigger_commands("Smart" .. players.get_name(pid))
-util.draw_debug_text(players.get_name(pid) .. " Is In Godmode")
-util.toast(players.get_name(pid) .. "Is In Godmode")
+if (players.is_godmode(csPID) or not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(ped)) and not NETWORK.NETWORK_IS_PLAYER_FADING(csPID) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(csPID) ~= 0 and get_interior_player_is_in(csPID) == interior then
+menu.trigger_commands("Smart" .. players.get_name(csPID))
+util.draw_debug_text(players.get_name(csPID) .. " Is In Godmode")
+util.toast(players.get_name(csPID) .. "Is In Godmode")
 break
 end
 end
@@ -2559,14 +2576,14 @@ end
 end)
 
 menu.toggle_loop(MenuModderDetections, "Vehicle Godmode", {}, "Detects if someone is using a vehicle that is in godmode.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
 local pos = ENTITY.GET_ENTITY_COORDS(ped, false)
 local player_veh = PED.GET_VEHICLE_PED_IS_USING(ped)
 if PED.IS_PED_IN_ANY_VEHICLE(ped, false) then
 for i, interior in ipairs(interior_stuff) do
-if not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(player_veh) and not NETWORK.NETWORK_IS_PLAYER_FADING(pid) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(pid) ~= 0 and get_interior_player_is_in(pid) == interior then
-util.draw_debug_text(players.get_name(pid) .. "  Is In Vehicle Godmode")
+if not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(player_veh) and not NETWORK.NETWORK_IS_PLAYER_FADING(csPID) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(csPID) ~= 0 and get_interior_player_is_in(csPID) == interior then
+util.draw_debug_text(players.get_name(csPID) .. "  Is In Vehicle Godmode")
 break
 end
 end
@@ -2575,16 +2592,16 @@ end
 end)
 
 menu.toggle_loop(MenuModderDetections, "Vehicle Godmode Auto Kick", {}, "Detects if someone is using a vehicle that is in godmode, blocks there joins and kicks them.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
 local pos = ENTITY.GET_ENTITY_COORDS(ped, false)
 local player_veh = PED.GET_VEHICLE_PED_IS_USING(ped)
 if PED.IS_PED_IN_ANY_VEHICLE(ped, false) then
 for i, interior in ipairs(interior_stuff) do
-if not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(player_veh) and not NETWORK.NETWORK_IS_PLAYER_FADING(pid) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(pid) ~= 0 and get_interior_player_is_in(pid) == interior then
-menu.trigger_commands("Smart" .. players.get_name(pid))
-util.draw_debug_text(players.get_name(pid) .. "Is In Vehicle Godmode")
-util.toast(players.get_name(pid) .. "Is In Vehicle Godmode")
+if not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(player_veh) and not NETWORK.NETWORK_IS_PLAYER_FADING(csPID) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(csPID) ~= 0 and get_interior_player_is_in(csPID) == interior then
+menu.trigger_commands("Smart" .. players.get_name(csPID))
+util.draw_debug_text(players.get_name(csPID) .. "Is In Vehicle Godmode")
+util.toast(players.get_name(csPID) .. "Is In Vehicle Godmode")
 break
 end
 end
@@ -2593,16 +2610,16 @@ end
 end)
 
 menu.toggle_loop(MenuModderDetections, "Vehicle Godmode Auto Slingshot", {}, "Detects if someone is using a vehicle that is in godmode, then slingshots there vehicle.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
 local pos = ENTITY.GET_ENTITY_COORDS(ped, false)
 local player_veh = PED.GET_VEHICLE_PED_IS_USING(ped)
 if PED.IS_PED_IN_ANY_VEHICLE(ped, false) then
 for i, interior in ipairs(interior_stuff) do
-if not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(player_veh) and not NETWORK.NETWORK_IS_PLAYER_FADING(pid) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(pid) ~= 0 and get_interior_player_is_in(pid) == interior then
-menu.trigger_commands("slingshot" .. players.get_name(pid))
-util.draw_debug_text(players.get_name(pid) .. "Is In Vehicle Godmode")
-util.toast(players.get_name(pid) .. "Is In Vehicle Godmode")
+if not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(player_veh) and not NETWORK.NETWORK_IS_PLAYER_FADING(csPID) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(csPID) ~= 0 and get_interior_player_is_in(csPID) == interior then
+menu.trigger_commands("slingshot" .. players.get_name(csPID))
+util.draw_debug_text(players.get_name(csPID) .. "Is In Vehicle Godmode")
+util.toast(players.get_name(csPID) .. "Is In Vehicle Godmode")
 break
 end
 end
@@ -2611,16 +2628,16 @@ end
 end)
 
 menu.toggle_loop(MenuModderDetections, "Vehicle Godmode Auto Kick Them Out", {}, "Detects if someone is using a vehicle that is in godmode, then kicks them out of the vehicle.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
 local pos = ENTITY.GET_ENTITY_COORDS(ped, false)
 local player_veh = PED.GET_VEHICLE_PED_IS_USING(ped)
 if PED.IS_PED_IN_ANY_VEHICLE(ped, false) then
 for i, interior in ipairs(interior_stuff) do
-if not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(player_veh) and not NETWORK.NETWORK_IS_PLAYER_FADING(pid) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(pid) ~= 0 and get_interior_player_is_in(pid) == interior then
-menu.trigger_commands("vehkick" .. players.get_name(pid))
-util.draw_debug_text(players.get_name(pid) .. "Is In Vehicle Godmode")
-util.toast(players.get_name(pid) .. "Is In Vehicle Godmode")
+if not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(player_veh) and not NETWORK.NETWORK_IS_PLAYER_FADING(csPID) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(csPID) ~= 0 and get_interior_player_is_in(csPID) == interior then
+menu.trigger_commands("vehkick" .. players.get_name(csPID))
+util.draw_debug_text(players.get_name(csPID) .. "Is In Vehicle Godmode")
+util.toast(players.get_name(csPID) .. "Is In Vehicle Godmode")
 break
 end
 end
@@ -2629,50 +2646,50 @@ end
 end)
 
 menu.toggle_loop(MenuModderDetections, "Unreleased Vehicle", {}, "Detects if someone is using a vehicle that has not been released yet.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local modelHash = players.get_vehicle_model(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local modelHash = players.get_vehicle_model(csPID)
 for i, name in ipairs(unreleased_vehicles) do
 if modelHash == util.joaat(name) then
-util.draw_debug_text(players.get_name(pid) .. " Is Driving An Unreleased Vehicle " .. "(" .. name .. ")")
+util.draw_debug_text(players.get_name(csPID) .. " Is Driving An Unreleased Vehicle " .. "(" .. name .. ")")
 end
 end
 end
 end)
 
 menu.toggle_loop(MenuModderDetections, "Unreleased Vehicle Auto Kick", {}, "Detects if someone is using a vehicle that has not been released yet, blocks there joins and Smart kicks them.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local modelHash = players.get_vehicle_model(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local modelHash = players.get_vehicle_model(csPID)
 for i, name in ipairs(unreleased_vehicles) do
 if modelHash == util.joaat(name) then
-menu.trigger_commands("Smart" .. players.get_name(pid))
-util.draw_debug_text(players.get_name(pid) .. " Is Driving An Unreleased Vehicle " .. "(" .. name .. ")")
-util.toast(players.get_name(pid) .. " Is Driving An Unreleased Vehicle" .. "(" .. name .. ")")
+menu.trigger_commands("Smart" .. players.get_name(csPID))
+util.draw_debug_text(players.get_name(csPID) .. " Is Driving An Unreleased Vehicle " .. "(" .. name .. ")")
+util.toast(players.get_name(csPID) .. " Is Driving An Unreleased Vehicle" .. "(" .. name .. ")")
 end
 end
 end
 end)
 
 menu.toggle_loop(MenuModderDetections, "Unreleased Car Auto Slingshot", {}, "Detects if someone is using a vehicle that has not been released yet, then slingshots there vehicle.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local modelHash = players.get_vehicle_model(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local modelHash = players.get_vehicle_model(csPID)
 for i, name in ipairs(unreleased_vehicles) do
 if modelHash == util.joaat(name) then
-menu.trigger_commands("slingshot" .. players.get_name(pid))
-util.draw_debug_text(players.get_name(pid) .. " Is Driving An Unreleased Vehicle " .. "(" .. name .. ")")
-util.toast(players.get_name(pid) .. " Is Driving An Unreleased Vehicle" .. "(" .. name .. ")")
+menu.trigger_commands("slingshot" .. players.get_name(csPID))
+util.draw_debug_text(players.get_name(csPID) .. " Is Driving An Unreleased Vehicle " .. "(" .. name .. ")")
+util.toast(players.get_name(csPID) .. " Is Driving An Unreleased Vehicle" .. "(" .. name .. ")")
 end
 end
 end
 end)
 
 menu.toggle_loop(MenuModderDetections, "Unreleased Car Auto Kick Them Out", {}, "Detects if someone is using a vehicle that has not been released yet, then Kicks them out.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local modelHash = players.get_vehicle_model(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local modelHash = players.get_vehicle_model(csPID)
 for i, name in ipairs(unreleased_vehicles) do
 if modelHash == util.joaat(name) then
-menu.trigger_commands("vehkick" .. players.get_name(pid))
-util.draw_debug_text(players.get_name(pid) .. " Is Driving An Unreleased Vehicle " .. "(" .. name .. ")")
-util.toast(players.get_name(pid) .. " Is Driving An Unreleased Vehicle" .. "(" .. name .. ")")
+menu.trigger_commands("vehkick" .. players.get_name(csPID))
+util.draw_debug_text(players.get_name(csPID) .. " Is Driving An Unreleased Vehicle " .. "(" .. name .. ")")
+util.toast(players.get_name(csPID) .. " Is Driving An Unreleased Vehicle" .. "(" .. name .. ")")
 end
 end
 end
@@ -2689,12 +2706,12 @@ end
 end)
 
 menu.toggle_loop(MenuModderDetections, "Modded Weapon", {}, "Detects if someone is using a weapon that can not be obtained in online.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
 for i, hash in ipairs(modded_weapons) do
 local weapon_hash = util.joaat(hash)
 if WEAPON.HAS_PED_GOT_WEAPON(ped, weapon_hash, false) and (WEAPON.IS_PED_ARMED(ped, 7) or TASK.GET_IS_TASK_ACTIVE(ped, 8) or TASK.GET_IS_TASK_ACTIVE(ped, 9)) then
-util.draw_debug_text(players.get_name(pid) .. " Is Using A Modded Weapon" .. "(" .. hash .. ")")
+util.draw_debug_text(players.get_name(csPID) .. " Is Using A Modded Weapon" .. "(" .. hash .. ")")
 break
 end
 end
@@ -2702,11 +2719,11 @@ end
 end)
 
 menu.toggle_loop(MenuModderDetections, "Modded Vehicle", {}, "Detects if someone is using a vehicle that can not be obtained in online.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local modelHash = players.get_vehicle_model(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local modelHash = players.get_vehicle_model(csPID)
 for i, name in ipairs(modded_vehicles) do
 if modelHash == util.joaat(name) then
-util.draw_debug_text(players.get_name(pid) .. " Is Driving A Modded Vehicle" .. "(" .. name .. ")")
+util.draw_debug_text(players.get_name(csPID) .. " Is Driving A Modded Vehicle" .. "(" .. name .. ")")
 break
 end
 end
@@ -2714,13 +2731,13 @@ end
 end)
 
 menu.toggle_loop(MenuModderDetections, "Modded Vehicle Auto Slingshot", {}, "Detects if someone is using a vehicle that can not be obtained in online, then slingshots vehicle.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local modelHash = players.get_vehicle_model(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local modelHash = players.get_vehicle_model(csPID)
 for i, name in ipairs(modded_vehicles) do
 if modelHash == util.joaat(name) then
-menu.trigger_commands("slingshot" .. players.get_name(pid))
-util.draw_debug_text(players.get_name(pid) .. " Is Driving A Modded Vehicle" .. "(" .. name .. ")")
-util.toast(players.get_name(pid) .. " Is Driving A Modded Vehicle" .. "(" .. name .. ")")
+menu.trigger_commands("slingshot" .. players.get_name(csPID))
+util.draw_debug_text(players.get_name(csPID) .. " Is Driving A Modded Vehicle" .. "(" .. name .. ")")
+util.toast(players.get_name(csPID) .. " Is Driving A Modded Vehicle" .. "(" .. name .. ")")
 break
 end
 end
@@ -2728,13 +2745,13 @@ end
 end)
 
 menu.toggle_loop(MenuModderDetections, "Modded Vehicle Auto Kick Them Out", {}, "Detects if someone is using a vehicle that can not be obtained in online, then kicks them out of the vehicle.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local modelHash = players.get_vehicle_model(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local modelHash = players.get_vehicle_model(csPID)
 for i, name in ipairs(modded_vehicles) do
 if modelHash == util.joaat(name) then
-menu.trigger_commands("vehkick" .. players.get_name(pid))
-util.draw_debug_text(players.get_name(pid) .. " Is Driving A Modded Vehicle" .. "(" .. name .. ")")
-util.toast(players.get_name(pid) .. " Is Driving A Modded Vehicle" .. "(" .. name .. ")")
+menu.trigger_commands("vehkick" .. players.get_name(csPID))
+util.draw_debug_text(players.get_name(csPID) .. " Is Driving A Modded Vehicle" .. "(" .. name .. ")")
+util.toast(players.get_name(csPID) .. " Is Driving A Modded Vehicle" .. "(" .. name .. ")")
 break
 end
 end
@@ -2742,43 +2759,43 @@ end
 end)
 
 menu.toggle_loop(MenuModderDetections, "Super Drive", {}, "Detects if the player is using super drive.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
 local vehicle = PED.GET_VEHICLE_PED_IS_USING(ped)
 local veh_speed = (ENTITY.GET_ENTITY_SPEED(vehicle)* 2.236936)
 local class = VEHICLE.GET_VEHICLE_CLASS(vehicle)
-if class ~= 15 and class ~= 16 and veh_speed >= 180 and VEHICLE.GET_PED_IN_VEHICLE_SEAT(vehicle, -1) and players.get_vehicle_model(pid) ~= util.joaat("oppressor") then -- not checking opressor mk1 cus its stinky
-util.draw_debug_text(players.get_name(pid) .. " Is Using Super Drive")
+if class ~= 15 and class ~= 16 and veh_speed >= 180 and VEHICLE.GET_PED_IN_VEHICLE_SEAT(vehicle, -1) and players.get_vehicle_model(csPID) ~= util.joaat("oppressor") then -- not checking opressor mk1 cus its stinky
+util.draw_debug_text(players.get_name(csPID) .. " Is Using Super Drive")
 break
 end
 end
 end)
 
 menu.toggle_loop(MenuModderDetections, "Super Drive Auto Slingshot", {}, "Detects if the player is using super drive, then slinghsots there vehicle.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
 local vehicle = PED.GET_VEHICLE_PED_IS_USING(ped)
 local veh_speed = (ENTITY.GET_ENTITY_SPEED(vehicle)* 2.236936)
 local class = VEHICLE.GET_VEHICLE_CLASS(vehicle)
-if class ~= 15 and class ~= 16 and veh_speed >= 180 and VEHICLE.GET_PED_IN_VEHICLE_SEAT(vehicle, -1) and players.get_vehicle_model(pid) ~= util.joaat("oppressor") then -- not checking opressor mk1 cus its stinky
-menu.trigger_commands("slingshot" .. players.get_name(pid))
-util.draw_debug_text(players.get_name(pid) .. " Is Using Super Drive")
-util.toast(players.get_name(pid) .. " Is Using Super Drive")
+if class ~= 15 and class ~= 16 and veh_speed >= 180 and VEHICLE.GET_PED_IN_VEHICLE_SEAT(vehicle, -1) and players.get_vehicle_model(csPID) ~= util.joaat("oppressor") then -- not checking opressor mk1 cus its stinky
+menu.trigger_commands("slingshot" .. players.get_name(csPID))
+util.draw_debug_text(players.get_name(csPID) .. " Is Using Super Drive")
+util.toast(players.get_name(csPID) .. " Is Using Super Drive")
 break
 end
 end
 end)
 
 menu.toggle_loop(MenuModderDetections, "Super Drive Auto Kick Them Out", {}, "Detects if the player is using super drive, then kicks them out of the vehicle.", function()
-for _, pid in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
+for _, csPID in ipairs(players.list(false, true, true)) do
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
 local vehicle = PED.GET_VEHICLE_PED_IS_USING(ped)
 local veh_speed = (ENTITY.GET_ENTITY_SPEED(vehicle)* 2.236936)
 local class = VEHICLE.GET_VEHICLE_CLASS(vehicle)
-if class ~= 15 and class ~= 16 and veh_speed >= 180 and VEHICLE.GET_PED_IN_VEHICLE_SEAT(vehicle, -1) and players.get_vehicle_model(pid) ~= util.joaat("oppressor") then -- not checking opressor mk1 cus its stinky
-menu.trigger_commands("vehkick" .. players.get_name(pid))
-util.draw_debug_text(players.get_name(pid) .. " Is Using Super Drive")
-util.toast(players.get_name(pid) .. " Is Using Super Drive")
+if class ~= 15 and class ~= 16 and veh_speed >= 180 and VEHICLE.GET_PED_IN_VEHICLE_SEAT(vehicle, -1) and players.get_vehicle_model(csPID) ~= util.joaat("oppressor") then -- not checking opressor mk1 cus its stinky
+menu.trigger_commands("vehkick" .. players.get_name(csPID))
+util.draw_debug_text(players.get_name(csPID) .. " Is Using Super Drive")
+util.toast(players.get_name(csPID) .. " Is Using Super Drive")
 break
 end
 end
@@ -2831,34 +2848,6 @@ menu.trigger_command(Clear_Minimap_Notifs)
 util.yield(1000)
 end)
 
-menu.toggle_loop(MenuNetwork, "Accept Joins & Transaction Errors!", {"accepterrors"}, "Automatically accept join screens and transaction errors.", function()
-local mess_hash = HUD.GET_WARNING_SCREEN_MESSAGE_HASH()
-if mess_hash == -896436592 then
-util.toast("This player left the session.")
-PAD.SET_CONTROL_VALUE_NEXT_FRAME(2, 201, 1)
-elseif mess_hash == 1575023314 then
-util.toast("Session timeout.")
-PAD.SET_CONTROL_VALUE_NEXT_FRAME(2, 201, 1)
-elseif mess_hash == 1446064540 then
-util.toast("You are already in the session.")
-PAD.SET_CONTROL_VALUE_NEXT_FRAME(2, 201, 1)
---                  transaction error              join session             join session            leave session             leave online
-elseif mess_hash == -991495373 or mess_hash == -587688989 or mess_hash == 15890625 or mess_hash == 99184332 or mess_hash == 1246147334 then
-PAD.SET_CONTROL_VALUE_NEXT_FRAME(2, 201, 1)
-elseif mess_hash ~= 0 then
-util.toast(mess_hash, TOAST_CONSOLE)
-end
-util.yield()
-end)
-
-menu.toggle_loop(MenuNetwork, "Accept Joins", {"autojoin"}, "Automatically accept join screens reliably.", function()
-local message_hash = HUD.GET_WARNING_SCREEN_MESSAGE_HASH()
-if message_hash == 15890625 or message_hash == -398982408 or message_hash == -587688989 then
-PAD.SET_CONTROL_VALUE_NEXT_FRAME(2, 201, 1.0)
-util.yield(200)
-end
-end, true)
-
 menu.action(MenuOnlineAll, "Nuke Kick", {"nuke"}, "Blocks the player join reaction then uses kick.", function()
     for i = 0, 31, 1 do
         if players.exists(i) and i ~= players.user() then
@@ -2877,96 +2866,6 @@ menu.action(MenuOnlineAll, "Bonk Kick", {"bonk"}, "Contains 6 SE kicks.", functi
             menu.trigger_command(menu.ref_by_command_name("bonk"..PlayerNameLower))
         end
     end
-end)
-
-menu.toggle_loop(MenuOnlineTK, "SE Kick (S0)", {"sekicks0"}, "Script event kick, Works nicely on regular players, most likely won't work on other menu's.", function()
-local int_min = -2147483647
-local int_max = 2147483647
-for i = 1, 15 do
-send_script_event(se.sekicks0, pid, {8, 5, -995382610, -1005524293, 1105725452, -995382610, -1005524293, 1105725452, -995350040, -1003336651, 1102848299, 0, 0, 0, 0, 0, 0, 5, 1110704128, 1110704128, 0, 0, 0, 5, 131071, 131071, 131071, 0, 0, 5, 0, 0, 0, 0, 0, 1965090280, -1082130432, 0, 0, math.random(int_min, int_max), math.random(int_min, int_max),
-math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max),
-math.random(int_min, int_max), pid, math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max)})
-send_script_event(se.sekicks0, pid, {8, 5, -995382610, -1005524293, 1105725452, -995382610, -1005524293, 1105725452, -995350040, -1003336651, 1102848299, 0, 0, 0, 0, 0, 0, 5, 1110704128, 1110704128, 0, 0, 0, 5, 131071, 131071, 131071, 0, 0, 5, 0, 0, 0, 0, 0, 1965090280, -1082130432, 0, 0})
-end
-menu.trigger_commands("givesh" .. players.get_name(pid))
-util.yield()
-for i = 1, 15 do
-send_script_event(se.sekicks0, pid, {8, 5, -995382610, -1005524293, 1105725452, -995382610, -1005524293, 1105725452, -995350040, -1003336651, 1102848299, 0, 0, 0, 0, 0, 0, 5, 1110704128, 1110704128, 0, 0, 0, 5, 131071, 131071, 131071, 0, 0, 5, 0, 0, 0, 0, 0, 1965090280, -1082130432, 0, 0, pid, math.random(int_min, int_max)})
-send_script_event(se.sekicks0, pid, {8, 5, -995382610, -1005524293, 1105725452, -995382610, -1005524293, 1105725452, -995350040, -1003336651, 1102848299, 0, 0, 0, 0, 0, 0, 5, 1110704128, 1110704128, 0, 0, 0, 5, 131071, 131071, 131071, 0, 0, 5, 0, 0, 0, 0, 0, 1965090280, -1082130432, 0, 0})
-util.yield(100)
-end
-end)
-
-menu.toggle_loop(MenuOnlineTK, "SE Kick (S1)", {"sekicks1"}, "Script event kick, Works nicely on regular players, most likely won't work on other menu's.", function()
-local int_min = -2147483647
-local int_max = 2147483647
-for i = 1, 15 do
-send_script_event(se.sekicks1, pid, {6, 0, math.random(int_min, int_max), math.random(int_min, int_max),
-math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max),
-math.random(int_min, int_max), pid, math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max)})
-send_script_event(se.sekicks1, pid, {6, 0})
-end
-menu.trigger_commands("givesh" .. players.get_name(pid))
-util.yield()
-for i = 1, 15 do
-send_script_event(se.sekicks1, pid, {6, 0, pid, math.random(int_min, int_max)})
-send_script_event(se.sekicks1, pid, {6, 0})
-util.yield(100)
-end
-end)
-
-menu.toggle_loop(MenuOnlineTK, "SE Kick (S3)", {"sekicks3"}, "Script event kick, Works nicely on regular players, most likely won't work on other menu's.", function()
-local int_min = -2147483647
-local int_max = 2147483647
-for i = 1, 15 do
-send_script_event(se.sekicks3, pid, {12, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, math.random(int_min, int_max), math.random(int_min, int_max),
-math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max),
-math.random(int_min, int_max), pid, math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max)})
-send_script_event(se.sekicks3, pid, {12, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
-end
-menu.trigger_commands("givesh" .. players.get_name(pid))
-util.yield()
-for i = 1, 15 do
-send_script_event(se.sekicks3, pid, {12, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, pid, math.random(int_min, int_max)}) -- S3 Credits to legy
-send_script_event(se.sekicks3_1, pid, {27, 0}) -- S1 Credits to legy
-util.yield(100)
-end
-end)
-
-menu.toggle_loop(MenuOnlineTK, "SE Kick (S4)", {"sekicks4"}, "Script event kick, Works nicely on regular players, most likely won't work on other menu's.", function()
-local int_min = -2147483647
-local int_max = 2147483647
-for i = 1, 15 do
-send_script_event(se.sekicks4, pid, {6, 0, 0, 0, 1, math.random(int_min, int_max), math.random(int_min, int_max),
-math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max),
-math.random(int_min, int_max), pid, math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max)})
-send_script_event(se.sekicks4, pid, {6, 0, 0, 0, 1})
-end
-menu.trigger_commands("givesh" .. players.get_name(pid))
-util.yield()
-for i = 1, 15 do
-send_script_event(se.sekicks4, pid, {6, 0, 0, 0, 1, pid, math.random(int_min, int_max)}) -- S3 Credits to legy
-send_script_event(se.sekicks4, pid, {6, 0, 0, 0, 1})
-util.yield(100)
-end
-end)
-
-menu.toggle_loop(MenuOnlineTK, "SE Kick (S7)", {"sekicks7"}, "Script event kick, Works nicely on regular players, most likely won't work on other menu's.", function()
-local int_min = -2147483647
-local int_max = 2147483647
-for i = 1, 15 do
-send_script_event(se.sekicks7, pid, {6, 536247389, -1910234257, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, math.random(int_min, int_max), math.random(int_min, int_max),
-math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max),
-math.random(int_min, int_max), pid, math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max)})
-send_script_event(se.sekicks7, pid, {6, 536247389, -1910234257, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1})
-end
-menu.trigger_commands("givesh" .. players.get_name(pid))
-util.yield()
-for i = 1, 15 do
-send_script_event(se.sekicks7, pid, {6, 536247389, -1910234257, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, pid, math.random(int_min, int_max)}) -- S3 Credits to legy
-send_script_event(se.sekicks7, pid, {6, 536247389, -1910234257, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1})
-util.yield(100)
-end
 end)
 
 menu.toggle(MenuNetwork, "Rig Casino", {"rigcasino"}, "Teleports them to casino then turns on the tables. It will spawn you to the table if you select it for yourself.", function(on_toggle)
@@ -3950,6 +3849,97 @@ menu.action(MenuOnlineTK, "Kick Modders", {"gskickmodders"}, "Will use Smart Kic
         end
     end  
 end)
+
+menu.toggle_loop(MenuOnlineTK, "SE Kick (S0)", {"sekicks0"}, "doesn't work but is here to allow bonk kick to function properly.", function()
+local int_min = -2147483647
+local int_max = 2147483647
+for i = 1, 15 do
+send_script_event(se.sekicks0, csPID, {8, 5, -995382610, -1005524293, 1105725452, -995382610, -1005524293, 1105725452, -995350040, -1003336651, 1102848299, 0, 0, 0, 0, 0, 0, 5, 1110704128, 1110704128, 0, 0, 0, 5, 131071, 131071, 131071, 0, 0, 5, 0, 0, 0, 0, 0, 1965090280, -1082130432, 0, 0, math.random(int_min, int_max), math.random(int_min, int_max),
+math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max),
+math.random(int_min, int_max), csPID, math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max)})
+send_script_event(se.sekicks0, csPID, {8, 5, -995382610, -1005524293, 1105725452, -995382610, -1005524293, 1105725452, -995350040, -1003336651, 1102848299, 0, 0, 0, 0, 0, 0, 5, 1110704128, 1110704128, 0, 0, 0, 5, 131071, 131071, 131071, 0, 0, 5, 0, 0, 0, 0, 0, 1965090280, -1082130432, 0, 0})
+end
+menu.trigger_commands("givesh" .. players.get_name(csPID))
+util.yield()
+for i = 1, 15 do
+send_script_event(se.sekicks0, csPID, {8, 5, -995382610, -1005524293, 1105725452, -995382610, -1005524293, 1105725452, -995350040, -1003336651, 1102848299, 0, 0, 0, 0, 0, 0, 5, 1110704128, 1110704128, 0, 0, 0, 5, 131071, 131071, 131071, 0, 0, 5, 0, 0, 0, 0, 0, 1965090280, -1082130432, 0, 0, csPID, math.random(int_min, int_max)})
+send_script_event(se.sekicks0, csPID, {8, 5, -995382610, -1005524293, 1105725452, -995382610, -1005524293, 1105725452, -995350040, -1003336651, 1102848299, 0, 0, 0, 0, 0, 0, 5, 1110704128, 1110704128, 0, 0, 0, 5, 131071, 131071, 131071, 0, 0, 5, 0, 0, 0, 0, 0, 1965090280, -1082130432, 0, 0})
+util.yield(100)
+end
+end)
+
+menu.toggle_loop(MenuOnlineTK, "SE Kick (S1)", {"sekicks1"}, "doesn't work but is here to allow bonk kick to function properly.", function()
+local int_min = -2147483647
+local int_max = 2147483647
+for i = 1, 15 do
+send_script_event(se.sekicks1, pid, {6, 0, math.random(int_min, int_max), math.random(int_min, int_max),
+math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max),
+math.random(int_min, int_max), pid, math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max)})
+send_script_event(se.sekicks1, pid, {6, 0})
+end
+menu.trigger_commands("givesh" .. players.get_name(pid))
+util.yield()
+for i = 1, 15 do
+send_script_event(se.sekicks1, pid, {6, 0, pid, math.random(int_min, int_max)})
+send_script_event(se.sekicks1, pid, {6, 0})
+util.yield(100)
+end
+end)
+
+menu.toggle_loop(MenuOnlineTK, "SE Kick (S3)", {"sekicks3"}, "doesn't work but is here to allow bonk kick to function properly.", function()
+local int_min = -2147483647
+local int_max = 2147483647
+for i = 1, 15 do
+send_script_event(se.sekicks3, pid, {12, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, math.random(int_min, int_max), math.random(int_min, int_max),
+math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max),
+math.random(int_min, int_max), pid, math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max)})
+send_script_event(se.sekicks3, pid, {12, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0})
+end
+menu.trigger_commands("givesh" .. players.get_name(pid))
+util.yield()
+for i = 1, 15 do
+send_script_event(se.sekicks3, pid, {12, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, pid, math.random(int_min, int_max)}) -- S3 Credits to legy
+send_script_event(se.sekicks3_1, pid, {27, 0}) -- S1 Credits to legy
+util.yield(100)
+end
+end)
+
+menu.toggle_loop(MenuOnlineTK, "SE Kick (S4)", {"sekicks4"}, "doesn't work but is here to allow bonk kick to function properly.", function()
+local int_min = -2147483647
+local int_max = 2147483647
+for i = 1, 15 do
+send_script_event(se.sekicks4, pid, {6, 0, 0, 0, 1, math.random(int_min, int_max), math.random(int_min, int_max),
+math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max),
+math.random(int_min, int_max), pid, math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max)})
+send_script_event(se.sekicks4, pid, {6, 0, 0, 0, 1})
+end
+menu.trigger_commands("givesh" .. players.get_name(pid))
+util.yield()
+for i = 1, 15 do
+send_script_event(se.sekicks4, pid, {6, 0, 0, 0, 1, pid, math.random(int_min, int_max)}) -- S3 Credits to legy
+send_script_event(se.sekicks4, pid, {6, 0, 0, 0, 1})
+util.yield(100)
+end
+end)
+
+menu.toggle_loop(MenuOnlineTK, "SE Kick (S7)", {"sekicks7"}, "doesn't work but is here to allow bonk kick to function properly.", function()
+local int_min = -2147483647
+local int_max = 2147483647
+for i = 1, 15 do
+send_script_event(se.sekicks7, pid, {6, 536247389, -1910234257, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, math.random(int_min, int_max), math.random(int_min, int_max),
+math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max),
+math.random(int_min, int_max), pid, math.random(int_min, int_max), math.random(int_min, int_max), math.random(int_min, int_max)})
+send_script_event(se.sekicks7, pid, {6, 536247389, -1910234257, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1})
+end
+menu.trigger_commands("givesh" .. players.get_name(pid))
+util.yield()
+for i = 1, 15 do
+send_script_event(se.sekicks7, pid, {6, 536247389, -1910234257, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, pid, math.random(int_min, int_max)}) -- S3 Credits to legy
+send_script_event(se.sekicks7, pid, {6, 536247389, -1910234257, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1})
+util.yield(100)
+end
+end)
+
 
 
 
