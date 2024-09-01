@@ -852,6 +852,10 @@ MenuMisc = menu.list(menu.my_root(), "Genesis", {""}, "Genesis Options.") ; menu
 
 
 
+    --[[Session Menu]]--
+
+
+
 
 --[[ ||| THREADS ||| ]]--
 
@@ -4740,7 +4744,8 @@ function PlayerAddRoot(csPID)
     MenuPlayerTeleport = menu.list(MenuPlayerRoot, "Teleport", {"gsteleport"}, "Genesis Teleport Options For The Selected Player.") ; menu.divider(MenuPlayerTeleport, "Player Teleport Options")
     MenuPlayerFriendly = menu.list(MenuPlayerRoot, "Friendly", {"gsplayerfriendly"}, "Genesis Friendly Options for the Selected Player.") ; menu.divider(MenuPlayerFriendly, "Player Friendly Options") 
     MenuPlayerFun = menu.list(MenuPlayerRoot, "Fun", {"gsplayerfun"}, "Genesis Fun Options for the Selected Player.") ; menu.divider(MenuPlayerFun, "Player Fun Options")    
-    MenuPlayerTrolling = menu.list(MenuPlayerRoot, "Trolling", {"gsplayertrolling"}, "Genesis Trolling Options for the Selected Player.") ; menu.divider(MenuPlayerTrolling, "Player Trolling Options")  
+    MenuPlayerTrolling = menu.list(MenuPlayerRoot, "Trolling", {"gsplayertrolling"}, "Genesis Trolling Options for the Selected Player.") ; menu.divider(MenuPlayerTrolling, "Player Trolling Options") 
+    MenuPlayerVehicle = menu.list(MenuPlayerRoot, "Vehicle", {"gsplayervehicle"}, "Genesis Vehicle Options for the Selected Player.") ; menu.divider(MenuPlayerVehicle, "Player Vehicle Options")
         MenuPlayerTrollingSpawn = menu.list(MenuPlayerTrolling, "Spawn Options", {"gstrolling"}, "Trolling Options that Involve Spawning things.") ; menu.divider(MenuPlayerTrollingSpawn, "Trolling Spawn Options")  
         MenuPlayerTrollingCage = menu.list(MenuPlayerTrolling, "Cage Options", {"gsplayertrollingcage"}, "Different Types of Cages to put this Player in.") ; menu.divider(MenuPlayerTrollingCage, "Trolling Cage Options")
         MenuPlayerTrollingFreeze = menu.list(MenuPlayerTrolling, "Freeze Options", {"gsplayertrollingfreeze"}, "Freeze Options for this Player.") ; menu.divider(MenuPlayerTrollingFreeze, "Trolling Freeze Options")
@@ -5040,6 +5045,462 @@ menu.action(
         util.yield(3000)
         entities.delete_by_handle(spawnedTruck)
     end)
+
+        --Player Root Vehicle
+
+local function spawn_object_in_front_of_ped(ped, hash, ang, room, zoff, setonground)
+coords = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, room, zoff)
+request_model_load(hash)
+hdng = ENTITY.GET_ENTITY_HEADING(ped)
+new = OBJECT.CREATE_OBJECT_NO_OFFSET(hash, coords['x'], coords['y'], coords['z'], true, false, false)
+ENTITY.SET_ENTITY_HEADING(new, hdng+ang)
+if setonground then
+OBJECT.PLACE_OBJECT_ON_GROUND_PROPERLY(new)
+end
+return new
+end
+
+read_global = {
+byte = function(global)
+local address = memory.script_global(global)
+return memory.read_byte(address)
+end,
+int = function(global)
+local address = memory.script_global(global)
+return memory.read_int(address)
+end,
+float = function(global)
+local address = memory.script_global(global)
+return memory.read_float(address)
+end,
+string = function(global)
+local address = memory.script_global(global)
+return memory.read_string(address)
+end
+}
+
+function get_random_ped()
+peds = entities.get_all_peds_as_handles()
+npcs = {}
+valid = 0
+for k,p in pairs(peds) do
+if p ~= nil and not is_ped_player(p) then
+table.insert(npcs, p)
+valid = valid + 1
+end
+end
+return npcs[math.random(valid)]
+end
+
+function DELETE(ent)
+ENTITY.SET_ENTITY_AS_MISSION_ENTITY(ent, true, true)
+entities.delete_by_handle(ent)
+end
+
+
+
+vehicle_kicks = menu.list(MenuPlayerVehicle, "Vehicle Kicks", {"vehiclekicks"}, "", function(); end)
+troll_sub_vehicle_tab = menu.list(MenuPlayerVehicle, "Trolling Options", {}, "", function(); end)
+health_sub_vehicle_tab = menu.list(MenuPlayerVehicle, "Health and Appearance Options", {}, "", function(); end)
+givevehicle = menu.list(MenuPlayerVehicle, "Give Player A Vehicle", {}, "", function(); end)
+
+menu.action(givevehicle, "Give A MK2", {"givemk2"}, "", function()
+menu.show_command_box("as " .. PLAYER.GET_PLAYER_NAME(csPID) .. " oppressor2")
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+menu.action(givevehicle, "Give A Deluxo", {"givedeluxo"}, "", function()
+menu.show_command_box("as " .. PLAYER.GET_PLAYER_NAME(csPID) .. " deluxo")
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+menu.action(givevehicle, "Give A Festival Bus", {"givefestivalbus"}, "", function()
+menu.show_command_box("as " .. PLAYER.GET_PLAYER_NAME(csPID) .. " pbus2")
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+menu.action(givevehicle, "Give A Forklift", {"giveforklift"}, "", function()
+menu.show_command_box("as " .. PLAYER.GET_PLAYER_NAME(csPID) .. " forklift")
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+menu.action(givevehicle, "Give A Khanjali", {"givekhanjali"}, "", function()
+menu.show_command_box("as " .. PLAYER.GET_PLAYER_NAME(csPID) .. " khanjali")
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+menu.action(givevehicle, "Give A Future Shock Sasquatch", {"givesasquatch"}, "", function()
+menu.show_command_box("as " .. PLAYER.GET_PLAYER_NAME(csPID) .. " monster4")
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+menu.action(givevehicle, "Give A Future Shock Scarab", {"givescarab"}, "", function()
+menu.show_command_box("as " .. PLAYER.GET_PLAYER_NAME(csPID) .. " scarab2")
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+menu.action(givevehicle, "Give Aqua Blazer", {"giveblazer"}, "", function()
+menu.show_command_box("as " .. PLAYER.GET_PLAYER_NAME(csPID) .. " blazer5")
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+menu.action(givevehicle, "Give A Lazer", {"givelazer"}, "", function()
+menu.show_command_box("as " .. PLAYER.GET_PLAYER_NAME(csPID) .. " lazer")
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+menu.action(givevehicle, "Give A Hydra", {"givehydra"}, "", function()
+menu.show_command_box("as " .. PLAYER.GET_PLAYER_NAME(csPID) .. " hydra")
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+menu.action(givevehicle, "Give A Starling", {"givestarling"}, "", function()
+menu.show_command_box("as " .. PLAYER.GET_PLAYER_NAME(csPID) .. " starling")
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+menu.action(givevehicle, "Give A Pyro", {"givepyro"}, "", function()
+menu.show_command_box("as " .. PLAYER.GET_PLAYER_NAME(csPID) .. " pyro")
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+
+menu.action(health_sub_vehicle_tab,"Repair Vehicle", {"fixveh"}, "Repairs player's vehicle", function()
+for k, veh in pairs(entities.get_all_vehicles_as_handles()) do
+NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(veh)
+VEHICLE.SET_VEHICLE_FIXED(veh)
+end
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+menu.action(health_sub_vehicle_tab,"Repair Vehicle Shell", {"repair"}, "Repairs player's vehicle but don't repair it's engine", function()
+for k, veh in pairs(entities.get_all_vehicles_as_handles()) do
+NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(veh)
+VEHICLE.SET_VEHICLE_DEFORMATION_FIXED(veh)
+end
+end, nil, nil, COMMANDPERM_FRIENDLY)
+
+
+
+menu.action(troll_sub_vehicle_tab, "Ramp Buggy fuck", {"rampbuggyram"}, "Sends 10 per loop.", function()
+local id = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+local vehicle_req = util.joaat("dune5")
+util.request_model(vehicle_req)
+for i = 1, 10 do
+local vehicle = entities.create_vehicle(vehicle_req, ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(PLAYER.GET_PLAYER_PED(csPID), 0, 1, 1), ENTITY.GET_ENTITY_HEADING(id))
+ENTITY.SET_ENTITY_AS_MISSION_ENTITY(vehicle, true, true)
+ENTITY.APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(vehicle, 1, 0.0, 10000.0, 0.0, 0.0, 0.0, 0.0, false, true, true, false, true)
+util.yield(500)
+entities.delete_by_handle(vehicle)
+end
+end)
+
+menu.action(troll_sub_vehicle_tab, "Phantom fuck", {"phantomram"}, "Sends 10 per loop.", function()
+local id = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+local vehicle_req = util.joaat("phantom2")
+util.request_model(vehicle_req)
+for i = 1, 10 do
+local vehicle = entities.create_vehicle(vehicle_req, ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(PLAYER.GET_PLAYER_PED(csPID), 0, 1, 1), ENTITY.GET_ENTITY_HEADING(id))
+ENTITY.SET_ENTITY_AS_MISSION_ENTITY(vehicle, true, true)
+ENTITY.APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(vehicle, 1, 0.0, 10000.0, 0.0, 0.0, 0.0, 0.0, false, true, true, false, true)
+util.yield(500)
+entities.delete_by_handle(vehicle)
+end
+end)
+
+menu.action(troll_sub_vehicle_tab,"Honk Car", {"honkcar"}, "Honks.", function(on)
+for k, veh in pairs(entities.get_all_vehicles_as_handles()) do
+NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(veh)
+VEHICLE.START_VEHICLE_HORN(veh, 200, util.joaat("HELDDOWN"), true)
+end
+end)
+
+menu.action(troll_sub_vehicle_tab, "Sound Car Alarm", {"soundalarm"}, "", function()
+for k, veh in pairs(entities.get_all_vehicles_as_handles()) do
+NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(veh)
+VEHICLE.SET_VEHICLE_ALARM(veh, true)
+VEHICLE.START_VEHICLE_ALARM(veh)
+end
+end, nil, nil, COMMANDPERM_AGGRESSIVE)
+
+menu.action(troll_sub_vehicle_tab, "Car Ram", {"ram"}, "Don't drink and drive, folks", function()
+menu.trigger_commands("spectate" .. PLAYER.GET_PLAYER_NAME(csPID) .. " on")
+util.yield(1500)
+local hash = util.joaat("baller")
+local PlayerCoords = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID), true)
+if STREAMING.IS_MODEL_A_VEHICLE(hash) then
+STREAMING.REQUEST_MODEL(hash)
+while not STREAMING.HAS_MODEL_LOADED(hash) do
+util.yield()
+end
+local Coords1 = PlayerCoords.y + 10
+local Coords2 = PlayerCoords.y - 10
+local veh1 = VEHICLE.CREATE_VEHICLE(hash, PlayerCoords.x, Coords1, PlayerCoords.z, 180, true, false, true)
+local veh2 = VEHICLE.CREATE_VEHICLE(hash, PlayerCoords.x, Coords2, PlayerCoords.z, 0, true, false, true)
+ENTITY.SET_ENTITY_VELOCITY(veh1, 0, -100, 0)
+ENTITY.SET_ENTITY_VELOCITY(veh2, 0, 100, 0)
+end
+util.yield(5000)
+menu.trigger_commands("spectate" .. PLAYER.GET_PLAYER_NAME(csPID) .. " off")
+end)
+
+
+local plates = menu.list(troll_sub_vehicle_tab, "Fuck Plates", {}, "")
+
+menu.action(plates,"Genesis Plate Text", {"Genesisplate"}, "Genesisplate", function()
+for k, veh in pairs(entities.get_all_vehicles_as_handles()) do
+NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(veh)
+VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(veh, "Genesis")
+end
+end, nil, nil, COMMANDPERM_AGGRESSIVE)
+
+menu.action(plates,"TRUMP Plate Text", {"trumpplate"}, "Sets player's vehicle plate text to TRUMP", function()
+for k, veh in pairs(entities.get_all_vehicles_as_handles()) do
+NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(veh)
+VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(veh, "TRUMP")
+end
+end, nil, nil, COMMANDPERM_AGGRESSIVE)
+
+menu.action(plates,"TRASH Plate Text", {"trashplate"}, "Sets player's vehicle plate text to TRASH", function()
+for k, veh in pairs(entities.get_all_vehicles_as_handles()) do
+NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(veh)
+VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(veh, "TRASH")
+end
+end, nil, nil, COMMANDPERM_AGGRESSIVE)
+
+menu.action(plates,"Bitch Plate Text", {"bitchplate"}, "Sets player's vehicle plate text to Bitch", function()
+for k, veh in pairs(entities.get_all_vehicles_as_handles()) do
+NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(veh)
+VEHICLE.SET_VEHICLE_NUMBER_PLATE_TEXT(veh, "Bitch")
+end
+end, nil, nil, COMMANDPERM_AGGRESSIVE)
+
+menu.toggle_loop(troll_sub_vehicle_tab,"Fuck up all cars", {"fuckupcars"}, "Beats the SHIT out of all nearby cars. But this damage is only local.", function(on)
+for k, veh in pairs(entities.get_all_vehicles_as_handles()) do
+local locspeed2 = speed
+local holecoords = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID), true)
+NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(veh)
+ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(bh_target), true)
+vcoords = ENTITY.GET_ENTITY_COORDS(veh, true)
+VEHICLE.SET_VEHICLE_DAMAGE(veh, math.random(-5.0, 5.0), math.random(-5.0, 5.0), math.random(-5.0,5.0), 200.0, 10000.0, true)
+if not dont_stop and not PAD.IS_CONTROL_PRESSED(2, 71) and not PAD.IS_CONTROL_PRESSED(2, 72) then
+VEHICLE.SET_VEHICLE_FORWARD_SPEED(veh, 0.0);
+end
+end
+end)
+
+menu.toggle_loop(troll_sub_vehicle_tab,"Honk all cars", {"honkcars"}, "Honkss the SHIT out of all nearby cars.", function(on)
+for k, veh in pairs(entities.get_all_vehicles_as_handles()) do
+local locspeed2 = speed
+local holecoords = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID), true)
+NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(veh)
+ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(bh_target), true)
+vcoords = ENTITY.GET_ENTITY_COORDS(veh, true)
+VEHICLE.START_VEHICLE_HORN(veh, 200, util.joaat("HELDDOWN"), true)
+if not dont_stop and not PAD.IS_CONTROL_PRESSED(2, 71) and not PAD.IS_CONTROL_PRESSED(2, 72) then
+VEHICLE.SET_VEHICLE_FORWARD_SPEED(veh, 0.0);
+end
+end
+end)
+
+menu.toggle_loop(troll_sub_vehicle_tab,"Blow up all cars", {"blowupcars"}, "Blows the SHIT out of all nearby cars.", function(on)
+for k, veh in pairs(entities.get_all_vehicles_as_handles()) do
+local PedInSeat = VEHICLE.GET_PED_IN_VEHICLE_SEAT(veh, -1, false)
+local locspeed2 = speed
+local holecoords = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID), true)
+if not PED.IS_PED_A_PLAYER(PedInSeat) then
+NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(veh)
+ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(bh_target), true)
+vcoords = ENTITY.GET_ENTITY_COORDS(veh, true)
+FIRE.ADD_EXPLOSION(vcoords['x'], vcoords['y'], vcoords['z'], 7, 100.0, true, false, 1.0)
+if not dont_stop and not PAD.IS_CONTROL_PRESSED(2, 71) and not PAD.IS_CONTROL_PRESSED(2, 72) then
+    VEHICLE.SET_VEHICLE_FORWARD_SPEED(veh, 0.0);
+end
+end
+end
+end)
+
+menu.toggle(troll_sub_vehicle_tab, "Stealth Remote Control", {"stealthremote"}, "Enters there vehicle without them knowing and exits the same way. Note: It will disable them using that car until spawned again.", function(on_toggle)
+if on_toggle then
+menu.trigger_commands("tpmyspot")
+menu.trigger_commands("invisibility" .. " On")
+menu.trigger_commands("otr")
+menu.trigger_commands("tpveh" .. players.get_name(csPID))
+menu.trigger_commands("rc" .. " On")
+else
+menu.trigger_commands("otr")
+menu.trigger_commands("rc" .. " Off")
+menu.trigger_commands("undoteleport")
+menu.trigger_commands("invisibility" .. " Off")
+end
+end)
+
+menu.toggle_loop(troll_sub_vehicle_tab, "Glitch Vehicle V1", {"glitchvehv1"}, "", function()
+local player = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+local playerpos = ENTITY.GET_ENTITY_COORDS(player, false)
+local glitch_hash = util.joaat("p_spinning_anus_s")
+STREAMING.REQUEST_MODEL(glitch_hash)
+while not STREAMING.HAS_MODEL_LOADED(glitch_hash) do
+util.yield()
+end
+if not PED.IS_PED_IN_VEHICLE(player, PED.GET_VEHICLE_PED_IS_IN(player), false) then
+util.toast("Player isn't in a vehicle. :/")
+return
+end
+glitched_object = entities.create_object(glitch_hash, playerpos)
+ENTITY.SET_ENTITY_VISIBLE(glitched_object, false)
+ENTITY.SET_ENTITY_INVINCIBLE(glitched_object, true)
+ENTITY.SET_ENTITY_COLLISION(glitched_object, true, true)
+util.yield(100)
+entities.delete_by_handle(glitched_object)
+util.yield()
+end)
+
+
+menu.toggle_loop(troll_sub_vehicle_tab,"Glitch Vehicle V2", {"glitchvehv2"}, "Spins them around",function()
+for k, veh in pairs(entities.get_all_vehicles_as_handles()) do
+NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(veh)
+ENTITY.APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(veh, 1, 0, 0, -10, true, false, true) -- Down
+util.yield(100)
+ENTITY.APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(veh, 1, 0, 10, 0, true, false, true) -- North
+util.yield(100)
+ENTITY.APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(veh, 1, 0, -10, 0, true, false, true) -- South
+util.yield(100)
+ENTITY.APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(veh, 1, 10, 0, 0, true, false, true) -- East
+util.yield(100)
+ENTITY.APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(veh, 1, -10, 0, 0, true, false, true) -- West
+util.yield(100)
+end
+end)
+
+
+
+
+
+menu.action(vehicle_kicks, "Steal Vehicle V2", {"stealv2"}, "Spawns a ped to take them out of their vehicle and drives away.", function() -- Skidded from femboy girl prishum
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+local pos = players.get_position(csPID)
+local vehicle = PED.GET_VEHICLE_PED_IS_USING(ped)
+
+if not PED.IS_PED_IN_ANY_VEHICLE(ped, false) then
+util.toast(lang.get_localised(1067523721):gsub("{}", players.get_name(csPID)))
+return end
+local spawned_ped = PED.CREATE_RANDOM_PED(pos.x, pos.y - 10, pos.z)
+NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(spawned_ped)
+entities.set_can_migrate(entities.handle_to_pointer(spawned_ped), false)
+ENTITY.SET_ENTITY_INVINCIBLE(spawned_ped, true)
+ENTITY.SET_ENTITY_VISIBLE(spawned_ped, false)
+ENTITY.FREEZE_ENTITY_POSITION(spawned_ped, true)
+PED.SET_BLOCKING_OF_NON_TEMPORARY_EVENTS(spawned_ped, true)
+PED.CAN_PED_RAGDOLL(spawned_ped, false)
+PED.SET_PED_CONFIG_FLAG(spawned_ped, 26, true)
+TASK.TASK_ENTER_VEHICLE(spawned_ped, vehicle, 1000, -1, 1.0, 2|8|16, pos)
+util.yield(1500)
+if TASK.GET_IS_TASK_ACTIVE(ped, 2) then
+repeat
+util.yield()
+until not TASK.GET_IS_TASK_ACTIVE(ped, 2) or PED.IS_PED_IN_ANY_VEHICLE(spawned_ped, false)
+TASK.TASK_VEHICLE_DRIVE_WANDER(spawned_ped, vehicle, 9999.0, 6)
+util.toast("Now your vehcile!")
+else
+util.toast("Failed to steal players vehicle. :/")
+entities.delete_by_handle(spawned_ped)
+end
+if not TASK.GET_IS_TASK_ACTIVE(spawned_ped) then
+repeat
+TASK.TASK_VEHICLE_DRIVE_WANDER(spawned_ped, vehicle, 9999.0, 6) -- giving task again cus doesnt work sometimes
+util.yield()
+until TASK.GET_IS_TASK_ACTIVE(spawned_ped)
+end
+end)
+
+menu.action(vehicle_kicks, "Steal Vehicle V4", {"stealv4"}, "Changes the net object owner of the vehicle.", function()
+local pped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(players.user())
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+local veh = PED.GET_VEHICLE_PED_IS_IN(ped, true)
+local myveh = PED.GET_VEHICLE_PED_IS_IN(pped, true)
+PED.SET_PED_INTO_VEHICLE(pped, veh, -2)
+util.yield(50)
+ChangeNetObjOwner(veh, csPID)
+ChangeNetObjOwner(veh, pped)
+util.yield(50)
+PED.SET_PED_INTO_VEHICLE(pped, myveh, -1)
+end)
+
+
+local Steal
+local fail_count = 0
+Steal = menu.action(vehicle_kicks, "Kick from Vehicle", {"kickfromveh"}, "", function()
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+local pos = players.get_position(csPID)
+local vehicle = PED.GET_VEHICLE_PED_IS_USING(ped)
+
+if PED.IS_PED_IN_VEHICLE(ped, vehicle, false) then
+local spawned_ped = PED.CREATE_RANDOM_PED(pos.x, pos.y - 10, pos.z)
+NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(spawned_ped)
+entities.set_can_migrate(entities.handle_to_pointer(spawned_ped), false)
+ENTITY.SET_ENTITY_INVINCIBLE(spawned_ped, true)
+ENTITY.SET_ENTITY_VISIBLE(spawned_ped, false)
+ENTITY.FREEZE_ENTITY_POSITION(spawned_ped, true)
+PED.SET_BLOCKING_OF_NON_TEMPORARY_EVENTS(spawned_ped, true)
+PED.CAN_PED_RAGDOLL(spawned_ped, false)
+PED.SET_PED_CONFIG_FLAG(spawned_ped, 26, true)
+TASK.TASK_ENTER_VEHICLE(spawned_ped, vehicle, 1000, -1, 1.0, 2|8|16, pos)
+util.yield(1000)
+if TASK.GET_IS_TASK_ACTIVE(ped, 2) then
+repeat
+    util.yield()
+until not TASK.GET_IS_TASK_ACTIVE(ped, 2)
+end
+if fail_count >= 5 then
+util.toast("Failed to steal player too many times. Disabling feature...")
+fail_count = 0
+Steal.value = false
+end
+if PED.IS_PED_IN_ANY_VEHICLE(spawned_ped, false) then
+util.yield(1500)
+TASK.TASK_VEHICLE_DRIVE_WANDER(spawned_ped, vehicle, 9999.0, 6)
+fail_count = 0
+else
+fail_count += 1
+entities.delete_by_handle(spawned_ped)
+end
+util.yield(500)
+end
+end, function()
+fail_count = 0
+end)
+
+local Steal
+local fail_count = 0
+Steal = player_toggle_loop(vehicle_kicks, csPID, "Auto Kick Vehicle", {"autokick"}, "Will keep kicking any vehicle they try to drive.", function()
+local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
+local pos = players.get_position(csPID)
+local vehicle = PED.GET_VEHICLE_PED_IS_USING(ped)
+
+if PED.IS_PED_IN_VEHICLE(ped, vehicle, false) then
+local spawned_ped = PED.CREATE_RANDOM_PED(pos.x, pos.y - 10, pos.z)
+NETWORK.NETWORK_REQUEST_CONTROL_OF_ENTITY(spawned_ped)
+entities.set_can_migrate(entities.handle_to_pointer(spawned_ped), false)
+ENTITY.SET_ENTITY_INVINCIBLE(spawned_ped, true)
+ENTITY.SET_ENTITY_VISIBLE(spawned_ped, false)
+ENTITY.FREEZE_ENTITY_POSITION(spawned_ped, true)
+PED.SET_BLOCKING_OF_NON_TEMPORARY_EVENTS(spawned_ped, true)
+PED.CAN_PED_RAGDOLL(spawned_ped, false)
+PED.SET_PED_CONFIG_FLAG(spawned_ped, 26, true)
+TASK.TASK_ENTER_VEHICLE(spawned_ped, vehicle, 1000, -1, 1.0, 2|8|16, pos)
+util.yield(1000)
+if TASK.GET_IS_TASK_ACTIVE(ped, 2) then
+repeat
+    util.yield()
+until not TASK.GET_IS_TASK_ACTIVE(ped, 2)
+end
+if fail_count >= 5 then
+util.toast("Failed to steal player too many times. Disabling feature...")
+fail_count = 0
+Steal.value = false
+end
+if PED.IS_PED_IN_ANY_VEHICLE(spawned_ped, false) then
+util.yield(1500)
+TASK.TASK_VEHICLE_DRIVE_WANDER(spawned_ped, vehicle, 9999.0, 6)
+fail_count = 0
+else
+fail_count += 1
+entities.delete_by_handle(spawned_ped)
+end
+util.yield(500)
+end
+end, function()
+fail_count = 0
+end)
+
 
         --Trolling Cage Options
 
