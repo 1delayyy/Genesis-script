@@ -3904,7 +3904,7 @@ util.require_natives("2944a", "g")
 
 antiBarcodeEnabled = false
 
-menu.toggle_loop(Genesis_menu, "Anti-Barcode", {"antibarcode"}, "Will kick players with a barcode name", function() 
+menu.toggle_loop(Genesis_menu, "Anti-Barcode", {"antibarcode"}, "Bye Bye Barcode!", function() 
 end, function ()
     util.toast("Anti-Barcode Disabled")
 end)
