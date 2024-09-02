@@ -25,7 +25,6 @@ Bug Fixes
 
 28/08/24
 
-Added Auto kick barcode usernames
 Added Auto kick Chinese/Russian players
 New kicks added
 Bug fixes
