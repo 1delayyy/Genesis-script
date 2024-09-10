@@ -38,3 +38,9 @@ Added more trolling options (Cage Options) (Player Trolling)
 Added more player removal crashes (25 more)
 Added lag switch macro
 Added vehicle options to player menu
+
+10/09/24
+
+Added Naughty Options 
+Added Animations to naughty options
+Added body accessories to game menu 
