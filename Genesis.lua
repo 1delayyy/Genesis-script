@@ -782,7 +782,7 @@ local api = require('lib.Genesis.api')
 
 local scriptHome = filesystem.scripts_dir() .. "/Genesis/"
 local debug_file_path = scriptHome .. "debug.txt"
-local blacklist_file_path = scriptHome .. "antirus.txt"
+local blacklist_file_path = scriptHome .. "language.txt"
 
 functions.create_directory(scriptHome)
 functions.generate_blacklist(blacklist_file_path)
@@ -796,10 +796,10 @@ local main_menu = menu.my_root()
 
 local Genesis_menu = menu.list(MenuOnline, "Anti-Player", {}, "Anti Player Features")
 
-Genesis_menu:toggle("Kick *Russian&Chinese* Nuisances", {}, "Kick nuisances typing in ruscheese (*Russian & Chinese!*", function(state)
+Genesis_menu:toggle("Kick *RusChiJaKor* Nuisances", {}, "Kick nuisances typing in forbidden language", function(state)
     kick_prohibited_chat_toggle = state
-    functions.log_debug("Kick Russian & Chinese toggled: " .. tostring(state), debug_file_path)
-    util.toast("Kick Russian & Chinese toggled: " .. tostring(state))
+    functions.log_debug("Kick forbidden users toggled: " .. tostring(state), debug_file_path)
+    util.toast("Kick forbidden users toggled: " .. tostring(state))
 end, false)
 
 chat.on_message(function(packet_sender, message_sender, message_text, is_team_chat)
@@ -1471,15 +1471,6 @@ end)
 
 
 --[[| Vehicle/Main/Movement/ |]]--
-menu.toggle_loop(MenuVehMovement, "Shift to Drift", {"gsshifttodrift"}, "This will Lower you Car's Traction when Holding Shift. I Reccomend Tapping Shift to Actually Drift, since you can Vary the Drift's Turn Rate that way.", function(on)    
-    if PAD.IS_CONTROL_PRESSED(21, 21) then
-        VEHICLE.SET_VEHICLE_REDUCE_GRIP(player_cur_car, true)
-        VEHICLE.SET_VEHICLE_REDUCE_GRIP_LEVEL(player_cur_car, 0.0)
-    else
-        VEHICLE.SET_VEHICLE_REDUCE_GRIP(player_cur_car, false)
-    end
-end)
-
 menu.toggle_loop(MenuVehMovement, "Nitrous", {"gsnitrous"}, "Use your Standard Boost Keybind to Toggle Nitrous in any Car.", function(on)
     if PED.IS_PED_IN_ANY_VEHICLE(players.user_ped(), true) and player_cur_car ~= 0 then
         if PAD.IS_CONTROL_JUST_PRESSED(357, 357) then
@@ -1487,15 +1478,6 @@ menu.toggle_loop(MenuVehMovement, "Nitrous", {"gsnitrous"}, "Use your Standard B
             VEHICLE.SET_OVERRIDE_NITROUS_LEVEL(player_cur_car, true, 100, 1, 99999999999, false)
             repeat util.yield() until PAD.IS_CONTROL_JUST_PRESSED(357, 357)
             VEHICLE.SET_OVERRIDE_NITROUS_LEVEL(player_cur_car, false, 0, 0, 0, false)
-        end
-    end
-end)
-
-menu.toggle_loop(MenuVehMovement, "Horn Boost", {"gshornboost"}, "Use your Horn Button to Boost your Car Forwards.", function(on)    
-    if player_cur_car ~= 0 then
-        VEHICLE.SET_VEHICLE_ALARM(player_cur_car, false)
-        if AUDIO.IS_HORN_ACTIVE(player_cur_car) then
-            ENTITY.APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(player_cur_car, 1, 0.0, 1.0, 0.0, true, true, true, true)
         end
     end
 end)
@@ -6765,7 +6747,6 @@ end
 players.on_join(PlayerAddRoot)
 players.dispatch_on_join()
 
---PROP LIST
 
 local prop_list = {
     ["Backpack1"] = {
@@ -7319,10 +7300,6 @@ local IsInAnimation = false
 local isCrouched = false
 local isHansUp = false
 
---function
-
-util.require_natives(1651208000)
-
 local function notify(message)
     HUD.BEGIN_TEXT_COMMAND_THEFEED_POST("STRING")
     HUD.ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME(message)
@@ -7548,9 +7525,6 @@ end
 --menu
 
 OptMisc = menu.list(MenuGame, "Body Accessories", {}, "", function(); end)
-menu.action(OptMisc, "Choose Body Prop Below", {''}, "", function(on_click)
-    stopAnimation()
-end)
 
 OptProp = menu.list(OptMisc, "Any Prop", {}, "", function(); end)
 for k,v in spairs(prop_list, function(t, a, b) return t[b][3] end) do
@@ -7652,39 +7626,6 @@ util.create_thread(function()
 		util.yield()
 	end
 end)
-
-while true do
-    if X_HandsUp then
-        if PAD.IS_CONTROL_PRESSED(1, 323) then
-            loadAnimation("random@mugging3")
-            if not ENTITY.IS_ENTITY_PLAYING_ANIM(PLAYER.PLAYER_PED_ID(), "random@mugging3", "handsup_standing_base", 3) then
-                stopAnimation()
-                WEAPON.GIVE_WEAPON_TO_PED(PLAYER.PLAYER_PED_ID(), MISC.GET_HASH_KEY("WEAPON_UNARMED"), 1, false, true)
-                TASK.TASK_PLAY_ANIM(PLAYER.PLAYER_PED_ID(), "random@mugging3", "handsup_standing_base", 4, 4, -1, 51, 0, false, false, false)
-                STREAMING.REMOVE_ANIM_DICT("random@mugging3")
-                PED.SET_ENABLE_HANDCUFFS(PLAYER.PLAYER_PED_ID(), true)
-                IsInAnimation = true
-            end
-        end
-        if PAD.IS_CONTROL_RELEASED(1, 323) and ENTITY.IS_ENTITY_PLAYING_ANIM(PLAYER.PLAYER_PED_ID(), "random@mugging3", "handsup_standing_base", 3) then
-            PED.SET_ENABLE_HANDCUFFS(PLAYER.PLAYER_PED_ID(), false)
-            stopAnimation()
-        end
-    end
-
-    -- crouch
-    if isCrouched then
-        if IsPlayerAiming(PLAYER.PLAYER_PED_ID()) then
-            -- limiting movement when aiming
-            PED.SET_PED_MAX_MOVE_BLEND_RATIO(PLAYER.PLAYER_PED_ID(), 0.2)
-        end
-        -- stay crouched 
-        -- idk it doesn't work when characters punch :/
-        PED.SET_PED_USING_ACTION_MODE(PLAYER.PLAYER_PED_ID(), false, -1, "DEFAULT_ACTION")
-    end
-
-    util.yield()
-end
 
 
 
