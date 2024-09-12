@@ -4387,6 +4387,10 @@ menu.action(MenuCredits, "Lumineyyy_xx", {"gscredits.Lumineyyy_xx"}, "Good Frien
     util.toast(" - Lumineyyy_xx -\n\n.Good Friend Of Mine, Shared Code For Chinese Functions. <3")
 end)
 
+menu.action(MenuCredits, "Hexarobi", {"gscredits.Hexarobi"}, "Auto Update function thank you for implementing <3", function(on_click)
+    util.toast(" - Hexarobi -\n\n.Auto Update function thank you for implementing <3")
+end)
+
 
 --[[| Genesis/Credits/ |]]--
 menu.divider(MenuMisc, "Patch Notes")
@@ -4425,7 +4429,6 @@ local auto_update_config = {
     script_relpath=SCRIPT_RELPATH
 }
 
---auto updater implemented from hexarobi tysm 
 
 
 menu.action(MenuMisc, "Check for Update", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
