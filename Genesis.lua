@@ -4391,7 +4391,49 @@ end)
 --[[| Genesis/Credits/ |]]--
 menu.divider(MenuMisc, "Patch Notes")
 
+menu.divider(MenuMisc, "Check For Update")
+
 menu.hyperlink(MenuMisc, "Patch Notes/ChangeLog", "https://github.com/1delayyy/Genesis-script/blob/master/ChangeLog.txt")
+
+--[[| Genesis/Credits/Auto Updater/ |]]--
+-- Manually check for updates with a menu option
+menu.action(MenuMisc, "Check for Update", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
+    auto_update_config.check_interval = 0
+    util.toast("Checking for updates")
+    auto_updater.run_auto_update(auto_update_config)
+end)
+
+-- Auto Updater from https://github.com/hexarobi/stand-lua-auto-updater
+local status, auto_updater = pcall(require, "auto-updater")
+if not status then
+    local auto_update_complete = nil util.toast("Installing auto-updater...", TOAST_ALL)
+    async_http.init("raw.githubusercontent.com", "/hexarobi/stand-lua-auto-updater/main/auto-updater.lua",
+        function(result, headers, status_code)
+            local function parse_auto_update_result(result, headers, status_code)
+                local error_prefix = "Error downloading auto-updater: "
+                if status_code ~= 200 then util.toast(error_prefix..status_code, TOAST_ALL) return false end
+                if not result or result == "" then util.toast(error_prefix.."Found empty file.", TOAST_ALL) return false end
+                filesystem.mkdir(filesystem.scripts_dir() .. "lib")
+                local file = io.open(filesystem.scripts_dir() .. "lib\\auto-updater.lua", "wb")
+                if file == nil then util.toast(error_prefix.."Could not open file for writing.", TOAST_ALL) return false end
+                file:write(result) file:close() util.toast("Successfully installed auto-updater lib", TOAST_ALL) return true
+            end
+            auto_update_complete = parse_auto_update_result(result, headers, status_code)
+        end, function() util.toast("Error downloading auto-updater lib. Update failed to download.", TOAST_ALL) end)
+    async_http.dispatch() local i = 1 while (auto_update_complete == nil and i < 40) do util.yield(250) i = i + 1 end
+    if auto_update_complete == nil then error("Error downloading auto-updater lib. HTTP Request timeout") end
+    auto_updater = require("auto-updater")
+end
+if auto_updater == true then error("Invalid auto-updater lib. Please delete your Stand/Lua Scripts/lib/auto-updater.lua and try again") end
+
+-- Run auto-update
+local auto_update_config = {
+    source_url="https://github.com/1delayyy/Genesis-script/blob/master/Genesis.lua",
+    script_relpath=SCRIPT_RELPATH
+}
+
+-- auto_updater.run_auto_update(auto_update_config)
+
 
 
 
