@@ -4394,9 +4394,13 @@ menu.divider(MenuMisc, "Patch Notes")
 menu.hyperlink(MenuMisc, "Patch Notes/ChangeLog", "https://github.com/1delayyy/Genesis-script/blob/master/ChangeLog.txt")
 
 --[[| Genesis/Credits/Auto Updater/ |]]--
+util.ensure_package_is_installed("lua/auto-updater")
+local auto_updater = require("auto-updater")
 
-
-
+auto_updater.run_auto_update({
+    source_url="https://github.com/1delayyy/Genesis-script/blob/master/Genesis.lua",
+    script_relpath=SCRIPT_RELPATH,
+})
 
 
 --[[ ||| PLAYER ROOT ||| ]]--
