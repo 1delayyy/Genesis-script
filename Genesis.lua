@@ -4425,7 +4425,7 @@ local auto_update_config = {
     script_relpath=SCRIPT_RELPATH
 }
 
-
+--auto updater implemented from hexarobi tysm 
 
 
 menu.action(MenuMisc, "Check for Update", {}, "The script will automatically check for updates at most daily, but you can manually check using this option anytime.", function()
