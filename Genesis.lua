@@ -3954,7 +3954,7 @@ end)
 
 
 --[[| Online/TargetedKickOptions/ |]]--
-menu.toggle_loop(MenuOnlineTK, "Auto Kick Host", {"gsautohost"}, "Detects if someone host, then kicks them this is best free option for basic and regular users.", function()
+menu.toggle_loop(MenuOnlineTK, "Auto Kick Host", {"gsautohost"}, "Detects if someone host, then kicks them this is best free option for basic and regular users. (Note this will loop kick you when you are host and become impossible to turn off so type in chat /gsautohost to turn it off)", function()
 util.draw_debug_text(players.get_name(players.get_host()) .. " Is Host")
 menu.trigger_commands("kick" .. players.get_name(players.get_host()))
 end)
@@ -4398,7 +4398,7 @@ util.ensure_package_is_installed("lua/auto-updater")
 local auto_updater = require("auto-updater")
 
 auto_updater.run_auto_update({
-    source_url="https://github.com/1delayyy/Genesis-script/blob/master/Genesis.lua",
+    source_url="https://raw.githubusercontent.com/1delayyy/Genesis-script/master/Genesis.lua",
     script_relpath=SCRIPT_RELPATH,
 })
 
