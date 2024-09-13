@@ -3925,6 +3925,10 @@ menu.action(anims_nroot_self, "Masturbation", {"sexanimmasturbation"}, "", funct
     play_anim("switch@trevor@jerking_off", "trev_jerking_off_loop", -1)
 end)
 
+menu.action(anims_nroot_self, "Masturbation (Vibrator)", {"sexanimmasturbation"}, "", function(on_click)
+    play_anim("timetable@amanda@ig_6", "ig_6_base", -1)
+end)
+
 menu.action(anims_nroot_giver, "Anal", {"sexanimnanalg"}, "", function(on_click)
     play_anim("rcmpaparazzo_2", "shag_loop_a", -1)
 end)
@@ -22524,6 +22528,7 @@ while true do
     end
 
     util.yield()
+
 
 
 
