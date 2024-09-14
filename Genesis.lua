@@ -5806,6 +5806,10 @@ end)
     menu.action(MenuPlayerRemovalKick, "Bonk Kick", {"bonk"}, "Contains 6 SE kicks.", function()
     menu.trigger_commands("kick" .. players.get_name(csPID))
     menu.trigger_commands("givesh" .. players.get_name(csPID))
+    menu.trigger_commands("timeout" .. players.get_name(csPID))
+    menu.trigger_commands("ignore" .. players.get_name(csPID))
+    menu.trigger_commands("blocksync" .. players.get_name(csPID))
+    menu.trigger_commands("desync" .. players.get_name(csPID))
     send_script_event(se.givecollectible, csPID, {csPID, 0x4, -1, 1, 1, 1}) -- Give Collectible SE
     send_script_event(se.kick1_casino, csPID, {csPID, memory.script_global(glob.sekickarg1 + 1 + (csPID * 466) + 321 + 8)})
     send_script_event(se.kick2, csPID, {players.user(), memory.read_int(memory.script_global(glob.sekickarg2 + 1 + (csPID * 599) + 510))})
@@ -22530,7 +22534,61 @@ while true do
     util.yield()
 
 
+    --menu detections 
+    
 
+
+
+
+
+
+    
+    
+    --function isDetectionPresent(playerID, detection)
+      --  if players.exists(playerID) and menu.player_root(playerID):isValid() then
+         --   for menu.player_root(playerID):getChildren() as cmd do
+             --   if cmd:getType() == COMMAND_LIST_CUSTOM_SPECIAL_MEANING and cmd:refByRelPath(detection):isValid() and players.exists(playerID) then
+                 --   return true
+              --  end
+         --   end
+      --  end
+      --  return false
+  --  end
+
+
+--Genesis_menu:toggle_loop("2Take1 User", {}, "Detects people using 2Take1. (Note: player must be in a vehicle spawned by them)", function()
+--for players.list_except() as playerID do
+--local ped = GET_PLAYER_PED_SCRIPT_INDEX(playerID)
+--local vehicle = GET_VEHICLE_PED_IS_USING(ped)
+--local bitset = DECOR_GET_INT(vehicle, "MPBitset")
+--local pegasusveh = DECOR_GET_BOOL(vehicle, "CreatedByPegasus")
+--if isNetPlayerOk(playerID) and bitset == 1024 and players.get_weapon_damage_modifier(playerID) == 1 and not entities.is_invulnerable(ped) and not pegasusveh and getPlayerJobPoints(playerID) == 0 then
+--if not isDetectionPresent(playerID, "2Take1 User") then
+--players.add_detection(playerID, "2Take1 User", TOAST_ALL, 100)
+--menu.trigger_commands($"historynote {players.get_name(playerID)} 2Take1 User")
+--return
+--end
+--end
+--end
+--yield(250)
+--end)
+    
+--Genesis_menu:toggle_loop("YimMenu User", {}, "Detects people using YimMenu's \"Force Session Host\".", function()
+--for players.list() as playerID do
+--local hostToken = tonumber(players.get_host_token(playerID))
+--if (hostToken == 41 or (hostToken > 255 and hostToken <= 10000)) and players.get_weapon_damage_modifier(playerID) != 1 then -- -- tbh, idc about detecting them, its just funny to see some people get annoyed. Note to Yim contributers: just randomize token 1-255
+--if not isDetectionPresent(playerID, "YimMenu User (Very Likely)") then
+--players.add_detection(playerID, "YimMenu User (Very Likely)", TOAST_ALL, 100)
+--menu.trigger_commands($"historynote {players.get_name(playerID)} YimMenu User")
+--return
+--end
+--end
+--end
+--yield(250)
+--end)
+
+
+    
 
 --  ||| MAIN TICK LOOP ||| --
 local last_car = 0
