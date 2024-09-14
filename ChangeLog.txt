@@ -47,3 +47,8 @@ Added body accessories to game menu
 
 12/09/24
 Added a few hundred Animations 
+
+14/09/24
+Added unblockable kick to player menu 
+Added credits 
+Added more animations 
