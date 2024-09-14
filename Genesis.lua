@@ -5799,6 +5799,10 @@ end)
         menu.action(MenuPlayerRemovalKick, "Nuke Kick", {"nuke"}, "Blocks the player join reaction then uses kick.", function()
             menu.trigger_commands("historyblock " .. players.get_name(csPID))
             menu.trigger_commands("kick" .. players.get_name(csPID))
+            menu.trigger_commands("timeout" .. players.get_name(csPID))
+            menu.trigger_commands("ignore" .. players.get_name(csPID))
+            menu.trigger_commands("blocksync" .. players.get_name(csPID))
+            menu.trigger_commands("desync" .. players.get_name(csPID))
         end)
     end
 
