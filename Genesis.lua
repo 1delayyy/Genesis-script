@@ -4383,8 +4383,8 @@ menu.action(MenuCredits, "notcracky", {"gscredits.cracky"}, "My Friend, Gave A F
     util.toast(" - notcracky -\n\nMy Friend, Gave A Few Ideas's To Add To My Script :).")
 end)
 
-menu.action(MenuCredits, "44_69_6d_61", {"gscredits.44_69_6d_61"}, "Another Friend Of Mine, also gave me some Ideas on what to Add to the Script.", function(on_click)
-    util.toast(" - 44_69_6d_61 -\n\nAnother Friend Of Mine, also gave me some Ideas on what to Add to the Script.")
+menu.action(MenuCredits, "44_69_6d_61", {"gscredits.44_69_6d_61"}, "Another Friend Of Mine, gave me ideas like an insane kick function and others :).", function(on_click)
+    util.toast(" - 44_69_6d_61 -\n\nAnother Friend Of Mine, gave me ideas like an insane kick function and others :).")
 end)
 
 menu.action(MenuCredits, "Lumineyyy_xx", {"gscredits.Lumineyyy_xx"}, "Good Friend Of Mine, Shared Code For Chinese Functions. <3", function(on_click)
@@ -5803,7 +5803,7 @@ end)
     end
 
     if menu.get_edition() >= 2 then
-    menu.action(MenuPlayerRemovalKick, "Bonk Kick", {"bonk"}, "Contains 6 SE kicks.", function()
+    menu.action(MenuPlayerRemovalKick, "Bonk Kick", {"bonk"}, "Contains 6 SE kicks.", function()             --credits to 44-69-6D-61 for helping with developing the most broken kick in the game using his method
     menu.trigger_commands("kick" .. players.get_name(csPID))
     menu.trigger_commands("givesh" .. players.get_name(csPID))
     menu.trigger_commands("timeout" .. players.get_name(csPID))
