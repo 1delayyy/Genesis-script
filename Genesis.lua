@@ -48,6 +48,20 @@ local glob = {
 
 --[[ ||| DEFINE FUNCTIONS ||| ]]--
 
+local function is_modder(pid, bool)
+    if players.is_marked_as_modder(pid) or players.is_marked_as_modder_or_admin(pid) then
+        return true
+    end
+    if bool then
+        for players.list_only(false, false, false, false, false, true) as plid do
+            if plid == pid then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 local function tunable(value)
     return memory.script_global(glob.base + value)
 end
@@ -741,6 +755,8 @@ MenuSelf = menu.list(menu.my_root(), "Self", {""}, "Self Options.") ; menu.divid
             MenuWeaponSACLOS = menu.list(MenuWeaponGuidedM, "SACLOS", {""}, "SACLOS Guided Missle Options.") ; menu.divider(MenuWeaponSACLOS, "SACLOS Options")
             MenuNaughtyOptions = menu.list(MenuSelf, "Naughty", {""}, "Naughty Options.") ; menu.divider(MenuNaughtyOptions, "Naughty Options")
             MenuAnimationOptions = menu.list(MenuSelf, "Animations", {""}, "Animation Options.") ; menu.divider(MenuAnimationOptions, "Animation Options")
+            MenuOutfitOptions = menu.list(MenuSelf, "Outfit", {""}, "Outfit Options.") ; menu.divider(MenuOutfitOptions, "Outfit Options")
+
 
 --[[Vehicle Menu]]--
 MenuVehicle = menu.list(menu.my_root(), "Vehicle", {""}, "Vehicle Options.") ; menu.divider(MenuVehicle, "Vehicle Options")
@@ -777,6 +793,60 @@ MenuOnline = menu.list(menu.my_root(), "Online", {""}, "Online Options.") ; menu
     MenuModderDetections = menu.list(MenuOnline, "Modder Detections", {""}, "Modder Detection Options.") ;menu.divider(MenuModderDetections, "Modder Detections")
     MenuNetwork = menu.list(MenuOnline, "Network", {""}, "Network Options.") ;menu.divider(MenuNetwork, "Network Options")
     MenuSession = menu.list(MenuOnline, "Session", {""}, "Session Options.") ;menu.divider(MenuSession, "Session Options")
+
+--[[MenuSession]]--
+
+menu.action(MenuSession, "block known crashers", {""}, "Blocks the player join reaction.", function()
+    menu.trigger_commands("historyadd rc10301")
+    util.yield(666)
+    menu.trigger_commands("historyblockrc10301")
+    menu.trigger_commands("historyadd rc10302")
+    menu.trigger_commands("historyblockrc10302")
+    menu.trigger_commands("historyadd rc10305")
+    menu.trigger_commands("historyblockrc10305")
+    menu.trigger_commands("historyadd rc10306")
+    menu.trigger_commands("historyblockrc10306")
+    menu.trigger_commands("historyadd rc10307")
+    menu.trigger_commands("historyblockrc10307")
+    menu.trigger_commands("historyadd babagsk")
+    menu.trigger_commands("historyblockbabagsk")
+    menu.trigger_commands("historyadd kamyloo")
+    menu.trigger_commands("historyblockkamyloo")
+    menu.trigger_commands("historyadd Gskamyloo")
+    menu.trigger_commands("historyblockGskamyloo")
+    menu.trigger_commands("historyadd Kamyk097")
+    menu.trigger_commands("historyblockKamyk097")
+    menu.trigger_commands("historyadd N0kamy")
+    menu.trigger_commands("historyblockN0kamy")
+    menu.trigger_commands("historyadd Kamyk2010")
+    menu.trigger_commands("historyblockKamyk2010")
+    menu.trigger_commands("historyadd kamyczekdx")
+    menu.trigger_commands("historyblockkamyczekdx")
+    menu.trigger_commands("historyadd kamyflo")
+    menu.trigger_commands("historyblockkamyflo")
+    menu.trigger_commands("historyadd Kamyczek3232")
+    menu.trigger_commands("historyblockKamyczek3232")
+end)
+
+menu.toggle_loop(MenuSession, "Admin Bail", {"antiadmin"}, "Instantly Bail and Join Invite only\nIf R* Admin Detected", function()
+    for players.list_except(true) as pid do
+        if players.is_marked_as_admin(pid) or players.is_marked_as_modder_or_admin(pid) then
+            menu.trigger_commands("quickbail")
+            util.yield()
+            warnify("Admin Detected, exfiling your ass out of here!!")
+            util.yield(666)
+            menu.trigger_commands("unstuck")
+            util.yield(666)
+            menu.trigger_commands("go inviteonly")
+        end
+    end
+end)
+
+menu.action(MenuSession, "Create \"Admin\" Group", {"pgadminlist"}, "Create a group called \"Admin\"", function()
+    menu.trigger_commands("adminsupdate")
+    util.yield(666)
+    menu.trigger_commands("adminsnote Admin")
+end)
 
 local functions = require('lib.Genesis.functions')
 local api = require('lib.Genesis.api')
@@ -820,6 +890,7 @@ end)
 
 
 
+
 --[[World Menu]]--
 MenuWorld = menu.list(menu.my_root(), "World", {""}, "World Options.") ; menu.divider(MenuWorld, "World Options")
     --[[World Menu Subcategories]]--
@@ -846,7 +917,143 @@ MenuMisc = menu.list(menu.my_root(), "Genesis", {""}, "Genesis Options.") ; menu
 
 
 
-    --[[Session Menu]]--
+    --[[Self outfit]]--
+    local delay_lib = require("Genesis/delay_lib")
+    local json = require("json")
+    util.require_natives("3095a", "g")
+
+
+    store_vampire_young = path_vampire_young,
+
+--credits to Asuka/PIP Girl script 
+
+    local foreverYoung = false
+
+    local moonCircle = 255
+    
+    path_vampire_young = menu.toggle(MenuOutfitOptions, "Forever young", {"foreveryoung"}, "Prevents you Char from getting old, destroyed and infected Skin.", function(on)
+        if on then
+            foreverYoung = true
+            SET_PED_HEAD_OVERLAY(players.user_ped(), 12, moonCircle, 1.0) --Remove random Dots on your skin , chest area.
+            SET_PED_HEAD_OVERLAY(players.user_ped(), 11, 255, 0.0) --Remove Moles. (body)
+            SET_PED_HEAD_OVERLAY(players.user_ped(), 9, 255, 0.0) --Remove Moles/Freckles. (face)
+            SET_PED_HEAD_OVERLAY(players.user_ped(), 7, 255, 0.0) --Remove Sun Damage.
+            SET_PED_HEAD_OVERLAY(players.user_ped(), 6, 11, 100.0) --Pale Face. (later making it optional)
+            SET_PED_HEAD_OVERLAY(players.user_ped(), 3, 255, 0.0) --Remove any aging processes.
+            SET_PED_HEAD_OVERLAY(players.user_ped(), 0, 255, 0.0) --Remove destroyed/infected skin in face.
+        else
+            foreverYoung = false
+        end
+    end)
+
+    if foreverYoung and delay_lib.transition_state(true) <3 then
+        SET_PED_HEAD_OVERLAY(players.user_ped(), 12, moonCircle, 1.0) --Remove random Dots on your skin , chest area.
+        SET_PED_HEAD_OVERLAY(players.user_ped(), 11, 255, 0.0) --Remove Moles. (body)
+        SET_PED_HEAD_OVERLAY(players.user_ped(), 9, 255, 0.0) --Remove Moles/Freckles. (face)
+        SET_PED_HEAD_OVERLAY(players.user_ped(), 7, 255, 0.0) --Remove Sun Damage.
+        SET_PED_HEAD_OVERLAY(players.user_ped(), 6, 11, 100.0) --Pale Face. (later making it optional)
+        SET_PED_HEAD_OVERLAY(players.user_ped(), 3, 255, 0.0) --Remove any aging processes.
+        SET_PED_HEAD_OVERLAY(players.user_ped(), 0, 255, 0.0) --Remove destroyed/infected skin in face.
+    end
+
+
+
+local demon_horn1 = nil
+local demon_horn2 = nil
+local demon_horn_hash = util.joaat("w_me_knife_01")
+
+ menu.toggle_loop(MenuOutfitOptions, "Demon Horns", {"demonhorns"}, "", function()
+    if delay_lib.allow_spawn_check() then
+        local pup = players.user_ped()
+        if not delay_lib.does_entity_exist(demon_horn1) then
+            if delay_lib.request_model(demon_horn_hash, 3) then
+                demon_horn1 = entities.create_object(demon_horn_hash, players.get_position(players.user()))
+                entities.set_can_migrate(demon_horn1, false)
+                if GET_ENTITY_LOD_DIST(demon_horn1) > 66 then
+                    SET_ENTITY_LOD_DIST(demon_horn1, 66)
+                end
+                SET_ENTITY_COLLISION(demon_horn1, false, false)
+                SET_ENTITY_INVINCIBLE(demon_horn1, true)
+                ATTACH_ENTITY_TO_ENTITY(demon_horn1, pup, GET_PED_BONE_INDEX(pup, 31086), -3 / 50.0, -1 / 50.0, 0, 78, 0, 122, false, true, false, false, 0, true, 1)
+            end
+        else
+            if not IS_ENTITY_ATTACHED_TO_ENTITY(demon_horn1, pup) then
+                delay_lib.delete_entity(demon_horn1)
+            end
+        end
+        if not delay_lib.does_entity_exist(demon_horn2) then
+            if delay_lib.request_model(demon_horn_hash, 3) then
+                demon_horn2 = entities.create_object(demon_horn_hash, players.get_position(players.user()))
+                entities.set_can_migrate(demon_horn2, false)
+                if GET_ENTITY_LOD_DIST(demon_horn2) > 66 then
+                    SET_ENTITY_LOD_DIST(demon_horn2, 66)
+                end
+                SET_ENTITY_COLLISION(demon_horn2, false, false)
+                SET_ENTITY_INVINCIBLE(demon_horn2, true)
+                ATTACH_ENTITY_TO_ENTITY(demon_horn2, pup, GET_PED_BONE_INDEX(pup, 31086), -3 / 50.0, -1 / 50.0, 0, 102, 0, 122, false, true, false, false, 0, true, 1)
+            end
+        else
+            if not IS_ENTITY_ATTACHED_TO_ENTITY(demon_horn2, pup) then
+                delay_lib.delete_entity(demon_horn2)
+            end
+        end
+        if GET_FOLLOW_PED_CAM_VIEW_MODE() == 4 then
+            SET_ENTITY_VISIBLE(demon_horn1, false, false)
+            SET_ENTITY_VISIBLE(demon_horn2, false, false)
+        else
+            SET_ENTITY_VISIBLE(demon_horn1, true, false)
+            SET_ENTITY_VISIBLE(demon_horn2, true, false)
+        end
+    end
+    util.yield(666)
+end, function()
+    delay_lib.delete_entity(demon_horn1)
+    delay_lib.delete_entity(demon_horn2)
+end)
+
+menu.list_select(MenuOutfitOptions, "Demon Horns Color", {}, "make sure demon horns is turned off in order to change the colour without error", {
+    {util.joaat("w_me_knife_01"), "Default"},
+    {util.joaat("w_me_knife_xm3"), "Eyes"},
+    {util.joaat("w_me_knife_xm3_01"), "Spatter"},
+    {util.joaat("w_me_knife_xm3_02"), "Flames"},
+    {util.joaat("w_me_knife_xm3_03"), "Lightning"},
+    {util.joaat("w_me_knife_xm3_04"), "Pills"},
+    {util.joaat("w_me_knife_xm3_05"), "Snakeskin"},
+    {util.joaat("w_me_knife_xm3_06"), "Lucha Libre"},
+    {util.joaat("w_me_knife_xm3_07"), "Trippy"},
+    {util.joaat("w_me_knife_xm3_08"), "Tequilya"},
+    {util.joaat("w_me_knife_xm3_09"), "Orang-O-Tang"},
+}, demon_horn_hash, function(value, menu_name, prev_value, click_type)
+    demon_horn_hash = value
+    if delay_lib.allow_spawn_check() and menu.get_value() and delay_lib.request_model(value, 3) then
+        delay_lib.delete_entity(demon_horn1)
+        delay_lib.delete_entity(demon_horn2)
+        local pos = players.get_position(players.user())
+        local pup = players.user_ped()
+        if not delay_lib.does_entity_exist(demon_horn1) then
+            demon_horn1 = entities.create_object(value, pos)
+            entities.set_can_migrate(demon_horn1, false)
+            if GET_ENTITY_LOD_DIST(demon_horn1) > 66 then
+                SET_ENTITY_LOD_DIST(demon_horn1, 66)
+            end
+            SET_ENTITY_COLLISION(demon_horn1, false, false)
+            SET_ENTITY_INVINCIBLE(demon_horn1, true)
+            ATTACH_ENTITY_TO_ENTITY(demon_horn1, pup, GET_PED_BONE_INDEX(pup, 31086), -3 / 50.0, -1 / 50.0, 0, 78, 0, 122, false, true, false, false, 0, true, 1)
+        end
+        if not delay_lib.does_entity_exist(demon_horn2) then
+            demon_horn2 = entities.create_object(value, pos)
+            entities.set_can_migrate(demon_horn2, false)
+            if GET_ENTITY_LOD_DIST(demon_horn2) > 66 then
+                SET_ENTITY_LOD_DIST(demon_horn2, 66)
+            end
+            SET_ENTITY_COLLISION(demon_horn2, false, false)
+            SET_ENTITY_INVINCIBLE(demon_horn2, true)
+            ATTACH_ENTITY_TO_ENTITY(demon_horn2, pup, GET_PED_BONE_INDEX(pup, 31086), -3 / 50.0, -1 / 50.0, 0, 102, 0, 122, false, true, false, false, 0, true, 1)
+        end
+    end
+end)
+  
+
 
 
 
@@ -1275,7 +1482,7 @@ menu.slider(MenuWeaponHotswap, "Hotswap Mode", {"gshotswapmode"}, "Wether to Ski
     elseif value == 3 then LegitSwitchA1 = false ; LegitSwitchA2 = false end 
 end)
 
-menu.slider(MenuWeaponHotswap, "Hotswap Delay", {"gshotswapdelay"}, "The Delay Between Switching to C4 and Back.\nValues Under 200 won't Work if using Legit Mode, Due to being Too Fast!", 1, 1000, 100, 50, function(value)
+menu.slider(MenuWeaponHotswap, "Hotswap delay", {"gshotswapdelay"}, "The delay Between Switching to C4 and Back.\nValues Under 200 won't Work if using Legit Mode, Due to being Too Fast!", 1, 1000, 100, 50, function(value)
     LegitRapidMS = value
 end)
 
@@ -3178,7 +3385,7 @@ menu.action(MenuLobby, "Umbrella Crash V1", {"umbc1"}, "Parachute crash may work
         end
         PLAYER.SET_PLAYER_PARACHUTE_MODEL_OVERRIDE(PLAYER.PLAYER_ID(), object_hash)
         ENTITY.SET_ENTITY_COORDS_NO_OFFSET(SelfPlayerPed, 0, 0, 500, false, true, true)
-        WEAPON.GIVE_DELAYED_WEAPON_TO_PED(SelfPlayerPed, 0xFBAB5776, 1000, false)
+        WEAPON.GIVE_delayED_WEAPON_TO_PED(SelfPlayerPed, 0xFBAB5776, 1000, false)
         util.yield(1000)
         for i = 0, 20 do
             PED.FORCE_PED_TO_OPEN_PARACHUTE(SelfPlayerPed)
@@ -3194,7 +3401,7 @@ menu.action(MenuLobby, "Umbrella Crash V1", {"umbc1"}, "Parachute crash may work
         end
         PLAYER.SET_PLAYER_PARACHUTE_MODEL_OVERRIDE(PLAYER.PLAYER_ID(), object_hash2)
         ENTITY.SET_ENTITY_COORDS_NO_OFFSET(SelfPlayerPed, 0, 0, 500, 0, 0, 1)
-        WEAPON.GIVE_DELAYED_WEAPON_TO_PED(SelfPlayerPed, 0xFBAB5776, 1000, false)
+        WEAPON.GIVE_delayED_WEAPON_TO_PED(SelfPlayerPed, 0xFBAB5776, 1000, false)
         util.yield(1000)
         for i = 0, 20 do
             PED.FORCE_PED_TO_OPEN_PARACHUTE(SelfPlayerPed)
@@ -3217,7 +3424,7 @@ menu.action(MenuLobby, "Umbrella Crash V2", {"umbc2"}, "use this if umbc1 doesn'
         end
         PLAYER.SET_PLAYER_PARACHUTE_MODEL_OVERRIDE(PLAYER.PLAYER_ID(), object_hash)
         ENTITY.SET_ENTITY_COORDS_NO_OFFSET(PEDP, 0, 0, 500, 0, 0, 1)
-        WEAPON.GIVE_DELAYED_WEAPON_TO_PED(PEDP, 0xFBAB5776, 1000, false)
+        WEAPON.GIVE_delayED_WEAPON_TO_PED(PEDP, 0xFBAB5776, 1000, false)
         util.yield(1000)
         for i = 0, 20 do
             PED.FORCE_PED_TO_OPEN_PARACHUTE(PEDP)
@@ -3231,7 +3438,7 @@ menu.action(MenuLobby, "Umbrella Crash V2", {"umbc2"}, "use this if umbc1 doesn'
         end
         PLAYER.SET_PLAYER_PARACHUTE_MODEL_OVERRIDE(PLAYER.PLAYER_ID(), bush_hash)
         ENTITY.SET_ENTITY_COORDS_NO_OFFSET(PEDP, 0, 0, 500, 0, 0, 1)
-        WEAPON.GIVE_DELAYED_WEAPON_TO_PED(PEDP, 0xFBAB5776, 1000, false)
+        WEAPON.GIVE_delayED_WEAPON_TO_PED(PEDP, 0xFBAB5776, 1000, false)
         util.yield(1000)
         for i = 0, 20 do
             PED.FORCE_PED_TO_OPEN_PARACHUTE(PEDP)
@@ -3250,7 +3457,7 @@ menu.action(MenuLobby, "Umbrella Crash V3", {"umbc3"}, "use this if umbc2 doesn'
         end
         PLAYER.SET_PLAYER_PARACHUTE_MODEL_OVERRIDE(PLAYER.PLAYER_ID(), object_hash)
         ENTITY.SET_ENTITY_COORDS_NO_OFFSET(PEDP, 0, 0, 500, 0, 0, 1)
-        WEAPON.GIVE_DELAYED_WEAPON_TO_PED(PEDP, 0xFBAB5776, 1000, false)
+        WEAPON.GIVE_delayED_WEAPON_TO_PED(PEDP, 0xFBAB5776, 1000, false)
         util.yield(1000)
         for i = 0, 20 do
             PED.FORCE_PED_TO_OPEN_PARACHUTE(PEDP)
@@ -3264,7 +3471,7 @@ menu.action(MenuLobby, "Umbrella Crash V3", {"umbc3"}, "use this if umbc2 doesn'
         end
         PLAYER.SET_PLAYER_PARACHUTE_MODEL_OVERRIDE(PLAYER.PLAYER_ID(), bush_hash)
         ENTITY.SET_ENTITY_COORDS_NO_OFFSET(PEDP, 0, 0, 500, 0, 0, 1)
-        WEAPON.GIVE_DELAYED_WEAPON_TO_PED(PEDP, 0xFBAB5776, 1000, false)
+        WEAPON.GIVE_delayED_WEAPON_TO_PED(PEDP, 0xFBAB5776, 1000, false)
         util.yield(1000)
         for i = 0, 20 do
             PED.FORCE_PED_TO_OPEN_PARACHUTE(PEDP)
@@ -3284,7 +3491,7 @@ menu.action(MenuLobby, "Umbrella Crash V4", {"umbc4"}, "use this if umbc3 doesn'
         end
         PLAYER.SET_PLAYER_PARACHUTE_MODEL_OVERRIDE(PLAYER.PLAYER_ID(), object_hash)
         ENTITY.SET_ENTITY_COORDS_NO_OFFSET(PEDP, 0, 0, 500, 0, 0, 1)
-        WEAPON.GIVE_DELAYED_WEAPON_TO_PED(PEDP, 0xFBAB5776, 1000, false)
+        WEAPON.GIVE_delayED_WEAPON_TO_PED(PEDP, 0xFBAB5776, 1000, false)
         util.yield(1000)
         for i = 0, 20 do
             PED.FORCE_PED_TO_OPEN_PARACHUTE(PEDP)
@@ -3298,7 +3505,7 @@ menu.action(MenuLobby, "Umbrella Crash V4", {"umbc4"}, "use this if umbc3 doesn'
         end
         PLAYER.SET_PLAYER_PARACHUTE_MODEL_OVERRIDE(PLAYER.PLAYER_ID(), bush_hash)
         ENTITY.SET_ENTITY_COORDS_NO_OFFSET(PEDP, 0, 0, 500, 0, 0, 1)
-        WEAPON.GIVE_DELAYED_WEAPON_TO_PED(PEDP, 0xFBAB5776, 1000, false)
+        WEAPON.GIVE_delayED_WEAPON_TO_PED(PEDP, 0xFBAB5776, 1000, false)
         util.yield(1000)
         for i = 0, 20 do
             PED.FORCE_PED_TO_OPEN_PARACHUTE(PEDP)
@@ -3314,12 +3521,12 @@ menu.action(MenuLobby, "Nature Global Crash", {"naturenuke"}, "What the hell are
     local pos = players.get_position(user)
     util.yield(100)
     PLAYER.SET_PLAYER_PARACHUTE_PACK_MODEL_OVERRIDE(players.user(), 0xFBF7D21F)
-    WEAPON.GIVE_DELAYED_WEAPON_TO_PED(user_ped, 0xFBAB5776, 100, false)
+    WEAPON.GIVE_delayED_WEAPON_TO_PED(user_ped, 0xFBAB5776, 100, false)
     TASK.TASK_PARACHUTE_TO_TARGET(user_ped, pos.x, pos.y, pos.z)
     util.yield()
     TASK.CLEAR_PED_TASKS_IMMEDIATELY(user_ped)
     util.yield(250)
-    WEAPON.GIVE_DELAYED_WEAPON_TO_PED(user_ped, 0xFBAB5776, 100, false)
+    WEAPON.GIVE_delayED_WEAPON_TO_PED(user_ped, 0xFBAB5776, 100, false)
     PLAYER.CLEAR_PLAYER_PARACHUTE_PACK_MODEL_OVERRIDE(user)
     util.yield(1000)
     for i = 1, 5 do
@@ -4346,19 +4553,19 @@ end)
 
 
 --[[| Game/MacroOptions/ |]]--
-macroDelay = 50
-macroRunDelay = 0
+macrodelay = 50
+macroRundelay = 0
 macroAnnounceEnds = false
 menu.toggle(MenuGameMacros, "Announce Start and Finish", {"gsmacroannouncestartfinish"}, "Toasts on Screen when the Macro youare Running has Started, and when it has Finished.", function(on)
     if on then macroAnnounceEnds = true else macroAnnounceEnds = false end
 end)
 
-menu.slider(MenuGameMacros, "Click Delay", {"gsmacroclickdelay"}, "The Delay between Every Click the Macro does, in Milliseconds. 30ms is Often the Limit, and will Almost Always Fail. Increase beyond 50ms if the Macro is Missing off by one, or not Working.", 20, 1000, 50, 10, function(value)
-    macroDelay = value
+menu.slider(MenuGameMacros, "Click delay", {"gsmacroclickdelay"}, "The delay between Every Click the Macro does, in Milliseconds. 30ms is Often the Limit, and will Almost Always Fail. Increase beyond 50ms if the Macro is Missing off by one, or not Working.", 20, 1000, 50, 10, function(value)
+    macrodelay = value
 end)
 
-menu.slider(MenuGameMacros, "Run Delay", {"gsmacrorundelay"}, "The Time, in Milliseconds before the Macro will Run after you Click it.", 0, 10000, 0, 50, function(value)
-    macroRunDelay = value
+menu.slider(MenuGameMacros, "Run delay", {"gsmacrorundelay"}, "The Time, in Milliseconds before the Macro will Run after you Click it.", 0, 10000, 0, 50, function(value)
+    macroRundelay = value
 end)
 
 
@@ -5916,7 +6123,7 @@ end)
         local p_pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid))
         ENTITY.SET_ENTITY_COORDS_NO_OFFSET(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(players.user()), p_pos.x, p_pos.y, p_pos.z
             , false, true, true)
-        WEAPON.GIVE_DELAYED_WEAPON_TO_PED(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(players.user()), 0xFBAB5776, 1000, false)
+        WEAPON.GIVE_delayED_WEAPON_TO_PED(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(players.user()), 0xFBAB5776, 1000, false)
         TASK.TASK_PARACHUTE_TO_TARGET(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(players.user()), -1087, -3012, 13.94)
         util.yield(500)
         TASK.CLEAR_PED_TASKS_IMMEDIATELY(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(players.user()))
@@ -8712,7 +8919,7 @@ Animation.Emotes = {
         "Chill",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 200,
+            Startdelay = 200,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
         }
@@ -8723,7 +8930,7 @@ Animation.Emotes = {
         "Cloudgaze",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 700,
+            Startdelay = 700,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
         }
@@ -8734,7 +8941,7 @@ Animation.Emotes = {
         "Cloudgaze 2",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 700,
+            Startdelay = 700,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
         }
@@ -8745,7 +8952,7 @@ Animation.Emotes = {
         "Prone",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 700,
+            Startdelay = 700,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
         }
@@ -9647,7 +9854,7 @@ Animation.Emotes = {
         "Lean On Table",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 200,
+            Startdelay = 200,
             ExitEmote = "offtable",
             ExitEmoteType = "Exits"
         }
@@ -9949,7 +10156,7 @@ Animation.Emotes = {
         "Sleep",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 700,
+            Startdelay = 700,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
         }
@@ -9960,7 +10167,7 @@ Animation.Emotes = {
         "Bum Sleep",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 700,
+            Startdelay = 700,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
         }
@@ -10049,7 +10256,7 @@ Animation.Emotes = {
         "Sit 7",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 900,
+            Startdelay = 900,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
         }
@@ -10294,7 +10501,7 @@ Animation.Emotes = {
         "Sunbathe - Hand On Head",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 700,
+            Startdelay = 700,
             NotInVehicle = true,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
@@ -10306,7 +10513,7 @@ Animation.Emotes = {
         "Sunbathe 2 - Hand Over Face",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 700,
+            Startdelay = 700,
             NotInVehicle = true,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
@@ -10318,7 +10525,7 @@ Animation.Emotes = {
         "Sunbathe 3 - Lay On Stomach",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 700,
+            Startdelay = 700,
             NotInVehicle = true,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
@@ -10640,7 +10847,7 @@ Animation.Emotes = {
         "Passout",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 900,
+            Startdelay = 900,
             NotInVehicle = true,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
@@ -10652,7 +10859,7 @@ Animation.Emotes = {
         "Passout 2",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 900,
+            Startdelay = 900,
             NotInVehicle = true,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
@@ -10664,7 +10871,7 @@ Animation.Emotes = {
         "Passout 3",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 900,
+            Startdelay = 900,
             NotInVehicle = true,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
@@ -10676,7 +10883,7 @@ Animation.Emotes = {
         "Passout 4",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 900,
+            Startdelay = 900,
             NotInVehicle = true,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
@@ -10688,7 +10895,7 @@ Animation.Emotes = {
         "Passout 5",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 900,
+            Startdelay = 900,
             NotInVehicle = true,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
@@ -10708,7 +10915,7 @@ Animation.Emotes = {
         "Crawl",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 700,
+            Startdelay = 700,
             ExitEmote = "meditateup",
             ExitEmoteType = "Exits"
         }
@@ -12118,7 +12325,7 @@ Animation.Emotes = {
         "Lay & Cry",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 700,
+            Startdelay = 700,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
         }
@@ -12129,7 +12336,7 @@ Animation.Emotes = {
         "Lay & Cry 2",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 700,
+            Startdelay = 700,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
         }
@@ -12140,7 +12347,7 @@ Animation.Emotes = {
         "Lay & Cry 3",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 700,
+            Startdelay = 700,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
         }
@@ -12151,7 +12358,7 @@ Animation.Emotes = {
         "Lay & Cry 4",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 700,
+            Startdelay = 700,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
         }
@@ -12162,7 +12369,7 @@ Animation.Emotes = {
         "Lay & Cry 5",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 700,
+            Startdelay = 700,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
         }
@@ -12173,7 +12380,7 @@ Animation.Emotes = {
         "Lay & Cry 6",
         AnimationOptions = {
             EmoteLoop = true,
-            StartDelay = 700,
+            Startdelay = 700,
             ExitEmote = "getup",
             ExitEmoteType = "Exits"
         }
