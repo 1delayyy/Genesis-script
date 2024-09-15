@@ -48,6 +48,172 @@ local glob = {
 
 --[[ ||| DEFINE FUNCTIONS ||| ]]--
 
+local function get_transition_state(pid)
+    return memory.read_int(memory.script_global(((glob.player + 1) + (pid * 453)) + 230))
+    end
+    
+    local function get_interior_player_is_in(pid)
+    return memory.read_int(memory.script_global(((glob.player + 1) + (pid * 453)) + 243))
+    end
+    
+    
+    local unreleased_vehicles = {
+    "virtue",
+    "eudora",
+    "boor",
+    "broadway",
+    "everon2",
+    "manchez3",
+    "panthere2",
+    }
+    
+    local modded_vehicles = {
+    "dune2",
+    "tractor",
+    "dilettante2",
+    "asea2",
+    "cutter",
+    "mesa2",
+    "jet",
+    "policeold1",
+    "policeold2",
+    "armytrailer2",
+    "towtruck",
+    "towtruck2",
+    "cargoplane",
+    }
+    
+    local modded_weapons = {
+    "weapon_railgun",
+    "weapon_stungun",
+    "weapon_digiscanner",
+    "weapon_emplauncher",
+    "weapon_digiscanner",
+    "weapon_raypistol",
+    "weapon_firework",
+    "weapon_stungun",
+    "weapon_flare",
+    }
+    
+    local all_weapons = {
+    "weapon_railgun",
+    "weapon_stungun",
+    "weapon_digiscanner",
+    "weapon_emplauncher",
+    "weapon_digiscanner",
+    "weapon_raypistol",
+    "weapon_firework",
+    "weapon_flare",
+    "WEAPON_KNIFE",
+    "WEAPON_NIGHTSTICK",
+    "weapon_bottle",
+    "weapon_unarmed",
+    "WEAPON_HAMMER",
+    "WEAPON_BAT",
+    "WEAPON_GOLFCLUB",
+    "WEAPON_CROWBAR",
+    "WEAPON_PISTOL",
+    "WEAPON_COMBATPISTOL",
+    "WEAPON_APPISTOL",
+    "WEAPON_PISTOL50",
+    "WEAPON_MICROSMG",
+    "WEAPON_SMG",
+    "WEAPON_ASSAULTSMG",
+    "WEAPON_ASSAULTRIFLE",
+    "weapon_hatchet",
+    "weapon_knuckle",
+    "weapon_machete",
+    "weapon_dagger",
+    "weapon_switchblade",
+    "weapon_wrench",
+    "weapon_battleaxe",
+    "weapon_poolcue",
+    "weapon_pistol_mk2",
+    "weapon_snspistol",
+    "weapon_snspistol_mk2",
+    "weapon_heavypistol",
+    "weapon_vintagepistol",
+    "weapon_flaregun",
+    "weapon_marksmanpistol",
+    "weapon_revolver",
+    "weapon_revolver_mk2",
+    "weapon_doubleaction",
+    "weapon_ceramicpistol",
+    "weapon_navyrevolver",
+    "weapon_smg_mk2",
+    "weapon_combatpdw",
+    "weapon_machinepistol",
+    "weapon_minismg",
+    "weapon_raycarbine",
+    "weapon_pumpshotgun",
+    "weapon_pumpshotgun_mk2",
+    "weapon_sawnoffshotgun",
+    "weapon_assaultshotgun",
+    "weapon_bullpupshotgun",
+    "weapon_musket",
+    "weapon_heavyshotgun",
+    "weapon_dbshotgun",
+    "weapon_autoshotgun",
+    "weapon_assaultrifle",
+    "weapon_assaultrifle_mk2",
+    "weapon_carbinerifle",
+    "weapon_carbinerifle_mk2",
+    "weapon_advancedrifle",
+    "weapon_specialcarbine",
+    "weapon_specialcarbine_mk2",
+    "weapon_bullpuprifle",
+    "weapon_bullpuprifle_mk2",
+    "weapon_compactrifle",
+    "weapon_mg",
+    "weapon_combatmg",
+    "weapon_combatmg_mk2",
+    "weapon_gusenberg",
+    "weapon_sniperrifle",
+    "weapon_heavysniper",
+    "weapon_heavysniper_mk2",
+    "weapon_marksmanrifle",
+    "weapon_marksmanrifle_mk2",
+    "weapon_rpg",
+    "weapon_grenadelauncher",
+    "weapon_grenadelauncher_smoke",
+    "weapon_minigun",
+    "weapon_hominglauncher",
+    "weapon_compactlauncher",
+    "weapon_rayminigun",
+    "weapon_grenade",
+    "weapon_bzgas",
+    "weapon_molotov",
+    "weapon_proxmine",
+    "weapon_snowball",
+    "weapon_pipebomb",
+    "weapon_ball",
+    "weapon_smokegrenade",
+    "weapon_stickybomb",
+    "weapon_petrolcan",
+    "weapon_parachute",
+    "weapon_fireextinguisher",
+    "weapon_hazardcan",
+    }
+
+    local proofs = {
+        bullet = {name="Bullets",on=false},
+        fire = {name="Fire",on=false},
+        explosion = {name="Explosions",on=false},
+        collision = {name="Collision",on=false},
+        melee = {name="Melee",on=false},
+        steam = {name="Steam",on=false},
+        drown = {name="Drowning",on=false},
+        }
+
+        local values = {
+            [0] = 0,
+            [1] = 50,
+            [2] = 88,
+            [3] = 160,
+            [4] = 208,
+            }
+
+
 local function is_modder(pid, bool)
     if players.is_marked_as_modder(pid) or players.is_marked_as_modder_or_admin(pid) then
         return true
@@ -2728,105 +2894,6 @@ menu.toggle_loop(
         end
     end
 )
-
-
-menu.toggle_loop(MenuModderDetections, "Godmode", {}, "Detects if someone is using godmode.", function()
-for _, csPID in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
-local pos = ENTITY.GET_ENTITY_COORDS(ped, false)
-for i, interior in ipairs(interior_stuff) do
-if (players.is_godmode(csPID) or not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(ped)) and not NETWORK.NETWORK_IS_PLAYER_FADING(csPID) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(csPID) ~= 0 and get_interior_player_is_in(csPID) == interior then
-util.draw_debug_text(players.get_name(csPID) .. " Is In Godmode")
-break
-end
-end
-end
-end)
-
-menu.toggle_loop(MenuModderDetections, "Godmode Auto Kick", {}, "Detects if someone is using godmode, blocks there joins and kicks them.", function()
-for _, csPID in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
-local pos = ENTITY.GET_ENTITY_COORDS(ped, false)
-for i, interior in ipairs(interior_stuff) do
-if (players.is_godmode(csPID) or not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(ped)) and not NETWORK.NETWORK_IS_PLAYER_FADING(csPID) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(csPID) ~= 0 and get_interior_player_is_in(csPID) == interior then
-menu.trigger_commands("Smart" .. players.get_name(csPID))
-util.draw_debug_text(players.get_name(csPID) .. " Is In Godmode")
-util.toast(players.get_name(csPID) .. "Is In Godmode")
-break
-end
-end
-end
-end)
-
-menu.toggle_loop(MenuModderDetections, "Vehicle Godmode", {}, "Detects if someone is using a vehicle that is in godmode.", function()
-for _, csPID in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
-local pos = ENTITY.GET_ENTITY_COORDS(ped, false)
-local player_veh = PED.GET_VEHICLE_PED_IS_USING(ped)
-if PED.IS_PED_IN_ANY_VEHICLE(ped, false) then
-for i, interior in ipairs(interior_stuff) do
-if not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(player_veh) and not NETWORK.NETWORK_IS_PLAYER_FADING(csPID) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(csPID) ~= 0 and get_interior_player_is_in(csPID) == interior then
-util.draw_debug_text(players.get_name(csPID) .. "  Is In Vehicle Godmode")
-break
-end
-end
-end
-end
-end)
-
-menu.toggle_loop(MenuModderDetections, "Vehicle Godmode Auto Kick", {}, "Detects if someone is using a vehicle that is in godmode, blocks there joins and kicks them.", function()
-for _, csPID in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
-local pos = ENTITY.GET_ENTITY_COORDS(ped, false)
-local player_veh = PED.GET_VEHICLE_PED_IS_USING(ped)
-if PED.IS_PED_IN_ANY_VEHICLE(ped, false) then
-for i, interior in ipairs(interior_stuff) do
-if not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(player_veh) and not NETWORK.NETWORK_IS_PLAYER_FADING(csPID) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(csPID) ~= 0 and get_interior_player_is_in(csPID) == interior then
-menu.trigger_commands("Smart" .. players.get_name(csPID))
-util.draw_debug_text(players.get_name(csPID) .. "Is In Vehicle Godmode")
-util.toast(players.get_name(csPID) .. "Is In Vehicle Godmode")
-break
-end
-end
-end
-end
-end)
-
-menu.toggle_loop(MenuModderDetections, "Vehicle Godmode Auto Slingshot", {}, "Detects if someone is using a vehicle that is in godmode, then slingshots there vehicle.", function()
-for _, csPID in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
-local pos = ENTITY.GET_ENTITY_COORDS(ped, false)
-local player_veh = PED.GET_VEHICLE_PED_IS_USING(ped)
-if PED.IS_PED_IN_ANY_VEHICLE(ped, false) then
-for i, interior in ipairs(interior_stuff) do
-if not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(player_veh) and not NETWORK.NETWORK_IS_PLAYER_FADING(csPID) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(csPID) ~= 0 and get_interior_player_is_in(csPID) == interior then
-menu.trigger_commands("slingshot" .. players.get_name(csPID))
-util.draw_debug_text(players.get_name(csPID) .. "Is In Vehicle Godmode")
-util.toast(players.get_name(csPID) .. "Is In Vehicle Godmode")
-break
-end
-end
-end
-end
-end)
-
-menu.toggle_loop(MenuModderDetections, "Vehicle Godmode Auto Kick Them Out", {}, "Detects if someone is using a vehicle that is in godmode, then kicks them out of the vehicle.", function()
-for _, csPID in ipairs(players.list(false, true, true)) do
-local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID)
-local pos = ENTITY.GET_ENTITY_COORDS(ped, false)
-local player_veh = PED.GET_VEHICLE_PED_IS_USING(ped)
-if PED.IS_PED_IN_ANY_VEHICLE(ped, false) then
-for i, interior in ipairs(interior_stuff) do
-if not ENTITY.GET_ENTITY_CAN_BE_DAMAGED(player_veh) and not NETWORK.NETWORK_IS_PLAYER_FADING(csPID) and ENTITY.IS_ENTITY_VISIBLE(ped) and get_transition_state(csPID) ~= 0 and get_interior_player_is_in(csPID) == interior then
-menu.trigger_commands("vehkick" .. players.get_name(csPID))
-util.draw_debug_text(players.get_name(csPID) .. "Is In Vehicle Godmode")
-util.toast(players.get_name(csPID) .. "Is In Vehicle Godmode")
-break
-end
-end
-end
-end
-end)
 
 menu.toggle_loop(MenuModderDetections, "Unreleased Vehicle", {}, "Detects if someone is using a vehicle that has not been released yet.", function()
 for _, csPID in ipairs(players.list(false, true, true)) do
