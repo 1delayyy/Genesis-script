@@ -7,6 +7,59 @@ util.require_natives("natives-1663599433")
 util.require_natives("natives-1651208000")
 util.require_natives(1663599433)
 
+
+resources_dir = filesystem.resources_dir() .. '\\Genesisscript\\'
+Genesisscript_logo = directx.create_texture(resources_dir .. 'Genesisscript_logo.png')
+
+if not filesystem.is_dir(resources_dir) then
+    return
+end
+
+if not SCRIPT_SILENT_START then
+    logo_alpha = 0
+    logo_alpha_incr = 0.02
+    logo_alpha_thread = util.create_thread(function (thr)
+    while true do
+        logo_alpha = logo_alpha + logo_alpha_incr
+        if logo_alpha > 1 then
+            logo_alpha = 1
+        elseif logo_alpha < 0 then
+            logo_alpha = 0
+        end
+        util.yield()
+    end
+end)
+
+    logo_thread = util.create_thread(function (thr)
+    starttime = os.clock()
+    local alpha = 0
+    while true do
+            directx.draw_texture(Genesisscript_logo, 0.15, 0.10, 0.5, 0.7, 0.5, 0.5, 0, 1, 1, 1, logo_alpha)
+            timepassed = os.clock() - starttime
+            if timepassed > 1 then
+                logo_alpha_incr = -0.01
+            end
+            if logo_alpha == 0 then
+                return
+            end
+            util.yield()
+        end
+    end)
+end
+
+local function lan(msg)
+    return util.log(msg), util.toast(msg)
+end
+
+
+
+local welcomeMessage = "Welcome to Genesis Script!"
+
+
+lan(welcomeMessage)
+
+
+
 -- Add all SE's here for quicker updates
 local se = {
     tpspread = -1388926377, -- older gta se version
