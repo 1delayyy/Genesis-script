@@ -58,3 +58,7 @@ Added block known crashers from joining
 Added Admin bail better version
 Added create admin group 
 Added demon horns prop
+
+16/09/24
+Added lua script logo
+Added welcome message
