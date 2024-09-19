@@ -101,6 +101,35 @@ local glob = {
 
 --[[ ||| DEFINE FUNCTIONS ||| ]]--
 
+function isDetectionPresent(playerID, detection)
+	if players.exists(playerID) and menu.player_root(playerID):isValid() then
+		for menu.player_root(playerID):getChildren() as cmd do
+			if cmd:getType() == COMMAND_LIST_CUSTOM_SPECIAL_MEANING and cmd:refByRelPath(detection):isValid() and players.exists(playerID) then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+local GlobalplayerBD = 2657971
+local GlobalplayerBD_FM = 1845281
+local GlobalplayerBD_FM_3 = 1887305
+
+function isNetPlayerOk(playerID, assert_playing = false, assert_done_transition = true) 
+	if not NETWORK_IS_PLAYER_ACTIVE(playerID) then return false end
+	if assert_playing and not IS_PLAYER_PLAYING(playerID) then return false end
+	if assert_done_transition then
+		if playerID == memory.read_int(memory.script_global(2672855 + 3)) then -- Global_2672855.f_3
+			return memory.read_int(memory.script_global(2672855 + 2)) != 0 -- -- Global_2672855.f_2
+		elseif memory.read_int(memory.script_global(GlobalplayerBD + 1 + (playerID * 465))) != 4 then -- Global_2657971[iVar0 /*465*/] != 4
+			return false
+		end
+	end
+	return true
+end
+
+
 local function get_transition_state(pid)
     return memory.read_int(memory.script_global(((glob.player + 1) + (pid * 453)) + 230))
     end
@@ -966,6 +995,7 @@ MenuSelf = menu.list(menu.my_root(), "Self", {""}, "Self Options.") ; menu.divid
     MenuHealth = menu.list(MenuSelf, "Health", {""}, "Health Options.") ; menu.divider(MenuHealth, "Health Options")
     MenuWeapon = menu.list(MenuSelf, "Weapon", {""}, "Weapon Options.") ; menu.divider(MenuWeapon, "Weapon Options")
         MenuWeaponHotswap = menu.list(MenuWeapon, "Hotswap", {""}, "Weapon Hotswap Options.") ; menu.divider(MenuWeaponHotswap, "Hotswap Options")
+        MenuWeaponPunch = menu.list(MenuWeapon, "Super Hit", {""}, "Super Hit Options.") ; menu.divider(MenuWeaponPunch, "Super Hit Options")
         MenuWeaponSAim = menu.list(MenuWeapon, "Silent Aimbot", {""}, "Silent Aimbot Options.") ; menu.divider(MenuWeaponSAim, "Silent Aimbot Options")
         MenuWeaponQR = menu.list(MenuWeapon, "Quick Rocket", {""}, "Quick Rocket Options.") ; menu.divider(MenuWeaponQR, "Quick Rocket Options")
         MenuWeaponGuidedM = menu.list(MenuWeapon, "Missle Guidance", {""}, "Missle Guidance Options.") ; menu.divider(MenuWeaponGuidedM, "Missle Guidance Options")
@@ -975,6 +1005,7 @@ MenuSelf = menu.list(menu.my_root(), "Self", {""}, "Self Options.") ; menu.divid
             MenuNaughtyOptions = menu.list(MenuSelf, "Naughty", {""}, "Naughty Options.") ; menu.divider(MenuNaughtyOptions, "Naughty Options")
             MenuAnimationOptions = menu.list(MenuSelf, "Animations", {""}, "Animation Options.") ; menu.divider(MenuAnimationOptions, "Animation Options")
             MenuOutfitOptions = menu.list(MenuSelf, "Outfit", {""}, "Outfit Options.") ; menu.divider(MenuOutfitOptions, "Outfit Options")
+           
 
 
 --[[Vehicle Menu]]--
@@ -1067,6 +1098,22 @@ menu.action(MenuSession, "Create \"Admin\" Group", {"pgadminlist"}, "Create a gr
     menu.trigger_commands("adminsnote Admin")
 end)
 
+menu.toggle(MenuSession, "Load Enhancement", {"enhance"}, "Player loading enhancement toggle", function ()
+    menu.trigger_commands("speeddial")
+    util.yield(666)
+    menu.trigger_commands("transitionhelper")
+    menu.trigger_commands("nospawnactivities")
+    menu.trigger_commands("skipswoopdown")
+    menu.trigger_commands("skipbroadcast")
+    menu.trigger_commands("speedupfmmc")
+    menu.trigger_commands("speedupspawn")
+    menu.trigger_commands("scripthost")
+end)
+
+
+
+
+
 local functions = require('lib.Genesis.functions')
 local api = require('lib.Genesis.api')
 
@@ -1135,6 +1182,8 @@ MenuMisc = menu.list(menu.my_root(), "Genesis", {""}, "Genesis Options.") ; menu
     MenuCredits = menu.list(MenuMisc, "Credits", {""}, "Credits for the Developer and Supporters of Genesis.") ; menu.divider(MenuCredits, "")
 
 
+
+    
 
     --[[Self outfit]]--
     local delay_lib = require("Genesis/delay_lib")
@@ -1242,7 +1291,7 @@ menu.list_select(MenuOutfitOptions, "Demon Horns Color", {}, "make sure demon ho
     {util.joaat("w_me_knife_xm3_07"), "Trippy"},
     {util.joaat("w_me_knife_xm3_08"), "Tequilya"},
     {util.joaat("w_me_knife_xm3_09"), "Orang-O-Tang"},
-}, demon_horn_hash, function(value, menu_name, prev_value, click_type)
+},  demon_horn_hash, function(value, menu_name, prev_value, click_type)
     demon_horn_hash = value
     if delay_lib.allow_spawn_check() and menu.get_value() and delay_lib.request_model(value, 3) then
         delay_lib.delete_entity(demon_horn1)
@@ -1624,6 +1673,18 @@ end)
 
 menu.toggle(MenuMainMovement, "Super Jump", {"gssuperjump"}, "Makes you Jump very High. Detected by Most Menus.", function(on)
     menu.trigger_command(menu.ref_by_command_name("superjump"))
+end)
+
+
+local strength = 1000.0
+menu.slider_float(MenuWeaponPunch, "Hit Strength", {"hitstrength"}, "", 1000, 10000000, 100000, 1000, function(value)
+	strength = value/100
+end)
+
+menu.toggle_loop(MenuWeaponPunch, "Super Hit", {}, "", function(toggled)
+    SET_PLAYER_MELEE_WEAPON_DAMAGE_MODIFIER(players.user(), strength, true)
+end, function()
+	SET_PLAYER_MELEE_WEAPON_DAMAGE_MODIFIER(players.user(), 1.0, true)
 end)
 
 
@@ -2489,18 +2550,20 @@ menu.action(MenuOnlineAll, "Kick All", {"gskickall"}, "Kicks every Player in the
     end
 end)
 
-menu.action(MenuOnlineAll, "Crash All", {"gscrashall"}, "Crashes every Player in the Session.", function(on_click)
+menu.action(MenuOnlineAll, "Silent Crash All", {"gscrashall"}, "Crashes every Player in the Session.", function()
+    menu.trigger_commands("ruinerc1")
+ end)
+
+ menu.toggle(MenuOnlineAll, "Timeoutall", {"gstimeoutall"}, "Blocks all network traffic from every player", function(on_click)
     for i = 0, 31, 1 do
         if players.exists(i) and i ~= players.user() then
             local string PlayerName = players.get_name(i)
             local string PlayerNameLower = PlayerName:lower()
-            menu.trigger_command(menu.ref_by_command_name("crash"..PlayerNameLower))
-            menu.trigger_command(menu.ref_by_command_name("footlettuce"..PlayerNameLower))
-            menu.trigger_command(menu.ref_by_command_name("slaughter"..PlayerNameLower))
-            menu.trigger_command(menu.ref_by_command_name("steamroll"..PlayerNameLower))
+            menu.trigger_command(menu.ref_by_command_name("timeout"..PlayerNameLower))
         end
     end
 end)
+
 
 function CreateVehicle(Hash, Pos, Heading, Invincible)
     STREAMING.REQUEST_MODEL(Hash)
@@ -4084,6 +4147,42 @@ se.givecollectible,
 125899875,
 -1217949151,
 }
+
+    --menu detections 
+    
+    menu.toggle_loop(MenuModderDetections, "2Take1 User", {}, "Detects people using 2Take1. (Note: player must be in a vehicle spawned by them)", function()
+        for players.list_except() as playerID do
+            local ped = GET_PLAYER_PED_SCRIPT_INDEX(playerID)
+            local vehicle = GET_VEHICLE_PED_IS_USING(ped)
+            local bitset = DECOR_GET_INT(vehicle, "MPBitset")
+            local pegasusveh = DECOR_GET_BOOL(vehicle, "CreatedByPegasus")
+            if isNetPlayerOk(playerID) and bitset == 1024 and players.get_weapon_damage_modifier(playerID) == 1 and not entities.is_invulnerable(ped) and not pegasusveh and getPlayerJobPoints(playerID) == 0 then
+                if not isDetectionPresent(playerID, "2Take1 User") then
+                    players.add_detection(playerID, "2Take1 User", TOAST_ALL, 100)
+                    menu.trigger_commands($"historynote {players.get_name(playerID)} 2Take1 User")
+                    return
+                end
+            end
+        end
+        util.yield(250)
+    end)
+    
+    menu.toggle_loop(MenuModderDetections, "YimMenu User", {}, "Detects people using YimMenu's \"Force Session Host\".", function()
+        for players.list() as playerID do
+            local hostToken = tonumber(players.get_host_token(playerID))
+            if (hostToken == 41 or (hostToken > 255 and hostToken <= 10000)) and players.get_weapon_damage_modifier(playerID) != 1 then -- -- tbh, idc about detecting them, its just funny to see some people get annoyed. Note to Yim contributers: just randomize token 1-255
+                if not isDetectionPresent(playerID, "YimMenu User (Very Likely)") then
+                    players.add_detection(playerID, "YimMenu User (Very Likely)", TOAST_ALL, 100)
+                    menu.trigger_commands($"historynote {players.get_name(playerID)} YimMenu User")
+                    return
+                end
+            end
+        end
+        util.yield(250)
+    end)
+
+
+
 
 menu.action(MenuNaughtyOptions, "Cum", {"cum"}, "", function ()
     local ptfx_asset = "scr_indep_fireworks"
@@ -22863,60 +22962,6 @@ while true do
     end
 
     util.yield()
-
-
-    --menu detections 
-    
-
-
-
-
-
-
-    
-    
-    --function isDetectionPresent(playerID, detection)
-      --  if players.exists(playerID) and menu.player_root(playerID):isValid() then
-         --   for menu.player_root(playerID):getChildren() as cmd do
-             --   if cmd:getType() == COMMAND_LIST_CUSTOM_SPECIAL_MEANING and cmd:refByRelPath(detection):isValid() and players.exists(playerID) then
-                 --   return true
-              --  end
-         --   end
-      --  end
-      --  return false
-  --  end
-
-
---Genesis_menu:toggle_loop("2Take1 User", {}, "Detects people using 2Take1. (Note: player must be in a vehicle spawned by them)", function()
---for players.list_except() as playerID do
---local ped = GET_PLAYER_PED_SCRIPT_INDEX(playerID)
---local vehicle = GET_VEHICLE_PED_IS_USING(ped)
---local bitset = DECOR_GET_INT(vehicle, "MPBitset")
---local pegasusveh = DECOR_GET_BOOL(vehicle, "CreatedByPegasus")
---if isNetPlayerOk(playerID) and bitset == 1024 and players.get_weapon_damage_modifier(playerID) == 1 and not entities.is_invulnerable(ped) and not pegasusveh and getPlayerJobPoints(playerID) == 0 then
---if not isDetectionPresent(playerID, "2Take1 User") then
---players.add_detection(playerID, "2Take1 User", TOAST_ALL, 100)
---menu.trigger_commands($"historynote {players.get_name(playerID)} 2Take1 User")
---return
---end
---end
---end
---yield(250)
---end)
-    
---Genesis_menu:toggle_loop("YimMenu User", {}, "Detects people using YimMenu's \"Force Session Host\".", function()
---for players.list() as playerID do
---local hostToken = tonumber(players.get_host_token(playerID))
---if (hostToken == 41 or (hostToken > 255 and hostToken <= 10000)) and players.get_weapon_damage_modifier(playerID) != 1 then -- -- tbh, idc about detecting them, its just funny to see some people get annoyed. Note to Yim contributers: just randomize token 1-255
---if not isDetectionPresent(playerID, "YimMenu User (Very Likely)") then
---players.add_detection(playerID, "YimMenu User (Very Likely)", TOAST_ALL, 100)
---menu.trigger_commands($"historynote {players.get_name(playerID)} YimMenu User")
---return
---end
---end
---end
---yield(250)
---end)
 
 
     
