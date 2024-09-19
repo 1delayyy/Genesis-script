@@ -1,2 +1,2 @@
-Genesis Lua Script is a project i made with old scripts i had created myself but decided to add them mostly all together into one. i have plans to add even more to the script when i get better ideas. 
-some features added to this script was taken from an old paste pin with old code from other scripts, if you see your code inside of the script please let me know so i can add credits to the orginal creator. 
+Genesis Lua Script is a project i made with QoL features all put into one script for simplicity 
+
