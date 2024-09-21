@@ -62,3 +62,12 @@ Added demon horns prop
 16/09/24
 Added lua script logo
 Added welcome message
+
+21/09/24
+Added super hit in weapon option
+Added Non-hostile peds in session option
+Added Ped riot mode in session option
+Added enable xmas trees in apartments in session option
+Added block gooch event in protections
+Added auto claim bounties in protections
+Added Translator to online menu 
