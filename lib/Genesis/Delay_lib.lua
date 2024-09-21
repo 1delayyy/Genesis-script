@@ -1,0 +1,376 @@
+local json = require("json")
+local delay_lib = {}
+
+function delay_lib.session_type()
+    if util.is_session_started() or util.is_session_transition_active() then
+        if NETWORK_SESSION_IS_PRIVATE() then
+            return "Privat"
+        end
+        if NETWORK_SESSION_IS_CLOSED_FRIENDS() then
+            return "Friends"
+        end
+        if NETWORK_SESSION_IS_CLOSED_CREW() then
+            return "Crew"
+        end
+        if NETWORK_SESSION_IS_SOLO() then
+            return "Solo"
+        end
+        return "Public"
+    end
+    return "Singleplayer"
+end
+
+delay_lib.delay_booty = false
+
+function delay_lib.transition_state(state)
+    if delay_lib.delay_booty then
+        return state and 666 or "UwU"
+    end
+    if not util.is_session_transition_active() and util.is_session_started() and players.are_stats_ready(players.user()) then
+        return state and 1 or "Docked"
+    end
+    if not util.is_session_transition_active() and util.is_session_started() and not players.are_stats_ready(players.user()) then
+        return state and 2 or "Pressurization"
+    end
+    if util.is_session_transition_active() then
+        return state and 3 or "Orbit"
+    end
+    return state and 404 or "404"
+end
+
+function delay_lib.player_exist(pid)
+    if pid and players.exists(pid) then
+        return true
+    end
+    return false
+end
+
+function delay_lib.has_detection(pid, detection_part)
+    if delay_lib.player_exist(pid) and menu.player_root(pid):isValid() then
+        for menu.player_root(pid):getChildren() as cmd do
+            if delay_lib.player_exist(pid) and cmd:getType() == COMMAND_LIST_CUSTOM_SPECIAL_MEANING then
+                for cmd:getChildren() as detection do
+                    detection_menu_name = detection.menu_name
+                    if delay_lib.player_exist(pid) and (string.contains(detection_menu_name, detection_part) or string.contains(lang.get_string(detection_menu_name), detection_part)) then
+                        return true
+                    end
+                end
+            end
+        end
+    end
+    return false
+end
+
+function delay_lib.discovered_since(pid)
+    if delay_lib.player_exist(pid) and menu.player_root(pid):isValid() then
+        local playerPath = menu.player_root(pid)
+        local timeString = playerPath:refByRelPath("Information>Discovered").value
+        if timeString and type(timeString) == "string" then
+            local totalSeconds = 0
+            local seconds = timeString:match("(%d+) seconds ago")
+            if seconds then
+                totalSeconds = totalSeconds + tonumber(seconds)
+            end
+            local minutes = timeString:match("(%d+) minutes")
+            if minutes then
+                totalSeconds = totalSeconds + tonumber(minutes) * 60
+            end
+            local hours = timeString:match("(%d+) hours")
+            if hours then
+                totalSeconds = totalSeconds + tonumber(hours) * 3600
+            end
+            local days = timeString:match("(%d+) days")
+            if days then
+                totalSeconds = totalSeconds + tonumber(days) * 86400
+            end
+            return totalSeconds
+        end
+    end
+    return 0
+end
+
+function delay_lib.is_loading(pid)
+    if delay_lib.transition_state(true) ~= 1 then
+        return false
+    end
+    if (not players.is_visible(pid) or NETWORK_IS_PLAYER_FADING(pid)) and players.are_stats_ready(pid) and GET_ENTITY_SPEED(GET_PLAYER_PED_SCRIPT_INDEX(pid)) < 1 and not IS_PLAYER_IN_CUTSCENE(pid) and not players.is_using_rc_vehicle(pid) then
+        return true
+    end
+    return false
+end
+
+function delay_lib.is_in_clouds(pid)
+    if delay_lib.transition_state(true) > 2 then
+        if pid == players.user() then
+            return true
+        else
+            return false
+        end
+    end
+    if (not players.is_visible(pid) or NETWORK_IS_PLAYER_FADING(pid)) and not players.are_stats_ready(pid) and GET_ENTITY_SPEED(GET_PLAYER_PED_SCRIPT_INDEX(pid)) < 1 and not IS_PLAYER_IN_CUTSCENE(pid) and not players.is_using_rc_vehicle(pid) then
+        return true
+    end
+    return false
+end
+
+function delay_lib.get_session_code()
+    local applicable, code = util.get_session_code()
+    if applicable then
+        if code then
+            return code
+        end
+        return "Please wait..."
+    end
+    return "N/A"
+end
+
+function delay_lib.get_session_code_bool()
+    local applicable, code = util.get_session_code()
+    if applicable and code then
+        return true
+    end
+    return false
+end
+
+function delay_lib.does_entity_exist(entity)
+    if entity and entity ~= INVALID_GUID and DOES_ENTITY_EXIST(entity) then
+        return true
+    end
+    return false
+end
+
+function delay_lib.get_user_vehicle()
+    local user_vehicle_handle = entities.get_user_vehicle_as_handle(true)
+    if user_vehicle_handle == INVALID_GUID then
+        return entities.get_user_personal_vehicle_as_handle()
+    else
+        return user_vehicle_handle
+    end
+end
+
+local trailerPtr = memory.alloc_int()
+
+function delay_lib.get_trailer(vehicle)
+    GET_VEHICLE_TRAILER_VEHICLE(vehicle, trailerPtr)
+    local trailer = memory.read_int(trailerPtr)
+    return trailer
+end
+
+function delay_lib.is_user_driving_vehicle(vehicle)
+    if GET_PED_IN_VEHICLE_SEAT(vehicle, -1) == players.user_ped() then
+        return true
+    end
+    return false 
+end
+
+function delay_lib.is_vehicle_free_for_use(vehicle)
+    local driverPed = GET_PED_IN_VEHICLE_SEAT(vehicle, -1)
+    local driver = IS_PED_A_PLAYER(driverPed)
+    if not driver or driverPed == players.user_ped() then
+        return true
+    end
+    return false
+end
+
+function delay_lib.is_vehicle_empty(vehicle)
+    local seat_int = GET_VEHICLE_MODEL_NUMBER_OF_SEATS(entities.get_model_hash(vehicle))
+    for seat = -1, seat_int do
+        local seater = GET_PED_IN_VEHICLE_SEAT(vehicle, seat, true)
+        if seater and seater ~= 0 then
+            return false
+        end
+    end
+    return true
+end
+
+function delay_lib.get_number_of_passengers(vehicle)
+    local seat_int = GET_VEHICLE_MODEL_NUMBER_OF_SEATS(entities.get_model_hash(vehicle))
+    local passenger_count = 0
+    for seat = -1, seat_int do
+        local seater = GET_PED_IN_VEHICLE_SEAT(vehicle, seat, true)
+        if seater and seater ~= 0 then
+            passenger_count = passenger_count + 1
+        end
+    end
+    return passenger_count
+end
+
+function delay_lib.is_user_inside_vehicle(bool)
+    if bool == nil then bool = true end
+    return (IS_PED_IN_ANY_VEHICLE(players.user_ped(), bool))
+end
+
+function delay_lib.get_random_value(min, max)
+    math.randomseed(os.time())
+    return math.random(min, max)
+end
+
+function delay_lib.request_model(hash, timeout)
+    if not HAS_MODEL_LOADED(hash) then
+        REQUEST_MODEL(hash)
+        local start_time = os.time()
+        while not HAS_MODEL_LOADED(hash) do
+            if os.time() - start_time > timeout or timeout == 0 then
+                return false
+            end
+            util.yield(timeout)
+        end
+    end
+    return true
+end
+
+function delay_lib.allow_spawn_check()
+    if NETWORK_IS_ACTIVITY_SESSION() then
+        return false
+    end
+    if not players.is_visible(players.user()) or NETWORK_IS_PLAYER_FADING(players.user()) and not players.is_using_rc_vehicle(players.user()) then
+        return false
+    end
+    if not NETWORK_IS_PLAYER_ACTIVE(players.user()) then
+        return false
+    end
+    if delay_lib.transition_state(true) == 666 then
+        return false
+    end
+    return true
+end
+
+function delay_lib.spawn_and_check_object(entity, hash, locationV3, pitch, roll, yaw, order, timeout, anti_collision, networked, assisted) -- For placing objects.
+    if order == nil then order = 2 end
+    if not delay_lib.does_entity_exist(entity) then
+        if type(hash) == "string" then
+            hash = util.joaat(hash)
+        end
+        if delay_lib.request_model(hash, timeout) then
+            if networked then
+                if assisted then
+                    entity = GET_CLOSEST_OBJECT_OF_TYPE(locationV3, 0.3, hash, false, false, false)
+                    if delay_lib.does_entity_exist(entity) then
+                        return entity
+                    end
+                end
+                entity = entities.create_object(hash, locationV3)
+            else
+                entity = CREATE_OBJECT_NO_OFFSET(hash, locationV3, false, true, false)
+            end
+            if delay_lib.does_entity_exist(entity) then
+                if networked then
+                    if GET_ENTITY_LOD_DIST(entity) > 66 then
+                        SET_ENTITY_LOD_DIST(entity, 66)
+                    end
+                    if not anti_collision then
+                        entities.set_can_migrate(entity, false)
+                    end
+                end
+                SET_ENTITY_COORDS_NO_OFFSET(entity, locationV3, true, true, true)
+                SET_ENTITY_ROTATION(entity, pitch, roll, yaw, order, true)
+                FREEZE_ENTITY_POSITION(entity, true)
+            end
+        end
+    end
+    if anti_collision and delay_lib.does_entity_exist(entity) then
+        if not networked then
+            SET_ENTITY_NO_COLLISION_ENTITY(entity, players.user_ped(), false)
+        else
+            local closestDistance = nil
+            local closestPlayer = players.user()
+            for players.list_only(true, true, false, true) as pid do
+                local distance = locationV3:distance(players.get_position(pid))
+                if not closestDistance or distance < closestDistance then
+                    closestDistance = distance
+                    closestPlayer = pid
+                end
+                util.yield(timeout)
+            end
+            if closestDistance and closestDistance < 13 then
+                if closestPlayer == players.user() then
+                    SET_ENTITY_NO_COLLISION_ENTITY(entity, players.user_ped(), false)
+                else
+                    SET_ENTITY_COLLISION(entity, false, false)
+                end
+            else
+                SET_ENTITY_NO_COLLISION_ENTITY(entity, players.user_ped(), false)
+            end
+        end
+    end
+    return entity
+end
+
+function delay_lib.delete_entity(ent)
+    if delay_lib.does_entity_exist(ent) then
+        entities.delete(ent)
+    end
+end
+
+function delay_lib.read_from_file(the_path)
+    if type(the_path) ~= "string" then
+        print("ERROR: the_path must be a string.")
+        return
+    end    
+    local file = io.open(the_path, "r")
+    if file then
+        local content = file:read("*all")
+        file:close()
+        return content
+    else
+        print("ERROR: Could not read file")
+        return nil
+    end
+end
+
+function delay_lib.write_to_file(the_path, payload)
+    if type(the_path) ~= "string" then
+        print("ERROR: the_path must be a string.")
+        return
+    end    
+    if not filesystem.exists(the_path) then
+        local directory = the_path:match("(.*/)")
+        if directory then
+            filesystem.mkdir(directory)
+        end
+    end
+    local file = io.open(the_path, "w")
+    if file then
+        file:write(payload)
+        file:close()
+    else
+        print("ERROR: Could not open file for writing.")
+    end
+end
+
+function delay_lib.load_and_apply_config(config_path, data_cfg)
+    local config_data = delay_lib.read_from_file(config_path)
+    if config_data then
+        local json_status_decode, decoded_data = pcall(json.decode, config_data)
+        if json_status_decode and decoded_data then
+            for store, path in pairs(data_cfg) do
+                local value = decoded_data[store]
+                local original_value = menu.get_value(path)
+                if value ~= nil and type(value) == type(original_value) then
+                    menu.set_value(path, value)
+                end
+                util.yield()
+            end
+            print("Config loaded and applied successfully.")
+        else
+            print("Error: Unable to decode config data.")
+        end
+    end
+end
+
+function delay_lib.save_config(config_path, data_cfg, bool)
+    local config_data = {}
+    for store, path in pairs(data_cfg) do
+        config_data[store] = menu.get_value(path)
+        if bool then
+            util.yield()
+        end
+    end
+
+    local json_status_encode, json_data = pcall(json.encode, config_data)
+    if json_status_encode and json_data then
+        delay_lib.write_to_file(config_path, json_data)
+    end
+end
+
+return delay_lib
