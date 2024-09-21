@@ -1043,6 +1043,7 @@ MenuOnline = menu.list(menu.my_root(), "Online", {""}, "Online Options.") ; menu
     MenuModderDetections = menu.list(MenuOnline, "Modder Detections", {""}, "Modder Detection Options.") ;menu.divider(MenuModderDetections, "Modder Detections")
     MenuNetwork = menu.list(MenuOnline, "Network", {""}, "Network Options.") ;menu.divider(MenuNetwork, "Network Options")
     MenuSession = menu.list(MenuOnline, "Session", {""}, "Session Options.") ;menu.divider(MenuSession, "Session Options")
+    MenuTranslator = menu.list(MenuOnline, "Translator", {""}, "Translator Options.") ;menu.divider(MenuTranslator, "Translator Options")
 
 --[[MenuSession]]--
 
@@ -1109,6 +1110,337 @@ menu.toggle(MenuSession, "Load Enhancement", {"enhance"}, "Player loading enhanc
     menu.trigger_commands("speedupspawn")
     menu.trigger_commands("scripthost")
 end)
+
+menu.toggle_loop(MenuSession, "Non-Hostile Peds", {"friendlyai"}, "Makes NPCs unable to target you.", function()
+	SET_PED_RESET_FLAG(players.user_ped(), 124, true)
+	SET_EVERYONE_IGNORE_PLAYER(players.user(), true)
+	util.yield(1000)
+end)
+
+menu.toggle(MenuSession, "Ped Riot Mode", {}, "", function(toggled)
+	SET_RIOT_MODE_ENABLED(toggled)
+end)
+
+menu.toggle(MenuSession, "Enable Christmas Trees", {"enablexmastrees"}, "Enables Christmas trees in your apartment.", function(toggle)
+	memory.write_int(memory.script_global(262145 + 9436), toggled ? 0 : 1) -- Global_262145.f_9436
+	memory.write_int(memory.script_global(262145 + 9437), toggled ? 0 : 1) -- Global_262145.f_9437
+end)
+
+local joaat, toast, yield, draw_debug_text, reverse_joaat = util.joaat, util.toast, util.yield, util.draw_debug_text, util.reverse_joaat
+
+menu.toggle_loop(MenuProtection, "Block Gooch Event", {}, "Blocks the event that sends the gooch after you.", function()
+	if GET_NUMBER_OF_THREADS_RUNNING_THE_SCRIPT_WITH_THIS_HASH(joaat("fm_content_xmas_mugger")) > 0 then
+		local amLauncherHost = NETWORK_GET_HOST_OF_SCRIPT("am_launcher", -1, 0)
+		TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME("fm_content_xmas_mugger")
+		toast($"Prevented a freemode script (fm_content_xmas_mugger). :D")
+	end
+end)
+
+menu.toggle_loop(MenuProtection, "Auto Claim Bounties", {"autoclaimbounties"}, "Automatically claims bounties that are placed on you.", function()
+	local bounty = players.get_bounty(players.user())
+	if bounty != nil then
+		repeat
+			menu.trigger_commands("removebounty")
+			yield(1000)
+			bounty = players.get_bounty(players.user())
+		until bounty == nil
+		toast("Bounty has been auto-claimed. :D")
+	end
+	util.yield(1000)
+end)
+
+focusref = {}
+isfocused = false
+selectedcoloraddict = 0
+colorselec = 1
+allchatlabel = util.get_label_text("MP_CHAT_ALL")
+teamchatlabel = util.get_label_text("MP_CHAT_TEAM")
+
+function save()
+configfile = io.open(filesystem.store_dir().."Genesis_Translator//config.txt", "w+")
+configfile:write("colorselec = "..colorselec..string.char(10)..'teamchatlabel = "'..teamchatlabel..'"'..string.char(10)..'allchatlabel = "'..allchatlabel..'"')
+configfile:close()
+end
+
+if not filesystem.exists(filesystem.store_dir().."Genesis_Translator//config.txt") then
+filesystem.mkdir(filesystem.store_dir().."Genesis_Translator//")
+configfile = io.open(filesystem.store_dir().."Genesis_Translator//config.txt", "w+")
+configfile:write("colorselec = "..colorselec..string.char(10)..'teamchatlabel = "'..util.get_label_text("MP_CHAT_TEAM")..'"'..string.char(10)..'allchatlabel = "'..util.get_label_text("MP_CHAT_ALL")..'"')
+configfile:close()
+colorselec = 1
+else
+configfile = io.open(filesystem.store_dir().."Genesis_Translator//config.txt")
+configfiledata = configfile:read("*all")
+configfile:close()
+--load(configfiledata)
+end
+
+util.ensure_package_is_installed("lua/ScaleformLib")
+local sfchat = require("lib.ScaleformLib")("multiplayer_chat")
+sfchat:draw_fullscreen()
+
+local Languages = {
+{ Name = "Afrikaans", Key = "af" },
+{ Name = "Albanian", Key = "sq" },
+{ Name = "Arabic", Key = "ar" },
+{ Name = "Azerbaijani", Key = "az" },
+{ Name = "Basque", Key = "eu" },
+{ Name = "Belarusian", Key = "be" },
+{ Name = "Bengali", Key = "bn" },
+{ Name = "Bulgarian", Key = "bg" },
+{ Name = "Catalan", Key = "ca" },
+{ Name = "Chinese Simplified", Key = "zh-cn" },
+{ Name = "Chinese Traditional", Key = "zh-tw" },
+{ Name = "Croatian", Key = "hr" },
+{ Name = "Czech", Key = "cs" },
+{ Name = "Danish", Key = "da" },
+{ Name = "Dutch", Key = "nl" },
+{ Name = "English", Key = "en" },
+{ Name = "Esperanto", Key = "eo" },
+{ Name = "Estonian", Key = "et" },
+{ Name = "Filipino", Key = "tl" },
+{ Name = "Finnish", Key = "fi" },
+{ Name = "French", Key = "fr" },
+{ Name = "Galician", Key = "gl" },
+{ Name = "Georgian", Key = "ka" },
+{ Name = "German", Key = "de" },
+{ Name = "Greek", Key = "el" },
+{ Name = "Gujarati", Key = "gu" },
+{ Name = "Haitian Creole", Key = "ht" },
+{ Name = "Hebrew", Key = "iw" },
+{ Name = "Hindi", Key = "hi" },
+{ Name = "Hungarian", Key = "hu" },
+{ Name = "Icelandic", Key = "is" },
+{ Name = "Indonesian", Key = "id" },
+{ Name = "Irish", Key = "ga" },
+{ Name = "Italian", Key = "it" },
+{ Name = "Japanese", Key = "ja" },
+{ Name = "Kannada", Key = "kn" },
+{ Name = "Korean", Key = "ko" },
+{ Name = "Latin", Key = "la" },
+{ Name = "Latvian", Key = "lv" },
+{ Name = "Lithuanian", Key = "lt" },
+{ Name = "Macedonian", Key = "mk" },
+{ Name = "Malay", Key = "ms" },
+{ Name = "Maltese", Key = "mt" },
+{ Name = "Norwegian", Key = "no" },
+{ Name = "Persian", Key = "fa" },
+{ Name = "Polish", Key = "pl" },
+{ Name = "Portuguese", Key = "pt" },
+{ Name = "Romanian", Key = "ro" },
+{ Name = "Russian", Key = "ru" },
+{ Name = "Serbian", Key = "sr" },
+{ Name = "Slovak", Key = "sk" },
+{ Name = "Slovenian", Key = "sl" },
+{ Name = "Spanish", Key = "es" },
+{ Name = "Swahili", Key = "sw" },
+{ Name = "Swedish", Key = "sv" },
+{ Name = "Tamil", Key = "ta" },
+{ Name = "Telugu", Key = "te" },
+{ Name = "Thai", Key = "th" },
+{ Name = "Turkish", Key = "tr" },
+{ Name = "Ukrainian", Key = "uk" },
+{ Name = "Urdu", Key = "ur" },
+{ Name = "Vietnamese", Key = "vi" },
+{ Name = "Welsh", Key = "cy" },
+{ Name = "Yiddish", Key = "yi" },
+}
+
+local LangKeys = {}
+local LangName = {}
+local LangIndexes = {}
+local LangLookupByName = {}
+local LangLookupByKey = {}
+local PlayerSpooflist = {}
+local PlayerSpoof = {}
+
+for i=1,#Languages do
+local Language = Languages[i]
+LangKeys[i] = Language.Name
+LangName[i] = Language.Name
+LangIndexes[Language.Key] = i
+LangLookupByName[Language.Name] = Language.Key
+LangLookupByKey[Language.Key] = Language.Name
+end
+
+table.sort(LangKeys)
+
+function encode(text)
+return string.gsub(text, "%s", "+")
+end
+function decode(text)
+return string.gsub(text, "%+", " ")
+end
+
+
+settingtrad = menu.list(MenuTranslator, "Settings for translation")
+colortradtrad = menu.list(MenuTranslator, "Player name color")
+menu.on_focus(colortradtrad, function()
+util.yield(50)
+isfocused = false
+end)
+selectmenu = menu.action(colortradtrad, "Selectioned : ".."Color : "..colorselec, {}, "this will be saved to a config file", function()
+menu.focus(focusref[tonumber(colorselec)])
+end)
+menu.on_focus(selectmenu, function()
+util.yield(50)
+isfocused = false
+end)
+for i = 1, 234 do
+focusref[i] = menu.action(colortradtrad, "Color : "..i, {}, "this will be saved to a config file", function()
+menu.set_menu_name(selectmenu, "Selectioned : ".."Color : "..i)
+colorselec = i
+save()
+end)
+menu.on_focus(focusref[i], function()
+isfocused = false
+util.yield(50)
+isfocused = true
+while isfocused do
+if not menu.is_open() then
+isfocused = false
+end
+ptr1 = memory.alloc()
+ptr2 = memory.alloc()
+ptr3 = memory.alloc()
+ptr4 = memory.alloc()
+HUD.GET_HUD_COLOUR(i, ptr1, ptr2, ptr3, ptr4)
+directx.draw_text(0.5, 0.5, "example", 5, 0.75, {r = memory.read_int(ptr1)/255, g = memory.read_int(ptr2)/255, b =memory.read_int(ptr3)/255, a= memory.read_int(ptr4)/255}, true)
+util.yield()
+end
+end)
+end
+
+
+menu.text_input(settingtrad, "Custom label for ["..string.upper(util.get_label_text("MP_CHAT_TEAM")).."] translation message", {"labelteam"}, "leaving it blank will revert it to the original label", function(s, click_type)
+if (s == "") then
+teamchatlabel = util.get_label_text("MP_CHAT_TEAM")
+else
+teamchatlabel = s
+end
+if not (click_type == 4) then
+save()
+end
+end)
+if not (teamchatlabel == util.get_label_text("MP_CHAT_TEAM")) then
+menu.trigger_commands("labelteam "..teamchatlabel)
+end
+
+
+menu.text_input(settingtrad, "Custom label for ["..string.upper(util.get_label_text("MP_CHAT_ALL")).."] translation message", {"labelall"}, "leaving it blank will revert it to the original label", function(s, click_type)
+if (s == "") then
+allchatlabel = util.get_label_text("MP_CHAT_ALL")
+else
+allchatlabel = s
+end
+if not (click_type == 4) then
+save()
+end
+end)
+if not (teamchatlabel == util.get_label_text("MP_CHAT_TEAM")) then
+menu.trigger_commands("labelall "..allchatlabel)
+end
+
+targetlangmenu = menu.slider_text(MenuTranslator, "Target Language", {}, "You need to click to aply change", LangName, function(s)
+targetlang = LangLookupByName[LangKeys[s]]
+end)
+
+tradlocamenu = menu.slider_text(settingtrad, "Location of Translated Message", {}, "You need to click to aply change", {"Global Chat networked", "Global Chat not networked", "Team Chat not networked", "Team Chat networked", "notification"}, function(s)
+Tradloca = s
+end)
+
+traductself = false
+menu.toggle(settingtrad, "Translate Yourself", {}, "", function(on)
+traductself = on
+end)
+traductsamelang = false
+menu.toggle(settingtrad, "Translate even if the language is the same as the desired one", {}, "might not work correctly because google is dumb", function(on)
+traductsamelang = on
+end)
+oldway = false
+menu.toggle(settingtrad, "Use the old method", {}, players.get_name(players.user()).." [ALL] player_sender : their message", function(on)
+oldway = on
+end)
+traduct = false
+menu.toggle(MenuTranslator, "Translator On/Off", {}, "", function(on)
+traduct = on
+end, false)
+
+traductmymessage = menu.list(MenuTranslator, "Send Translated Message")
+finallangmenu = menu.slider_text(traductmymessage, "Final Language", {"finallang"}, "Final Languge of your message.																	  You need to click to aply change", LangName, function(s)
+targetlangmessagesend = LangLookupByName[LangKeys[s]]
+end)
+
+menu.action(traductmymessage, "Send Message", {"Sendmessage"}, "Input the text For your message", function(on_click)
+util.toast("Please input your message")
+menu.show_command_box("Sendmessage ")
+end, function(on_command)
+mytext = on_command
+async_http.init("translate.googleapis.com", "/translate_a/single?client=gtx&sl=auto&tl="..targetlangmessagesend.."&dt=t&q="..encode(mytext), function(Sucess)
+if Sucess ~= "" then
+translation, original, sourceLang = Sucess:match("^%[%[%[\"(.-)\",\"(.-)\",.-,.-,.-]],.-,\"(.-)\"")
+for _, pId in ipairs(players.list()) do
+chat.send_targeted_message(pId, players.user(), string.gsub(translation, "%+", " "), false)
+end
+end
+end)
+async_http.dispatch()
+end)
+botsend = false
+chat.on_message(function(packet_sender, message_sender, text, team_chat)
+if not botsend then
+if not traductself and (packet_sender == players.user()) then
+else
+if traduct then
+async_http.init("translate.googleapis.com", "/translate_a/single?client=gtx&sl=auto&tl="..targetlang.."&dt=t&q="..encode(text), function(Sucess)
+if Sucess ~= "" then
+translation, original, sourceLang = Sucess:match("^%[%[%[\"(.-)\",\"(.-)\",.-,.-,.-]],.-,\"(.-)\"")
+if not traductsamelang and (sourceLang == targetlang)then
+
+else
+if oldway then
+sender = players.get_name(players.user())
+translationtext = players.get_name(packet_sender).." : "..decode(translation)
+colorfinal = 1
+else
+sender = players.get_name(packet_sender)
+translationtext = decode(translation)
+colorfinal = colorselec
+end
+if (Tradloca == 1) then
+sfchat.ADD_MESSAGE(sender, translationtext, teamchatlabel, false, colorfinal)
+end if (Tradloca == 2) then
+    botsend = true
+    chat.send_message(players.get_name(packet_sender).." : "..decode(translation), true, false, true)
+    sfchat.ADD_MESSAGE(sender, translationtext, teamchatlabel, false, colorfinal)
+    end if (Tradloca == 3) then
+        sfchat.ADD_MESSAGE(sender, translationtext, allchatlabel, false, colorfinal)
+        end if (Tradloca == 4) then
+            botsend = true
+            chat.send_message(players.get_name(packet_sender).." : "..decode(translation), false, false, true)
+            sfchat.ADD_MESSAGE(sender, translationtext, allchatlabel, false, colorfinal)
+            end if (Tradloca == 5) then
+                util.toast(players.get_name(packet_sender).." : "..decode(translation), TOAST_ALL)
+            end
+        end
+    end
+    end)
+    async_http.dispatch()
+end
+end
+end
+botsend = false
+end)
+
+
+run = 0
+while run<10 do
+Tradloca = menu.get_value(tradlocamenu)
+targetlangmessagesend = LangLookupByName[LangKeys[menu.get_value(finallangmenu)]]
+targetlang = LangLookupByName[LangKeys[menu.get_value(targetlangmenu)]]
+util.yield()
+run = run+1
+end
 
 
 
@@ -3181,7 +3513,7 @@ util.toast("Slots are now free :)")
 end
 end)
 
-menu.action(MenuNetwork, "Start Fake Typing", {}, "Will show a typing indicator above your nickname and also make other addicts think that you're typing in chat", function()
+menu.action(MenuNetwork, "Start Fake Typing", {}, "Will show a typing indicator above your nickname and also make other menus think that you're typing in chat", function()
 menu.trigger_commands("hidetyping off")
 for pids = 0, 31 do
 if players.exists(pids) and pids ~= players.user() then
@@ -6790,7 +7122,7 @@ end)
     end)
 
 
-local main_menu = menu.list(MenuPlayerRemovalCrash, "Menu Crashes", {}, "Other Menu Crashes")                                        --Credits to addict script
+local main_menu = menu.list(MenuPlayerRemovalCrash, "Menu Crashes", {}, "Other Menu Crashes")                                        --Credits to menu script
 
 menu.action(main_menu,"North Crash", {"northcrash"}, "Working.", function()
 local pos = ENTITY.GET_ENTITY_COORDS(PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(csPID))
