@@ -51,6 +51,16 @@ local function lan(msg)
     return util.log(msg), util.toast(msg)
 end
 
+local translations = {}
+setmetatable(translations, {
+    __index = function (self, key)
+        return key
+    end
+})
+
+
+
+
 
 
 local welcomeMessage = "Welcome to Genesis Script!"
@@ -1077,6 +1087,8 @@ menu.action(MenuSession, "block known crashers", {""}, "Blocks the player join r
     menu.trigger_commands("historyblockkamyflo")
     menu.trigger_commands("historyadd Kamyczek3232")
     menu.trigger_commands("historyblockKamyczek3232")
+    menu.trigger_commands("historyadd Kamyloogsk")
+    menu.trigger_commands("historyblockKamyloogsk")
 end)
 
 menu.toggle_loop(MenuSession, "Admin Bail", {"antiadmin"}, "Instantly Bail and Join Invite only\nIf R* Admin Detected", function()
@@ -3566,6 +3578,26 @@ menu.action(MenuOnlineAll, "Bonk Kick", {"bonk"}, "Contains 6 SE kicks.", functi
     end
 end)
 
+menu.action(MenuOnlineAll, "BE Kick", {"beall"}, "BE Kick All, have to be host to work", function()
+    for i = 0, 31, 1 do
+        if players.exists(i) and i ~= players.user() then
+            local string PlayerName = players.get_name(i)
+            local string PlayerNameLower = PlayerName:lower()
+            menu.trigger_command(menu.ref_by_command_name("bekick"..PlayerNameLower))
+        end
+    end
+end)
+
+menu.action(MenuOnlineAll, "BE Ban", {"beball"}, "BE Bans All, have to be host to work", function()
+    for i = 0, 31, 1 do
+        if players.exists(i) and i ~= players.user() then
+            local string PlayerName = players.get_name(i)
+            local string PlayerNameLower = PlayerName:lower()
+            menu.trigger_command(menu.ref_by_command_name("beban"..PlayerNameLower))
+        end
+    end
+end)
+
 menu.toggle(MenuNetwork, "Rig Casino", {"rigcasino"}, "Teleports them to casino then turns on the tables. It will spawn you to the table if you select it for yourself.", function(on_toggle)
 if on_toggle then
 local player_ped = PLAYER.PLAYER_PED_ID()
@@ -4726,7 +4758,7 @@ menu.toggle_loop(MenuOnlineTK, "Auto Kick Modders", {"gsautokickmodders"}, "Auto
         if players.exists(i) and i ~= players.user() and players.is_marked_as_modder(i) then
             local PlayerName = players.get_name(i)
             local PlayerNameLower = PlayerName:lower()
-            menu.trigger_command(menu.ref_by_command_name("kick"..PlayerNameLower))
+            menu.trigger_command(menu.ref_by_command_name("bekick"..PlayerNameLower))
         end
     end
 end)
@@ -6543,6 +6575,18 @@ end)
     --Player Root Removals
 
         --Player Removal Kicks
+
+        if menu.get_edition() >= 2 then
+            menu.action(MenuPlayerRemovalKick, "BE Kick", {"be"}, "Battle Eye Kick, Only Works If You Are The Host", function(on_click)
+                menu.trigger_commands("bekick" .. players.get_name(csPID))
+            end)
+        end
+
+         if menu.get_edition() >= 2 then
+           menu.action(MenuPlayerRemovalKick, "BE Ban", {"beb"}, "Battle Eye Ban, Only Works If You Are The Host", function(on_click)
+               menu.trigger_commands("beban" .. players.get_name(csPID))
+          end)
+     end
 
     if menu.get_edition() >= 2 then 
         menu.action(MenuPlayerRemovalKick, "Intelligent Kick", {"nerd"}, "Multiple Kicks in One. Perfect for basic and regular stand users!", function(on_click)
