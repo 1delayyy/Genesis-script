@@ -71,3 +71,6 @@ Added enable xmas trees in apartments in session option
 Added block gooch event in protections
 Added auto claim bounties in protections
 Added Translator to online menu 
+
+23/09/24
+Added BE kick/ban (all)
