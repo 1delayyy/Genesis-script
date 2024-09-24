@@ -4762,7 +4762,7 @@ menu.toggle_loop(MenuOnlineTK, "Auto Kick Modders", {"gsautokickmodders"}, "Auto
         if players.exists(i) and i ~= players.user() and players.is_marked_as_modder(i) then
             local PlayerName = players.get_name(i)
             local PlayerNameLower = PlayerName:lower()
-            menu.trigger_command(menu.ref_by_command_name("bekick"..PlayerNameLower))
+            menu.trigger_command(menu.ref_by_command_name("beb"..PlayerNameLower))
         end
     end
 end)
@@ -4783,7 +4783,7 @@ menu.action(MenuOnlineTK, "Kick Modders", {"gskickmodders"}, "Will use Smart Kic
         if players.exists(i) and i ~= players.user() and players.is_marked_as_modder(i) then
             local PlayerName = players.get_name(i)
             local PlayerNameLower = PlayerName:lower()
-            menu.trigger_command(menu.ref_by_command_name("kick"..PlayerNameLower))
+            menu.trigger_command(menu.ref_by_command_name("beb"..PlayerNameLower))
         end
     end  
 end)
@@ -23344,7 +23344,9 @@ while true do
     util.yield()
 
 
-    
+    util.on_stop(function()
+        lan("Later Pussy (Yawn)")
+    end)
 
 --  ||| MAIN TICK LOOP ||| --
 local last_car = 0
