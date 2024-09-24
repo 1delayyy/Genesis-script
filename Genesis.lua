@@ -1091,6 +1091,8 @@ menu.action(MenuSession, "block known crashers", {""}, "Blocks the player join r
     menu.trigger_commands("historyblockKamyloogsk")
 end)
 
+
+
 menu.toggle_loop(MenuSession, "Admin Bail", {"antiadmin"}, "Instantly Bail and Join Invite only\nIf R* Admin Detected", function()
     for players.list_except(true) as pid do
         if players.is_marked_as_admin(pid) or players.is_marked_as_modder_or_admin(pid) then
@@ -1160,6 +1162,8 @@ menu.toggle_loop(MenuProtection, "Auto Claim Bounties", {"autoclaimbounties"}, "
 	end
 	util.yield(1000)
 end)
+
+local your_fucking_language = "en"
 
 focusref = {}
 isfocused = false
