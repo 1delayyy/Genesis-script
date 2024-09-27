@@ -3582,25 +3582,7 @@ menu.action(MenuOnlineAll, "Bonk Kick", {"bonk"}, "Contains 6 SE kicks.", functi
     end
 end)
 
-menu.action(MenuOnlineAll, "BE Kick", {"beall"}, "BE Kick All, have to be host to work", function()
-    for i = 0, 31, 1 do
-        if players.exists(i) and i ~= players.user() then
-            local string PlayerName = players.get_name(i)
-            local string PlayerNameLower = PlayerName:lower()
-            menu.trigger_command(menu.ref_by_command_name("bekick"..PlayerNameLower))
-        end
-    end
-end)
 
-menu.action(MenuOnlineAll, "BE Ban", {"beball"}, "BE Bans All, have to be host to work", function()
-    for i = 0, 31, 1 do
-        if players.exists(i) and i ~= players.user() then
-            local string PlayerName = players.get_name(i)
-            local string PlayerNameLower = PlayerName:lower()
-            menu.trigger_command(menu.ref_by_command_name("beban"..PlayerNameLower))
-        end
-    end
-end)
 
 menu.toggle(MenuNetwork, "Rig Casino", {"rigcasino"}, "Teleports them to casino then turns on the tables. It will spawn you to the table if you select it for yourself.", function(on_toggle)
 if on_toggle then
@@ -4762,20 +4744,42 @@ menu.toggle_loop(MenuOnlineTK, "Auto Kick Modders", {"gsautokickmodders"}, "Auto
         if players.exists(i) and i ~= players.user() and players.is_marked_as_modder(i) then
             local PlayerName = players.get_name(i)
             local PlayerNameLower = PlayerName:lower()
-            menu.trigger_command(menu.ref_by_command_name("beb"..PlayerNameLower))
+            menu.trigger_command(menu.ref_by_command_name("kick"..PlayerNameLower))
         end
     end
 end)
 
+menu.toggle_loop(MenuOnlineTK, "Auto Kick Attackers", {"gsautokickattack"}, "Automatically Kicks any Players that attack you with their menu. only works as host.", function(on)
+    for i = 0, 31, 1 do
+        if players.exists(i) and i ~= players.user() and players.is_marked_as_attacker(i) then
+            local PlayerName = players.get_name(i)
+            local PlayerNameLower = PlayerName:lower()
+            menu.trigger_command(menu.ref_by_command_name("kick"..PlayerNameLower))
+         end
+     end
+end)
+
+menu.action(MenuOnlineTK, "Kick Attackers", {"gskickattack"}, "Kicks any Players that attack you with their menu. only works as host.", function(on)
+    for i = 0, 31, 1 do
+        if players.exists(i) and i ~= players.user() and players.is_marked_as_attacker(i) then
+            local PlayerName = players.get_name(i)
+            local PlayerNameLower = PlayerName:lower()
+            menu.trigger_command(menu.ref_by_command_name("kick"..PlayerNameLower))
+        else
+            util.toast("-Genesis-\n\nProtected You From Pussy Modder, They Have Been Booted Out Of The Session!")
+         end
+     end
+end)
+
 menu.action(MenuOnlineTK, "Kick Host", {"gskickhost"}, "Kicks the Host in your Current Session. Be careful with this, as you can get Karma'd if the Host is Modding.", function(on_click)
-    local CurrentHostId = players.get_host()
-    local CurrentHostName = players.get_name(CurrentHostId)
-    local string CurrentHostNameLower = CurrentHostName:lower()
-    if players.get_host() ~= players.user() then
-        menu.trigger_command(menu.ref_by_command_name("kick"..CurrentHostNameLower))
-    else
-        util.toast("-Genesis-\n\nThis Command doesn't Work on yourself; You are already the Host!")
-    end
+        local CurrentHostId = players.get_host()
+        local CurrentHostName = players.get_name(CurrentHostId)
+        local string CurrentHostNameLower = CurrentHostName:lower()
+        if players.get_host() ~= players.user() then
+             menu.trigger_command(menu.ref_by_command_name("kick"..CurrentHostNameLower))
+         else
+          util.toast("-Genesis-\n\nThis Command doesn't Work on yourself; You are already the Host!")
+         end
 end)
 
 menu.action(MenuOnlineTK, "Kick Modders", {"gskickmodders"}, "Will use Smart Kick to use the Best Kick on all Modders. Being the Host is Highly Reccomended, so as to not get Karma'd.", function(on_click)
@@ -4783,9 +4787,9 @@ menu.action(MenuOnlineTK, "Kick Modders", {"gskickmodders"}, "Will use Smart Kic
         if players.exists(i) and i ~= players.user() and players.is_marked_as_modder(i) then
             local PlayerName = players.get_name(i)
             local PlayerNameLower = PlayerName:lower()
-            menu.trigger_command(menu.ref_by_command_name("beb"..PlayerNameLower))
-        end
-    end  
+            menu.trigger_command(menu.ref_by_command_name("kick"..PlayerNameLower))
+         end
+     end  
 end)
 
 menu.toggle_loop(MenuOnlineTK, "SE Kick (S0)", {"sekicks0"}, "doesn't work but is here to allow bonk kick to function properly.", function()
@@ -6579,18 +6583,6 @@ end)
     --Player Root Removals
 
         --Player Removal Kicks
-
-        if menu.get_edition() >= 2 then
-            menu.action(MenuPlayerRemovalKick, "BE Kick", {"be"}, "Battle Eye Kick, Only Works If You Are The Host", function(on_click)
-                menu.trigger_commands("bekick" .. players.get_name(csPID))
-            end)
-        end
-
-         if menu.get_edition() >= 2 then
-           menu.action(MenuPlayerRemovalKick, "BE Ban", {"beb"}, "Battle Eye Ban, Only Works If You Are The Host", function(on_click)
-               menu.trigger_commands("beban" .. players.get_name(csPID))
-          end)
-     end
 
     if menu.get_edition() >= 2 then 
         menu.action(MenuPlayerRemovalKick, "Intelligent Kick", {"nerd"}, "Multiple Kicks in One. Perfect for basic and regular stand users!", function(on_click)
