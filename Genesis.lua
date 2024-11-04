@@ -1533,141 +1533,7 @@ MenuMisc = menu.list(menu.my_root(), "Genesis", {""}, "Genesis Options.") ; menu
 
     
 
-    --[[Self outfit]]--
-    local delay_lib = require("Genesis/delay_lib")
-    local json = require("json")
-    util.require_natives("3095a", "g")
 
-
-    store_vampire_young = path_vampire_young,
-
---credits to Asuka/PIP Girl script 
-
-    local foreverYoung = false
-
-    local moonCircle = 255
-    
-    path_vampire_young = menu.toggle(MenuOutfitOptions, "Forever young", {"foreveryoung"}, "Prevents you Char from getting old, destroyed and infected Skin.", function(on)
-        if on then
-            foreverYoung = true
-            SET_PED_HEAD_OVERLAY(players.user_ped(), 12, moonCircle, 1.0) --Remove random Dots on your skin , chest area.
-            SET_PED_HEAD_OVERLAY(players.user_ped(), 11, 255, 0.0) --Remove Moles. (body)
-            SET_PED_HEAD_OVERLAY(players.user_ped(), 9, 255, 0.0) --Remove Moles/Freckles. (face)
-            SET_PED_HEAD_OVERLAY(players.user_ped(), 7, 255, 0.0) --Remove Sun Damage.
-            SET_PED_HEAD_OVERLAY(players.user_ped(), 6, 11, 100.0) --Pale Face. (later making it optional)
-            SET_PED_HEAD_OVERLAY(players.user_ped(), 3, 255, 0.0) --Remove any aging processes.
-            SET_PED_HEAD_OVERLAY(players.user_ped(), 0, 255, 0.0) --Remove destroyed/infected skin in face.
-        else
-            foreverYoung = false
-        end
-    end)
-
-    if foreverYoung and delay_lib.transition_state(true) <3 then
-        SET_PED_HEAD_OVERLAY(players.user_ped(), 12, moonCircle, 1.0) --Remove random Dots on your skin , chest area.
-        SET_PED_HEAD_OVERLAY(players.user_ped(), 11, 255, 0.0) --Remove Moles. (body)
-        SET_PED_HEAD_OVERLAY(players.user_ped(), 9, 255, 0.0) --Remove Moles/Freckles. (face)
-        SET_PED_HEAD_OVERLAY(players.user_ped(), 7, 255, 0.0) --Remove Sun Damage.
-        SET_PED_HEAD_OVERLAY(players.user_ped(), 6, 11, 100.0) --Pale Face. (later making it optional)
-        SET_PED_HEAD_OVERLAY(players.user_ped(), 3, 255, 0.0) --Remove any aging processes.
-        SET_PED_HEAD_OVERLAY(players.user_ped(), 0, 255, 0.0) --Remove destroyed/infected skin in face.
-    end
-
-
-
-local demon_horn1 = nil
-local demon_horn2 = nil
-local demon_horn_hash = util.joaat("w_me_knife_01")
-
- menu.toggle_loop(MenuOutfitOptions, "Demon Horns", {"demonhorns"}, "", function()
-    if delay_lib.allow_spawn_check() then
-        local pup = players.user_ped()
-        if not delay_lib.does_entity_exist(demon_horn1) then
-            if delay_lib.request_model(demon_horn_hash, 3) then
-                demon_horn1 = entities.create_object(demon_horn_hash, players.get_position(players.user()))
-                entities.set_can_migrate(demon_horn1, false)
-                if GET_ENTITY_LOD_DIST(demon_horn1) > 66 then
-                    SET_ENTITY_LOD_DIST(demon_horn1, 66)
-                end
-                SET_ENTITY_COLLISION(demon_horn1, false, false)
-                SET_ENTITY_INVINCIBLE(demon_horn1, true)
-                ATTACH_ENTITY_TO_ENTITY(demon_horn1, pup, GET_PED_BONE_INDEX(pup, 31086), -3 / 50.0, -1 / 50.0, 0, 78, 0, 122, false, true, false, false, 0, true, 1)
-            end
-        else
-            if not IS_ENTITY_ATTACHED_TO_ENTITY(demon_horn1, pup) then
-                delay_lib.delete_entity(demon_horn1)
-            end
-        end
-        if not delay_lib.does_entity_exist(demon_horn2) then
-            if delay_lib.request_model(demon_horn_hash, 3) then
-                demon_horn2 = entities.create_object(demon_horn_hash, players.get_position(players.user()))
-                entities.set_can_migrate(demon_horn2, false)
-                if GET_ENTITY_LOD_DIST(demon_horn2) > 66 then
-                    SET_ENTITY_LOD_DIST(demon_horn2, 66)
-                end
-                SET_ENTITY_COLLISION(demon_horn2, false, false)
-                SET_ENTITY_INVINCIBLE(demon_horn2, true)
-                ATTACH_ENTITY_TO_ENTITY(demon_horn2, pup, GET_PED_BONE_INDEX(pup, 31086), -3 / 50.0, -1 / 50.0, 0, 102, 0, 122, false, true, false, false, 0, true, 1)
-            end
-        else
-            if not IS_ENTITY_ATTACHED_TO_ENTITY(demon_horn2, pup) then
-                delay_lib.delete_entity(demon_horn2)
-            end
-        end
-        if GET_FOLLOW_PED_CAM_VIEW_MODE() == 4 then
-            SET_ENTITY_VISIBLE(demon_horn1, false, false)
-            SET_ENTITY_VISIBLE(demon_horn2, false, false)
-        else
-            SET_ENTITY_VISIBLE(demon_horn1, true, false)
-            SET_ENTITY_VISIBLE(demon_horn2, true, false)
-        end
-    end
-    util.yield(666)
-end, function()
-    delay_lib.delete_entity(demon_horn1)
-    delay_lib.delete_entity(demon_horn2)
-end)
-
-menu.list_select(MenuOutfitOptions, "Demon Horns Color", {}, "make sure demon horns is turned off in order to change the colour without error", {
-    {util.joaat("w_me_knife_01"), "Default"},
-    {util.joaat("w_me_knife_xm3"), "Eyes"},
-    {util.joaat("w_me_knife_xm3_01"), "Spatter"},
-    {util.joaat("w_me_knife_xm3_02"), "Flames"},
-    {util.joaat("w_me_knife_xm3_03"), "Lightning"},
-    {util.joaat("w_me_knife_xm3_04"), "Pills"},
-    {util.joaat("w_me_knife_xm3_05"), "Snakeskin"},
-    {util.joaat("w_me_knife_xm3_06"), "Lucha Libre"},
-    {util.joaat("w_me_knife_xm3_07"), "Trippy"},
-    {util.joaat("w_me_knife_xm3_08"), "Tequilya"},
-    {util.joaat("w_me_knife_xm3_09"), "Orang-O-Tang"},
-},  demon_horn_hash, function(value, menu_name, prev_value, click_type)
-    demon_horn_hash = value
-    if delay_lib.allow_spawn_check() and menu.get_value() and delay_lib.request_model(value, 3) then
-        delay_lib.delete_entity(demon_horn1)
-        delay_lib.delete_entity(demon_horn2)
-        local pos = players.get_position(players.user())
-        local pup = players.user_ped()
-        if not delay_lib.does_entity_exist(demon_horn1) then
-            demon_horn1 = entities.create_object(value, pos)
-            entities.set_can_migrate(demon_horn1, false)
-            if GET_ENTITY_LOD_DIST(demon_horn1) > 66 then
-                SET_ENTITY_LOD_DIST(demon_horn1, 66)
-            end
-            SET_ENTITY_COLLISION(demon_horn1, false, false)
-            SET_ENTITY_INVINCIBLE(demon_horn1, true)
-            ATTACH_ENTITY_TO_ENTITY(demon_horn1, pup, GET_PED_BONE_INDEX(pup, 31086), -3 / 50.0, -1 / 50.0, 0, 78, 0, 122, false, true, false, false, 0, true, 1)
-        end
-        if not delay_lib.does_entity_exist(demon_horn2) then
-            demon_horn2 = entities.create_object(value, pos)
-            entities.set_can_migrate(demon_horn2, false)
-            if GET_ENTITY_LOD_DIST(demon_horn2) > 66 then
-                SET_ENTITY_LOD_DIST(demon_horn2, 66)
-            end
-            SET_ENTITY_COLLISION(demon_horn2, false, false)
-            SET_ENTITY_INVINCIBLE(demon_horn2, true)
-            ATTACH_ENTITY_TO_ENTITY(demon_horn2, pup, GET_PED_BONE_INDEX(pup, 31086), -3 / 50.0, -1 / 50.0, 0, 102, 0, 122, false, true, false, false, 0, true, 1)
-        end
-    end
-end)
   
 
 
@@ -2197,11 +2063,7 @@ end)
 
 
 --[[| Self/Weapon/MissleGuidance/MA/ |]]--
-homing_missles = false
-menu.toggle(MenuWeaponMA, "Missle Aimbot", {"gsmissleaimbot"}, "Rotates any Missle or Bomb Towards the Nearest player in the set Range. Aims a little Ahead, in Attempt to cut the Target off.", function(on)
-    homing_missles = on
-    mod_uses("object", if on then 1 else -1)
-end)
+
 
 HomingM_SelectedMissle = util.joaat("w_lr_homing_rocket")
 menu.slider(MenuWeaponMA, "Missle Aimbot Selected Missle", {"gsmissleaimbotmissle"}, "The Missle that will be used for 'Missle Aimbot'.\n\n1 - RPG\n2 - Homing Launcher\n3 - Oppressor Missle\n4 - B-11 Barrage\n5 - B-11 Homing\n6 - Chernobog Missle\n7 - Explosive Bomb\n8 - Incendiary Bomb\n9 - Gas Bomb\n10 - Cluster Bomb", 1, 10, 2, 1, function(value)
@@ -2225,11 +2087,7 @@ end)
 
 
 --[[| Self/Weapon/MissleGuidance/MCLOS/ |]]--
-missle_MCLOS = false
-menu.toggle(MenuWeaponMCLOS, "MCLOS", {"gsmclos"}, "MCLOS is Manual Missle Guidance. Use the Numpad 4, 5, 6, 8 to Control any Missle you Fire Manually.", function(on)
-    missle_MCLOS = on
-    mod_uses("object", if on then 1 else -1)
-end)
+
 
 MCLOS_SelectedMissle = util.joaat("w_lr_homing_rocket")
 menu.slider(MenuWeaponMCLOS, "MCLOS Selected Missle", {"gsmclosmissle"}, "The Missle that will be used for MCLOS Guidance.\n\n1 - RPG\n2 - Homing Launcher\n3 - Oppressor Missle\n4 - B-11 Barrage\n5 - B-11 Homing\n6 - Chernobog Missle\n7 - Explosive Bomb\n8 - Incendiary Bomb\n9 - Gas Bomb\n10 - Cluster Bomb", 1, 10, 2, 1, function(value)
@@ -2274,11 +2132,7 @@ end)
 
 
 --[[| Self/Weapon/MissleGuidance/SACLOS/ |]]--
-missle_SACLOS = false
-menu.toggle(MenuWeaponSACLOS, "SACLOS", {"gssaclos"}, "SACLOS is Semi-Automatic Missle Guidance. The Missle will go to where your Cursor Points.", function(on)
-    missle_SACLOS = on
-    mod_uses("object", if on then 1 else -1)
-end)
+
 
 SACLOS_SelectedMissle = util.joaat("w_lr_homing_rocket")
 menu.slider(MenuWeaponSACLOS, "SACLOS Selected Missle", {"gssaclosmissle"}, "The Missle that will be used for SACLOS Guidance.\n\n1 - RPG\n2 - Homing Launcher\n3 - Oppressor Missle\n4 - B-11 Barrage\n5 - B-11 Homing\n6 - Chernobog Missle\n7 - Explosive Bomb\n8 - Incendiary Bomb\n9 - Gas Bomb\n10 - Cluster Bomb", 1, 10, 2, 1, function(value)
@@ -2825,11 +2679,7 @@ end)
 
 
 --[[| Vehicle/Other/Countermeasures/TROPHYAPS/ |]]--
-menu.toggle(MenuCMAPS, "TROPHY APS", {"gstrophyaps"}, "APS (Active Protection System), is a System that will Defend your Vehicle from Missles by Shooting them out of the Sky before they Hit you.", function(on)
-    APS_charges = CountermeasureAPSCharges
-    vehicle_APS = on
-    mod_uses("object", if on then 1 else -1)
-end)
+
 
 CountermeasureAPSrange = 10
 menu.slider(MenuCMAPS, "APS Range", {"gstrophyapsrange"}, "The Range at which APS will Destroy Incoming Projectiles.", 5, 100, 10, 5, function(value)
@@ -5006,41 +4856,9 @@ end)
 
 
 --[[| World/Projectile/ProjectileMarking/MarkProjectiles/ |]]--
-blip_projectiles = false
-blip_proj_missles = false
-blip_proj_bombs = false
-blip_proj_grenades = false
-blip_proj_mines = false
-blip_proj_misc = false
-menu.toggle(MenuWrldProjOptions, "Mark Projectiles", {"gsmarkprojectiles"}, "Puts a Marker on any Slow-Moving Projectile.\nThis includes things like C4, Proximity Mines, Missles, Etc.\nWill also Mark People using Explosive Rounds Under 'Misc' Category.", function(on)
-    blip_projectiles = on
-    mod_uses("object", if on then 1 else -1)
-end)
 
-menu.toggle(MenuWrldProjOptions, "Mark Missles", {"gsmarkmissles"}, "Wether to Mark Different types of Missles on the Map.", function(on)
-    blip_proj_missles = on
-    mod_uses("object", if on then 1 else -1)
-end)
 
-menu.toggle(MenuWrldProjOptions, "Mark Bombs", {"gsmarkbombs"}, "Wether to Mark Bombs Dropped from Planes on the Map.", function(on)
-    blip_proj_bombs = on
-    mod_uses("object", if on then 1 else -1)
-end)
 
-menu.toggle(MenuWrldProjOptions, "Mark Grenades", {"gsmarkgrenades"}, "Wether to Mark Different types of Grenades on the Map.", function(on)
-    blip_proj_grenades = on
-    mod_uses("object", if on then 1 else -1)
-end)
-
-menu.toggle(MenuWrldProjOptions, "Mark Mines", {"gsmarkmines"}, "Wether to Mark Different types of Mines on the Map.", function(on)
-    blip_proj_mines = on
-    mod_uses("object", if on then 1 else -1)
-end)
-
-menu.toggle(MenuWrldProjOptions, "Mark Misc", {"gsmarkmisc"}, "Wether to Mark Miscellaneous Projectiles like Flares on the Map.", function(on)
-    blip_proj_misc = on
-    mod_uses("object", if on then 1 else -1)
-end)
 
 
 --[[| World/Projectile/ProjectileMarking/MarkProjectileColours/ |]]--
@@ -5096,17 +4914,7 @@ end)
 
 
 --[[| World/Projectile/ProjectileMovement/ |]]--
-projectile_spaz = false
-menu.toggle(MenuWrldProjMovement, "Projectile Random", {"gsprojectilerandom"}, "Applies Random Velocity to any Projectiles on the Map. Makes them Spaz out.", function(on)
-    projectile_spaz = on
-    mod_uses("object", if on then 1 else -1)
-end)
 
-slow_projectiles = false
-menu.toggle(MenuWrldProjMovement, "Slow Projectiles", {"gsprojectileslow"}, "Makes All Projectiles move Extremely Slow.", function(on)
-    slow_projectiles = on
-    mod_uses("object", if on then 1 else -1)
-end)
 
 
 --[[| World/Chaos |]]--
