@@ -74,3 +74,6 @@ Added Translator to online menu
 
 23/09/24
 Added BE kick/ban (all)
+
+04/11/24
+removed outdated/broken features causing the script to not start
