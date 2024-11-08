@@ -5361,56 +5361,7 @@ menu.action(
         entities.delete_by_handle(spawnedTruck)
     end)
 
-        --Player Root Vehicle
 
-local function spawn_object_in_front_of_ped(ped, hash, ang, room, zoff, setonground)
-coords = ENTITY.GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(ped, 0.0, room, zoff)
-request_model_load(hash)
-hdng = ENTITY.GET_ENTITY_HEADING(ped)
-new = OBJECT.CREATE_OBJECT_NO_OFFSET(hash, coords['x'], coords['y'], coords['z'], true, false, false)
-ENTITY.SET_ENTITY_HEADING(new, hdng+ang)
-if setonground then
-OBJECT.PLACE_OBJECT_ON_GROUND_PROPERLY(new)
-end
-return new
-end
-
-read_global = {
-byte = function(global)
-local address = memory.script_global(global)
-return memory.read_byte(address)
-end,
-int = function(global)
-local address = memory.script_global(global)
-return memory.read_int(address)
-end,
-float = function(global)
-local address = memory.script_global(global)
-return memory.read_float(address)
-end,
-string = function(global)
-local address = memory.script_global(global)
-return memory.read_string(address)
-end
-}
-
-function get_random_ped()
-peds = entities.get_all_peds_as_handles()
-npcs = {}
-valid = 0
-for k,p in pairs(peds) do
-if p ~= nil and not is_ped_player(p) then
-table.insert(npcs, p)
-valid = valid + 1
-end
-end
-return npcs[math.random(valid)]
-end
-
-function DELETE(ent)
-ENTITY.SET_ENTITY_AS_MISSION_ENTITY(ent, true, true)
-entities.delete_by_handle(ent)
-end
 
 
 
